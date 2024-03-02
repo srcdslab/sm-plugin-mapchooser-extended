@@ -2,17 +2,17 @@
 {
 	"Vote Nextmap"
 	{
-		"pt"			"Vote para o prÛximo mapa!"
+		"pt"			"Vote para o pr√≥ximo mapa!"
 	}	
 
 	"Nextmap Voting Started"
 	{
-		"pt"			"VotaÁ„o para o prÛximo mapa comeÁou."
+		"pt"			"Vota√ß√£o para o pr√≥ximo mapa come√ßou."
 	}	
 
 	"Nextmap Voting Finished"
 	{
-		"pt"			"A votaÁ„o para o prÛximo mapa terminou. O prÛximo mapa ser· {1}. (Recebidos {2}%% de {3} votos)"
+		"pt"			"A vota√ß√£o para o pr√≥ximo mapa terminou. O pr√≥ximo mapa ser√° {1}. (Recebidos {2}%% de {3} votos)"
 	}
 
 	"Current Map Extended"
@@ -27,7 +27,7 @@
 
 	"Dont Change"
 	{
-		"pt"			"N„o Mudar"
+		"pt"			"N√£o Mudar"
 	}
 
 	"Current Map Stays"
@@ -37,17 +37,17 @@
 
 	"Changed Next Map"
 	{
-		"pt"		"Mudado o prÛximo mapa para \"{1}\"."	
+		"pt"		"Mudado o pr√≥ximo mapa para \"{1}\"."	
 	}
 
 	"Runoff Vote Nextmap"
 	{
-		"pt"		"Segundo turno de votos para o prÛximo mapa!"
+		"pt"		"Segundo turno de votos para o pr√≥ximo mapa!"
 	}
 
 	"Number Of Votes"
 	{
-		"pt"		"N˙mero de votos"
+		"pt"		"N√∫mero de votos"
 	}
 
 	"Custom"
@@ -57,37 +57,37 @@
 
 	"Revote Is Needed"
 	{
-		"pt"		"Nenhum mapa recebeu mais que {1}%% de votos.\nEnt„o, qual mapa ganhar·? Precisa de uma nova votaÁ„o!"
+		"pt"		"Nenhum mapa recebeu mais que {1}%% de votos.\nEnt√£o, qual mapa ganhar√°? Precisa de uma nova vota√ß√£o!"
 	}
 
 	"Revote Warning"
 	{
-		"pt"		"Segundo turno comeÁa em: {1}s"
+		"pt"		"Segundo turno come√ßa em: {1}s"
 	}
 
 	"Vote Warning"
 	{
-		"pt"		"AtenÁ„o! VotaÁ„o para o prÛximo mapa comeÁar· em: {1}s"
+		"pt"		"Aten√ß√£o! Vota√ß√£o para o pr√≥ximo mapa come√ßar√° em: {1}s"
 	}
 
 	"Line One"
 	{
-		"pt"		"Considere que mapa vocÍ quer jogar..."
+		"pt"		"Considere que mapa voc√™ quer jogar..."
 	}
 
 	"Line Two"
 	{
-		"pt"		"...e n„o aperte os botıes sem pensar ;-)"
+		"pt"		"...e n√£o aperte os bot√µes sem pensar ;-)"
 	}
 
 	"Cannot Start Vote"
 	{
-		"pt"		"VotaÁ„o em progresso.  Tentando novamente em {1}s."
+		"pt"		"Vota√ß√£o em progresso.  Tentando novamente em {1}s."
 	}
 
 	"Tie Vote"
 	{
-		"pt"		"Os {1} mapas tiveram o mesmo n˙mero de votos.\nUma nova votaÁ„o È necess·ria!"
+		"pt"		"Os {1} mapas tiveram o mesmo n√∫mero de votos.\nUma nova vota√ß√£o √© necess√°ria!"
 	}
 
 	"Custom Marked"

@@ -12,7 +12,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -52,49 +52,117 @@ enum CanNominateResult
 
 /**
  * Called whenever warning timer starts
- * 
+ *
  */
-forward OnMapVoteWarningStart();
+forward void OnMapVoteWarningStart();
 
 /**
  * Called whenever runoff warning timer starts
  */
-forward OnMapVoteRunnoffWarningStart();
+forward void OnMapVoteRunnoffWarningStart();
 
 /**
  * Called whenever the timer ticks
  */
-forward OnMapVoteWarningTick(time);
+forward void OnMapVoteWarningTick(int time);
 
 /**
  * Called whenever vote starts
- * 
+ *
  * @deprecated Will be removed in MapChooser 1.8.  Use OnMapVoteStarted instead.
  */
-forward OnMapVoteStart();
+forward void OnMapVoteStart();
 
 /**
  * Called whenever vote ends
  */
-forward OnMapVoteEnd(const String:map[]);
+forward void OnMapVoteEnd(const char[] map);
+
+/**
+ * Called when a client who own a nomination disconnect
+ */
+forward void OnNominationDisconnect(char[] oldmap, int owner);
+
 
 /**
  * Is a map on the current game's official list?
  * This should be treated as informative only.
- * 
+ *
  * @param map 	Name of map to check
  * @return 		true if it's on the list of official maps for this game
  */
-native bool:IsMapOfficial(const String:map[]);
+native bool IsMapOfficial(const char[] map);
 
 /**
  * Is nominate allowed?
- * 
+ *
  * @return		A CanNominateResult corresponding to whether a vote is allowed or not
  */
-native CanNominateResult:CanNominate();
+native CanNominateResult CanNominate();
 
-public SharedPlugin:__pl_mapchooser_extended = 
+/**
+ * Add map to nomination exclude list.
+ * Known as cooldown.
+ *
+ * @param map 		Name of map
+ * @param cooldown 	Cooldown, interpretation depends on mode.
+ * @param mode 		0: Normal, use cooldown value from config/default.
+ *					1: Set or replace cooldown with cooldown value.
+ *					2: Set or replace cooldown with cooldown value if greater than current cooldown.
+ * @return 			true on success
+ */
+native bool ExcludeMap(const char[] map, int cooldown = 0, int mode = 0);
+// Cooldown in seconds
+native bool ExcludeMapTime(const char[] map, int cooldown = 0, int mode = 0);
+
+native int GetMapCooldown(const char[] map);
+native int GetMapCooldownTime(const char[] map); // in unix time
+native int GetMapMinTime(const char[] map);
+native int GetMapMaxTime(const char[] map);
+native int GetMapMinPlayers(const char[] map);
+native int GetMapMaxPlayers(const char[] map);
+
+// 0 = Okay
+// >0 = Minutes till Okay
+native int GetMapTimeRestriction(const char[] map);
+
+// <0 = Less than MinPlayers
+// 0 = Okay
+// >0 = More than MaxPlayers
+native int GetMapPlayerRestriction(const char[] map);
+
+// <=0 = No group
+// >0 = Groups found
+native int GetMapGroups(const char[] map, int[] groups, int size);
+
+// <0 = No restriction
+// >=0 = Group _max -> Group full
+native int GetMapGroupRestriction(const char[] map, int client = 0);
+
+native bool IsMapAdminRestricted(const char[] map);
+
+native bool IsClientMapAdminRestricted(const char[] map, int client = 0);
+
+native bool IsMapVIPRestricted(const char[] map);
+
+native bool IsClientMapVIPRestricted(const char[] map, int client = 0);
+
+native bool IsMapLeaderRestricted(const char[] map);
+
+native bool IsClientMapLeaderRestricted(const char[] map, int client = 0);
+
+/**
+ * Amount of Extends left on the current map
+ *
+ * @return			amounts of extends left
+*/
+native int GetExtendsLeft();
+
+native bool AreRestrictionsActive();
+
+native int SimulateMapEnd();
+
+public SharedPlugin __pl_mapchooser_extended =
 {
 	name = "mapchooser",
 	file = "mapchooser_extended.smx",
