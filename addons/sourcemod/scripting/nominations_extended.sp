@@ -1002,12 +1002,12 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 		if(!filter[0] || StrContains(map, filter, false) != -1)
 		{
 			// If client does not have cookies cached or choose see unavailable maps: Show all maps
-			if(!bCached || g_bShowUnavailableMaps[client])
+			if(!bCached || bCached && g_bShowUnavailableMaps[client])
 			{
 				AddMenuItem(menu, map, map);
 			}
 			// Cookies are cached and client choose to Hide unavailable maps
-			if(!g_bShowUnavailableMaps[client] && 
+			if(bCached && !g_bShowUnavailableMaps[client] && 
 				AreRestrictionsActive() &&
 				GetMapCooldown(map) == 0 &&
 				GetMapCooldownTime(map) < GetTime() &&
