@@ -126,8 +126,8 @@
 	{
 		"en"		"VIP"
 	}
-	
-	"Leader Nomination"
+    
+    "Leader Nomination"
 	{
 		"en"		"Leader"
 	}
@@ -141,8 +141,8 @@
 	{
 		"en"		"Only VIPs can nominate this map."
 	}
-	
-	"Map Nominate Leader Error"
+    
+    "Map Nominate Leader Error"
 	{
 		"en"		"Only Leaders can nominate this map."
 	}
@@ -198,8 +198,8 @@
 	{
 		"en"		"VIP only"
 	}
-	
-	"Leader Restriction"
+    
+    "Leader Restriction"
 	{
 		"en"		"Leader only"
 	}
@@ -220,5 +220,15 @@
 	{
 		"#format"	"{1:s}"
 		"en"		"Your nomination {1} has been removed because it exceeds the maximum player restriction."
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"en"		"Show unavailable maps"
+	}
+
+	"Can not Load Cookies"
+	{
+		"en"		"Can not load cookies settings."
 	}
 }
