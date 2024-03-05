@@ -41,11 +41,10 @@
 #include <mapchooser_extended>
 #include <sdktools>
 
-#define VERSION "1.10.5"
+#define VERSION "1.10.6"
 
-#define CONFIG_FILE "configs/mapchooser_extended/sounds.cfg"
 #define CONFIG_DIRECTORY "configs/mapchooser_extended/sounds"
-
+#define DEFAULT_SOUND_SET "tf2"
 #define SET_NAME_MAX_LENGTH 64
 
 // 0-60, even though we don't ever call 0
@@ -122,7 +121,7 @@ public void OnPluginStart()
 {
 	g_Cvar_EnableSounds = CreateConVar("mce_sounds_enablesounds", "1", "Enable this plugin.  Sounds will still be downloaded (if applicable) even if the plugin is disabled this way.", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_Cvar_EnableCounterSounds = CreateConVar("mce_sounds_enablewarningcountersounds", "1", "Enable sounds to be played during warning counter.  If this is disabled, map vote warning, start, and stop sounds still play.", FCVAR_NONE, true, 0.0, true, 1.0);
-	g_Cvar_SoundSet = CreateConVar("mce_sounds_soundset", "tf2", "Sound set to use, optimized for TF by default.  Sound sets are defined in addons/sourcemod/configs/mapchooser_extended_sounds.cfg.  Takes effect immediately if sm_mapvote_downloadallsounds is 1, otherwise at map change.", FCVAR_NONE);
+	g_Cvar_SoundSet = CreateConVar("mce_sounds_soundset", DEFAULT_SOUND_SET, "Sound set to use, optimized for TF by default.  Sound sets are defined in addons/sourcemod/configs/mapchooser_extended/sound  Takes effect immediately if sm_mapvote_downloadallsounds is 1, otherwise at map change.", FCVAR_NONE);
 	g_Cvar_DownloadAllSounds = CreateConVar("mce_sounds_downloadallsounds", "0", "Force players to download all sound sets, so sets can be dynamically changed during the map. Defaults to off. Takes effect at map change.", FCVAR_NONE, true, 0.0, true, 1.0);
 	CreateConVar("mce_sounds_version", VERSION, "Mapchooser Extended Sounds Version", FCVAR_DONTRECORD|FCVAR_SPONLY|FCVAR_REPLICATED);
 
@@ -141,6 +140,9 @@ public void OnPluginStart()
 	g_SoundFiles = CreateTrie();
 	LoadSounds();
 	HookConVarChange(g_Cvar_SoundSet, SoundSetChanged);
+
+	// Make sure it get updated on every plugin load
+	OnConfigsExecuted();
 }
 
 public void OnConfigsExecuted()
@@ -167,7 +169,7 @@ stock void SetSoundSetFromCVar()
 	GetConVarString(g_Cvar_SoundSet, soundSet, sizeof(soundSet));
 	
 	// Unknown sound set from config file, reset to default
-	if (FindStringInArray(g_SetNames, soundSet) == -1 && !StrEqual(soundSet, "tf", true))
+	if (FindStringInArray(g_SetNames, soundSet) == -1 && !StrEqual(soundSet, DEFAULT_SOUND_SET, true))
 	{
 		ResetConVar(g_Cvar_SoundSet);
 		GetConVarString(g_Cvar_SoundSet, soundSet, sizeof(soundSet));
