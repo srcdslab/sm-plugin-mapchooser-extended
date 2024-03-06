@@ -46,7 +46,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.11.0"
+#define RTVE_VERSION "1.11.1"
 
 public Plugin myinfo =
 {
@@ -223,6 +223,11 @@ void UpdateRTV()
 	{
 		g_Voters = GetTeamClientCount(2) + GetTeamClientCount(3);
 		g_VotesNeeded = RoundToCeil(float(g_Voters) * g_Cvar_Needed.FloatValue);
+	}
+
+	if (g_VotesNeeded < 1)
+	{
+		g_VotesNeeded = 1;
 	}
 
 	if (!g_CanRTV)
