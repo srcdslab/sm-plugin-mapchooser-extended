@@ -150,8 +150,6 @@ public void OnPluginStart()
 
 	if (g_bLate)
 		OnConfigsExecuted();
-
-	g_bLate = false;
 }
 
 public void OnConfigsExecuted()
