@@ -69,6 +69,7 @@ Handle g_CurrentSoundSet = INVALID_HANDLE; // Lazy "pointer" to the current soun
 
 //Global variables
 bool g_DownloadAllSounds;
+bool g_bLate = false;
 
 enum SoundEvent
 {
@@ -117,6 +118,12 @@ stock void PopulateTypeNamesArray()
 	}
 }
 
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	g_bLate = late;
+	return APLRes_Success;
+}
+
 public void OnPluginStart()
 {
 	g_Cvar_EnableSounds = CreateConVar("mce_sounds_enablesounds", "1", "Enable this plugin.  Sounds will still be downloaded (if applicable) even if the plugin is disabled this way.", FCVAR_NONE, true, 0.0, true, 1.0);
@@ -141,8 +148,10 @@ public void OnPluginStart()
 	LoadSounds();
 	HookConVarChange(g_Cvar_SoundSet, SoundSetChanged);
 
-	// Make sure it get updated on every plugin load
-	OnConfigsExecuted();
+	if (g_bLate)
+		OnConfigsExecuted();
+
+	g_bLate = false;
 }
 
 public void OnConfigsExecuted()
