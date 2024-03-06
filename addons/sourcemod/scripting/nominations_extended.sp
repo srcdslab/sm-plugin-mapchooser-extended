@@ -38,6 +38,7 @@
 #include <mapchooser_extended>
 #include <multicolors>
 #include <basecomm>
+#include <clientprefs>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -47,7 +48,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define NE_VERSION "1.11.0"
+#define NE_VERSION "1.11.1"
 
 public Plugin myinfo =
 {
@@ -94,6 +95,10 @@ Handle g_hOnPublicMapReplaced = INVALID_HANDLE;
 Handle g_hOnAdminMapInsert = INVALID_HANDLE;
 Handle g_hOnAdminMapRemove = INVALID_HANDLE;
 
+// Clients Prefs
+Handle g_hShowUnavailableMaps = INVALID_HANDLE;
+bool g_bShowUnavailableMaps[MAXPLAYERS + 1] = { false, ... };
+
 int g_Player_NominationDelay[MAXPLAYERS+1];
 int g_NominationDelay;
 
@@ -102,6 +107,7 @@ bool g_bNEAllowed = false;		// True if Nominations is available to players.
 public void OnPluginStart()
 {
 	LoadTranslations("common.phrases");
+	LoadTranslations("clientprefs.phrases");
 	LoadTranslations("nominations.phrases");
 	LoadTranslations("basetriggers.phrases"); // for Next Map phrase
 	LoadTranslations("mapchooser_extended.phrases");
@@ -140,6 +146,10 @@ public void OnPluginStart()
 
 	AutoExecConfig(true, "nominations_extended");
 
+	// Cookies support
+	SetCookieMenuItem(NE_CookieHandler, 0, "Nominations Extended Settings");
+	g_hShowUnavailableMaps = RegClientCookie("NE_hide_unavailable", "Hide unavailable maps from the nominations list", CookieAccess_Protected);
+
 	g_mapTrie = CreateTrie();
 }
 
@@ -172,6 +182,11 @@ public void OnMapEnd()
 {
 	g_hDelayNominate = INVALID_HANDLE;
 	g_bNEAllowed = false;
+}
+
+public void OnClientDisconnect(int client)
+{
+	SetClientCookies(client);
 }
 
 public void OnConfigsExecuted()
@@ -227,7 +242,7 @@ void UpdateMapMenus()
 	if(g_MapMenu != INVALID_HANDLE)
 		delete g_MapMenu;
 
-	g_MapMenu = BuildMapMenu("");
+	g_MapMenu = BuildMapMenu("", -1);
 
 	if(g_AdminMapMenu != INVALID_HANDLE)
 		delete g_AdminMapMenu;
@@ -848,8 +863,7 @@ Action AttemptNominate(int client, const char[] filter = "")
 	}
 
 	Menu menu = g_MapMenu;
-	if(filter[0])
-		menu = BuildMapMenu(filter);
+	menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client);
 
 	SetMenuTitle(menu, "%T", "Nominate Title", client);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
@@ -967,11 +981,19 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 	return true;
 }
 
-Menu BuildMapMenu(const char[] filter)
+Menu BuildMapMenu(const char[] filter, int client = -1)
 {
 	Menu menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
 
 	static char map[PLATFORM_MAX_PATH];
+	bool bCached = client > 0 && client <= MaxClients && IsClientInGame(client) && AreClientCookiesCached(client);
+
+	if (bCached && !filter[0])
+	{
+		char buffer[128];
+		Format(buffer, sizeof(buffer), "%T: %T", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "Yes" : "No", client);
+		menu.AddItem("show_unavailable", buffer);
+	}
 
 	for(int i = 0; i < GetArraySize(g_MapList); i++)
 	{
@@ -979,7 +1001,22 @@ Menu BuildMapMenu(const char[] filter)
 
 		if(!filter[0] || StrContains(map, filter, false) != -1)
 		{
-			AddMenuItem(menu, map, map);
+			// If client does not have cookies cached or choose see unavailable maps: Show all maps
+			if(!bCached || bCached && g_bShowUnavailableMaps[client])
+			{
+				AddMenuItem(menu, map, map);
+			}
+			// Cookies are cached and client choose to Hide unavailable maps
+			if(bCached && !g_bShowUnavailableMaps[client] && 
+				AreRestrictionsActive() &&
+				GetMapCooldown(map) == 0 &&
+				GetMapCooldownTime(map) < GetTime() &&
+				GetMapTimeRestriction(map) == 0 &&
+				GetMapPlayerRestriction(map) == 0 &&
+				GetMapGroupRestriction(map, client) < 0)
+			{
+				AddMenuItem(menu, map, map);
+			}
 		}
 	}
 
@@ -1049,19 +1086,16 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			char name[MAX_NAME_LENGTH];
 			GetMenuItem(menu, param2, map, sizeof(map));
 
+			if (strcmp(map, "show_unavailable", false) == 0)
+			{
+				g_bShowUnavailableMaps[param1] = !g_bShowUnavailableMaps[param1];
+				AttemptNominate(param1, "");
+				return 0;
+			}
+
 			GetClientName(param1, name, MAX_NAME_LENGTH);
 
-			if(restrictionsActive && (
-				GetMapCooldownTime(map) > GetTime() ||
-				GetMapTimeRestriction(map) ||
-				GetMapPlayerRestriction(map) ||
-				GetMapGroupRestriction(map, param1) >= 0 ||
-				IsClientMapAdminRestricted(map, param1) ||
-				IsClientMapVIPRestricted(map, param1)
-				#if defined _zleader_included
-				|| IsClientMapLeaderRestricted(map, param1)
-				#endif
-				))
+			if(IsMapRestricted(param1, map))
 			{
 				CPrintToChat(param1, "{green}[NE]{default} You can't nominate this map right now.");
 				return 0;
@@ -1126,17 +1160,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				}
 			}
 
-			if(restrictionsActive && (
-				GetMapCooldownTime(map) > GetTime() ||
-				GetMapTimeRestriction(map) ||
-				GetMapPlayerRestriction(map) ||
-				GetMapGroupRestriction(map, param1) >= 0 ||
-				IsClientMapAdminRestricted(map, param1) ||
-				IsClientMapVIPRestricted(map, param1)
-				#if defined _zleader_included
-				|| IsClientMapLeaderRestricted(map, param1)
-				#endif
-				))
+			if(IsMapRestricted(param1, map))
 			{
 				return ITEMDRAW_DISABLED;
 			}
@@ -1359,17 +1383,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 
 			if(!CheckCommandAccess(param1, "sm_nominate_ignore", ADMFLAG_CHEATS, true))
 			{
-				if(AreRestrictionsActive() && (
-					GetMapCooldownTime(map) > GetTime() ||
-					GetMapTimeRestriction(map) ||
-					GetMapPlayerRestriction(map) ||
-					GetMapGroupRestriction(map, param1) >= 0 ||
-					IsClientMapAdminRestricted(map, param1) ||
-					IsClientMapVIPRestricted(map, param1)
-					#if defined _zleader_included
-					|| IsClientMapLeaderRestricted(map, param1)
-					#endif
-					))
+				if(IsMapRestricted(param1, map))
 				{
 					CPrintToChat(param1, "{green}[NE]{default} You can't nominate this map right now.");
 					return 0;
@@ -1441,6 +1455,86 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 		}
 	}
 
+	return 0;
+}
+
+/* COOKIES SUPPORT */
+public void OnClientCookiesCached(int client)
+{
+	ReadClientCookies(client);
+}
+
+public void ReadClientCookies(int client) {
+	char buffer[32];
+	GetClientCookie(client, g_hShowUnavailableMaps, buffer, sizeof(buffer));
+	// If no cookies was found (null), set the value to false as initial value
+	// Client can choose to enable the settings from the settings or nominate menu
+	// Otherwise, apply the value from the cookie
+	g_bShowUnavailableMaps[client] = (buffer[0] != '\0') ? view_as<bool>(StringToInt(buffer)) : false;
+}
+
+public void SetClientCookies(int client)
+{
+	if (!AreClientCookiesCached(client))
+		return;
+
+	char sValue[8];
+	Format(sValue, sizeof(sValue), "%i", g_bShowUnavailableMaps[client]);
+	SetClientCookie(client, g_hShowUnavailableMaps, sValue);
+}
+
+public void NE_CookieHandler(int client, CookieMenuAction action, any info, char[] buffer, int maxlen)
+{
+	switch (action)
+	{
+		case CookieMenuAction_SelectOption:
+		{
+			NE_ClientSettings_Menu(client);
+		}
+	}
+}
+
+public void NE_ClientSettings_Menu(int client)
+{
+	Menu menu = new Menu(NE_ClientSettingsHandler, MENU_ACTIONS_ALL);
+	menu.SetTitle("%T %T", "Nominate Title", client, "Client Settings", client);
+
+	bool bCached = AreClientCookiesCached(client);
+	char buffer[128];
+	if (bCached)
+		Format(buffer, sizeof(buffer), "%T: %T", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "Yes" : "No", client);
+	else
+		Format(buffer, sizeof(buffer), "%T", "Can not Load Cookies", client);
+	
+	menu.AddItem("ShowMap", buffer, bCached ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+
+	menu.ExitBackButton = true;
+	menu.ExitButton = true;
+	menu.Display(client, MENU_TIME_FOREVER);
+}
+
+public int NE_ClientSettingsHandler(Menu menu, MenuAction action, int param1, int param2)
+{
+	switch (action)
+	{
+		case MenuAction_Select:
+		{
+			char info[64];
+			menu.GetItem(param2, info, sizeof(info));
+			if (strcmp(info, "ShowMap", false) == 0)
+				g_bShowUnavailableMaps[param1] = !g_bShowUnavailableMaps[param1];
+
+			NE_ClientSettings_Menu(param1);
+		}
+		case MenuAction_Cancel:
+		{
+			ShowCookieMenu(param1);
+		}
+		case MenuAction_End:
+		{
+			delete menu;
+		}
+	}
 	return 0;
 }
 
@@ -1603,6 +1697,12 @@ stock int TimeStrToSeconds(const char[] str)
 		seconds += val * 60;
 	}
 	return seconds;
+}
+
+stock bool IsMapRestricted(int client, char[] map)
+{
+	return AreRestrictionsActive() && (GetMapCooldownTime(map) > GetTime() || GetMapTimeRestriction(map) || GetMapPlayerRestriction(map) ||
+	GetMapGroupRestriction(map, client) >= 0 || IsClientMapAdminRestricted(map, client) || IsClientMapVIPRestricted(map, client) || IsClientMapLeaderRestricted(map, client));
 }
 
 stock void Forward_OnPublicMapInsert(int client, char[] mapname, bool IsVIP, bool IsLeader)
