@@ -56,14 +56,16 @@
 
 #undef REQUIRE_PLUGIN
 #tryinclude <nativevotes>
+#tryinclude <DynamicChannels>
 #tryinclude <nominations_extended>
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.11.0"
+#define MCE_VERSION "1.11.1"
 
 #define NV "nativevotes"
 #define ZLEADER "zleader"
+#define DYNCHANNELS "DynamicChannels"
 
 enum RoundCounting
 {
@@ -123,6 +125,7 @@ ConVar g_Cvar_Extend;
 ConVar g_Cvar_DontChange;
 ConVar g_Cvar_EndOfMapVote;
 ConVar g_Cvar_EndOfMapInfo;
+ConVar g_cvHUDChannel;
 ConVar g_Cvar_VoteDuration;
 ConVar g_Cvar_RandomStartTime;
 ConVar g_Cvar_CountBots;
@@ -202,6 +205,7 @@ bool g_WarningInProgress = false;
 bool g_AddNoVote = false;
 bool g_SaveCDOnMapEnd = true;
 bool g_ZLeader = false;
+bool g_DynamicChannels = false;
 
 RoundCounting g_RoundCounting = RoundCounting_Standard;
 
@@ -253,6 +257,7 @@ public void OnPluginStart()
 
 	g_Cvar_EndOfMapVote = CreateConVar("mce_endvote", "1", "Specifies if MapChooser should run an end of map vote", _, true, 0.0, true, 1.0);
 	g_Cvar_EndOfMapInfo = CreateConVar("mce_endmap_info", "1", "Specifies if MapChooser should print a message with nextmap when the map end.", _, true, 0.0, true, 1.0);
+	g_cvHUDChannel = CreateConVar("mce_hud_channel", "1", "Channel for the HUD messages", _, true, 0.0, true, 6.0);
 
 	g_Cvar_StartTime = CreateConVar("mce_starttime", "10.0", "Specifies when to start the vote based on time remaining.", _, true, 1.0);
 	g_Cvar_RandomStartTime = CreateConVar("mce_random_starttime", "30.0", "The max interval time to add up to the original interval time for map vote in seconds", _, true, 1.0, true, 180.0);
@@ -471,6 +476,7 @@ public void OnAllPluginsLoaded()
 	g_NativeVotes = LibraryExists(NV);
 #endif
 	g_ZLeader = LibraryExists(ZLEADER);
+	g_DynamicChannels = LibraryExists(DYNCHANNELS);
 }
 
 public void OnLibraryAdded(const char[] name)
@@ -485,6 +491,8 @@ public void OnLibraryAdded(const char[] name)
 	}
 	if (StrEqual(name, ZLEADER))
 		g_ZLeader = true;
+	if (StrEqual(name, DYNCHANNELS))
+		g_DynamicChannels = true;
 }
 
 public void OnLibraryRemoved(const char[] name)
@@ -493,6 +501,8 @@ public void OnLibraryRemoved(const char[] name)
 		g_NativeVotes = false;
 	if (StrEqual(name, ZLEADER))
 		g_ZLeader = false;
+	if (StrEqual(name, DYNCHANNELS))
+		g_DynamicChannels = false;
 }
 
 public void OnMapStart()
@@ -924,23 +934,43 @@ public void Event_WinPanel(Handle event, const char[] name, bool dontBroadcast)
 	if(!GetNextMap(nextMap, sizeof(nextMap)))
 		return;
 
-	Handle g_hHud = CreateHudSynchronizer();
+	bool bDynamicAvailable = false;
+	int iChannel = 1;
+	int iHUDChannel = -1;
 
-	if (g_hHud != INVALID_HANDLE)
+	iChannel = g_cvHUDChannel.IntValue;
+	if (iChannel < 0 || iChannel > 6)
+		iChannel = 1;
+
+	bDynamicAvailable = g_DynamicChannels && CanTestFeatures() && GetFeatureStatus(FeatureType_Native, "GetDynamicChannel") == FeatureStatus_Available;
+
+#if defined _DynamicChannels_included_
+	if (bDynamicAvailable)
+		iHUDChannel = GetDynamicChannel(iChannel);
+#endif
+
+	Handle g_hHud = CreateHudSynchronizer();
+	SetHudTextParams(-1.0, 0.89, 7.0, 255, 71, 1, 1, 1, 4.0, 0.6, 0.6);
+
+	if (!bDynamicAvailable && g_hHud != INVALID_HANDLE || bDynamicAvailable)
 	{
-		SetHudTextParams(-1.0, 0.89, 7.0, 255, 71, 1, 1, 1, 4.0, 0.6, 0.6);
 		for(int i = 1; i <= MaxClients; i++)
 		{
 			if(!IsClientInGame(i) || IsFakeClient(i))
 				continue;
 
-			ClearSyncHud(i, g_hHud);
-			ShowSyncHudText(i, g_hHud, "Next Map: %s", nextMap);
+			if (bDynamicAvailable)
+				ShowHudText(i, iHUDChannel, "Next Map %s", nextMap);
+			else
+			{
+				ClearSyncHud(i, g_hHud);
+				ShowSyncHudText(i, g_hHud, "Next Map: %s", nextMap);
+			}
 		}
 	}
 
-	CPrintToChatAll("{lightgreen}Next Map: {green}%s", nextMap);	
-	CPrintToChatAll("{lightgreen}Next Map: {green}%s", nextMap);	
+	CPrintToChatAll("{lightgreen}Next Map: {green}%s", nextMap);
+	CPrintToChatAll("{lightgreen}Next Map: {green}%s", nextMap);
 	CPrintToChatAll("{lightgreen}Next Map: {green}%s", nextMap);
 
 	delete g_hHud;
