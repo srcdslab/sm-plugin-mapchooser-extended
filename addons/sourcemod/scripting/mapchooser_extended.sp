@@ -61,7 +61,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.11.1"
+#define MCE_VERSION "1.11.2"
 
 #define NV "nativevotes"
 #define ZLEADER "zleader"
@@ -2012,6 +2012,9 @@ void CreateNextVote()
 
 			if(!InternalAreRestrictionsActive())
 				break;
+
+			if(InternalGetMapAdminRestriction(map))
+				continue;
 
 			if(InternalGetMapVIPRestriction(map))
 				continue;
