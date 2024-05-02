@@ -61,7 +61,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.11.2"
+#define MCE_VERSION "1.11.3"
 
 #define NV "nativevotes"
 #define ZLEADER "zleader"
@@ -161,6 +161,7 @@ MapChange g_ChangeTime;
 Handle g_NominationsResetForward = INVALID_HANDLE;
 Handle g_NominationDisconnect = INVALID_HANDLE;
 Handle g_MapVoteStartedForward = INVALID_HANDLE;
+Handle g_SetNextMapForward = INVALID_HANDLE;
 
 /* Mapchooser Extended Plugin ConVars */
 
@@ -407,6 +408,7 @@ public void OnPluginStart()
 	g_NominationsResetForward = CreateGlobalForward("OnNominationRemoved", ET_Ignore, Param_String, Param_Cell);
 	g_NominationDisconnect= CreateGlobalForward("OnNominationDisconnect", ET_Ignore, Param_String, Param_Cell);
 	g_MapVoteStartedForward = CreateGlobalForward("OnMapVoteStarted", ET_Ignore);
+	g_SetNextMapForward = CreateGlobalForward("OnSetNextMap", ET_Ignore, Param_String);
 
 	//MapChooser Extended Forwards
 	g_MapVoteStartForward = CreateGlobalForward("OnMapVoteStart", ET_Ignore); // Deprecated
@@ -441,6 +443,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("EndOfMapVoteEnabled", Native_EndOfMapVoteEnabled);
 
 	// MapChooser Extended natives
+	CreateNative("GetNominationByOwner", Native_GetNominationByOwner);
 	CreateNative("IsMapOfficial", Native_IsMapOfficial);
 	CreateNative("CanNominate", Native_CanNominate);
 	CreateNative("ExcludeMap", Native_ExcludeMap);
@@ -481,7 +484,7 @@ public void OnAllPluginsLoaded()
 
 public void OnLibraryAdded(const char[] name)
 {
-	if (StrEqual(name, NV))
+	if (strcmp(name, NV) == 0)
 	{
 #if defined _nativevotes_included
 		g_NativeVotes = NativeVotes_IsVoteTypeSupported(NativeVotesType_NextLevelMult);
@@ -489,19 +492,19 @@ public void OnLibraryAdded(const char[] name)
 		g_NativeVotes = true;
 #endif
 	}
-	if (StrEqual(name, ZLEADER))
+	if (strcmp(name, ZLEADER) == 0)
 		g_ZLeader = true;
-	if (StrEqual(name, DYNCHANNELS))
+	if (strcmp(name, DYNCHANNELS) == 0)
 		g_DynamicChannels = true;
 }
 
 public void OnLibraryRemoved(const char[] name)
 {
-	if (StrEqual(name, NV))
+	if (strcmp(name, NV) == 0)
 		g_NativeVotes = false;
-	if (StrEqual(name, ZLEADER))
+	if (strcmp(name, ZLEADER) == 0)
 		g_ZLeader = false;
-	if (StrEqual(name, DYNCHANNELS))
+	if (strcmp(name, DYNCHANNELS) == 0)
 		g_DynamicChannels = false;
 }
 
@@ -698,6 +701,7 @@ public Action Command_SetNextmap(int client, int args)
 	LogAction(client, -1, "[MCE] \"%L\" changed nextmap to \"%s\"", client, map);
 
 	SetNextMap(map);
+	Forward_OnSetNextMap(map);
 	g_MapVoteCompleted = true;
 
 	return Plugin_Handled;
@@ -857,7 +861,7 @@ public void Event_TeamPlayWinPanel(Handle event, const char[] name, bool dontBro
 	int bluescore = GetEventInt(event, "blue_score");
 	int redscore = GetEventInt(event, "red_score");
 
-	if(GetEventInt(event, "round_complete") == 1 || StrEqual(name, "arena_win_panel"))
+	if(GetEventInt(event, "round_complete") == 1 || strcmp(name, "arena_win_panel") == 0)
 	{
 		g_TotalRounds++;
 
@@ -1392,7 +1396,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 				AddMapItem(map);
 			}
 			// New in Mapchooser Extended
-			else if(StrEqual(map, VOTE_DONTCHANGE))
+			else if(strcmp(map, VOTE_DONTCHANGE) == 0)
 			{
 				if (g_NativeVotes)
 				{
@@ -1405,7 +1409,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 					AddMenuItem(g_VoteMenu, VOTE_DONTCHANGE, "Don't Change");
 				}
 			}
-			else if(StrEqual(map, VOTE_EXTEND))
+			else if(strcmp(map, VOTE_EXTEND) == 0)
 			{
 				if (GetConVarInt(g_Cvar_Extend) - g_Extends > 0)
 					FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
@@ -1573,6 +1577,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		if(g_ChangeTime == MapChange_MapEnd)
 		{
 			SetNextMap(map);
+			Forward_OnSetNextMap(map);
 			if (g_NativeVotes)
 			{
 #if defined _nativevotes_included
@@ -1596,6 +1601,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		else // MapChange_RoundEnd
 		{
 			SetNextMap(map);
+			Forward_OnSetNextMap(map);
 			g_ChangeMapAtRoundEnd = true;
 
 			if (g_NativeVotes)
@@ -1753,25 +1759,25 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 				GetMenuItem(menu, param2, map, PLATFORM_MAX_PATH, _, _, _, param1);
 			}
 
-			if(StrEqual(map, VOTE_EXTEND, false))
+			if(strcmp(map, VOTE_EXTEND, false) == 0)
 			{
 				Format(buffer, sizeof(buffer), "%T", "Extend Map", param1);
 			}
-			else if(StrEqual(map, VOTE_DONTCHANGE, false))
+			else if(strcmp(map, VOTE_DONTCHANGE, false) == 0)
 			{
 				Format(buffer, sizeof(buffer), "%T", "Dont Change", param1);
 			}
 			// Mapchooser Extended
-			else if(StrEqual(map, LINE_ONE, false))
+			else if(strcmp(map, LINE_ONE, false) == 0)
 			{
 				Format(buffer, sizeof(buffer),"%T", "Line One", param1);
 			}
-			else if(StrEqual(map, LINE_TWO, false))
+			else if(strcmp(map, LINE_TWO, false) == 0)
 			{
 				Format(buffer, sizeof(buffer),"%T", "Line Two", param1);
 			}
 			// Note that the first part is to discard the spacer line
-			else if(!StrEqual(map, LINE_SPACER, false))
+			else if(strcmp(map, LINE_SPACER, false) != 0)
 			{
 				if(mark == 1 && !InternalIsMapOfficial(map))
 				{
@@ -1857,6 +1863,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 				while(strcmp(map, VOTE_EXTEND, false) == 0);
 
 				SetNextMap(map);
+				Forward_OnSetNextMap(map);
 				LogAction(-1, -1, "[MCE] No votes has been receive. Pickup a random map. Nextmap is : %s", map);
 				g_MapVoteCompleted = true;
 				if (g_NativeVotes)
@@ -2145,6 +2152,29 @@ public int Native_NominateMap(Handle plugin, int numParams)
 	GetNativeString(1, map, len+1);
 
 	return view_as<int>(InternalNominateMap(map, GetNativeCell(2), GetNativeCell(3)));
+}
+
+void InternalGetNominationByOwner(int owner, char[] buffer)
+{
+	int index;
+	if(owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
+	{
+		GetArrayString(g_NominateList, index, buffer, PLATFORM_MAX_PATH);
+	}
+}
+
+/* native  bool GetNominationByOwner(owner, const char[] buffer); */
+public int Native_GetNominationByOwner(Handle plugin, int numParams)
+{
+	int client = GetNativeCell(1);
+	char map[PLATFORM_MAX_PATH];
+	InternalGetNominationByOwner(client, map);
+
+	if (!map[0])
+		return 0;
+
+	SetNativeString(2, map, PLATFORM_MAX_PATH);
+	return 1;
 }
 
 bool InternalRemoveNominationByMap(char[] map)
@@ -3402,5 +3432,12 @@ stock void Forward_OnNominationDisconnect(char[] oldmap, int owner)
 	Call_StartForward(g_NominationDisconnect);
 	Call_PushString(oldmap);
 	Call_PushCell(owner);
+	Call_Finish();
+}
+
+stock void Forward_OnSetNextMap(char[] map)
+{
+	Call_StartForward(g_SetNextMapForward);
+	Call_PushString(map);
 	Call_Finish();
 }

@@ -83,6 +83,19 @@ forward void OnMapVoteEnd(const char[] map);
  */
 forward void OnNominationDisconnect(char[] oldmap, int owner);
 
+/**
+ * Called when the nextmap is set
+ */
+forward void OnSetNextMap(const char[] map);
+
+/** 
+ * Is nomination was made by a client?
+ * 
+ * @param owner 	Client index
+ * @param map 		buffer to store map name (PLATFORM_MAX_PATH)
+ * @return 			true if nomination was made by client (and map is stored in buffer)
+ */
+native bool GetNominationByOwner(int owner, char[] map);
 
 /**
  * Is a map on the current game's official list?
