@@ -48,7 +48,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define NE_VERSION "1.11.1"
+#define NE_VERSION "1.11.2"
 
 public Plugin myinfo =
 {
@@ -79,14 +79,14 @@ int g_AdminMapFileSerial = -1;
 Handle g_mapTrie;
 
 // Nominations Extended Convars
-Handle g_Cvar_MarkCustomMaps = INVALID_HANDLE;
-Handle g_Cvar_NominateDelay = INVALID_HANDLE;
+ConVar g_Cvar_MarkCustomMaps;
+ConVar g_Cvar_NominateDelay;
 ConVar g_Cvar_InitialDelay;
 
 // VIP Nomination Convars
-Handle g_Cvar_VIPTimeframe = INVALID_HANDLE;
-Handle g_Cvar_VIPTimeframeMinTime = INVALID_HANDLE;
-Handle g_Cvar_VIPTimeframeMaxTime = INVALID_HANDLE;
+ConVar g_Cvar_VIPTimeframe;
+ConVar g_Cvar_VIPTimeframeMinTime;
+ConVar g_Cvar_VIPTimeframeMaxTime;
 Handle g_hDelayNominate = INVALID_HANDLE;
 
 // Forwards
@@ -275,7 +275,7 @@ void UpdateMapTrie()
 
 		if(GetConVarBool(g_Cvar_ExcludeCurrent))
 		{
-			if(StrEqual(map, currentMap))
+			if(strcmp(map, currentMap) == 0)
 				status = MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_CURRENT;
 		}
 
