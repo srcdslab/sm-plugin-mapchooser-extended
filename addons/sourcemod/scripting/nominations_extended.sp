@@ -48,7 +48,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define NE_VERSION "1.11.2"
+#define NE_VERSION "1.11.3"
 
 public Plugin myinfo =
 {
@@ -1475,7 +1475,7 @@ public void ReadClientCookies(int client) {
 
 public void SetClientCookies(int client)
 {
-	if (!AreClientCookiesCached(client))
+	if (!AreClientCookiesCached(client) || IsFakeClient(client))
 		return;
 
 	char sValue[8];
