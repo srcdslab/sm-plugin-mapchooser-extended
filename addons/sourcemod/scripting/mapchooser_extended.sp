@@ -61,7 +61,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.11.3"
+#define MCE_VERSION "1.11.4"
 
 #define NV "nativevotes"
 #define ZLEADER "zleader"
@@ -2819,7 +2819,8 @@ public int Native_IsClientMapLeaderRestricted(Handle plugin, int numParams)
 	// Check if client should bypass leader restrictions
 	if(client >= 1 && client <= MaxClients)
 	{
-		if (g_ZLeader)
+		bLeaderNativeAvailable = g_ZLeader && CanTestFeatures() && GetFeatureStatus(FeatureType_Native, "ZL_IsPossibleLeader") == FeatureStatus_Available;
+		if (bLeaderNativeAvailable)
 		{
 #if defined _zleader_included
 			// Client has leader.ini access, dont return leader restrictions
