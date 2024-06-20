@@ -2819,7 +2819,7 @@ public int Native_IsClientMapLeaderRestricted(Handle plugin, int numParams)
 	// Check if client should bypass leader restrictions
 	if(client >= 1 && client <= MaxClients)
 	{
-		bLeaderNativeAvailable = g_ZLeader && CanTestFeatures() && GetFeatureStatus(FeatureType_Native, "ZL_IsPossibleLeader") == FeatureStatus_Available;
+		bool bLeaderNativeAvailable = g_ZLeader && CanTestFeatures() && GetFeatureStatus(FeatureType_Native, "ZL_IsPossibleLeader") == FeatureStatus_Available;
 		if (bLeaderNativeAvailable)
 		{
 #if defined _zleader_included
