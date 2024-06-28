@@ -134,3 +134,11 @@ Advanced Automated Map Voting with Extensions
 - Botox
 - zaCade
 - neon
+- maxime1907
+- .Rushaway
+- tilgep
+- notkoen
+- JMorell
+- tokKurumi
+- lameskydiver
+- TR1D
