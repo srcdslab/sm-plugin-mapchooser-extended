@@ -83,13 +83,13 @@ forward void NE_OnPublicMapReplaced(int client, char[] mapname, bool IsVIP, bool
 forward void NE_OnAdminMapInsert(int client, char[] mapname);
 
 /**
- * Called when a map get removed by an admin
+ * Called when a map get removed
  * 
- * @param client    	Admin UserId
+ * @param client    	Client UserId
  * @param mapname     	Name of the map inserted
  * @noreturn
  */
-forward void NE_OnAdminMapRemove(int client, char[] mapname);
+forward void NE_OnMapNominationRemove(int client, char[] mapname);
 
 public SharedPlugin __pl_nominations_extended =
 {

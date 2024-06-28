@@ -92,7 +92,7 @@ Handle g_hDelayNominate = INVALID_HANDLE;
 Handle g_hOnPublicMapInsert = INVALID_HANDLE;
 Handle g_hOnPublicMapReplaced = INVALID_HANDLE;
 Handle g_hOnAdminMapInsert = INVALID_HANDLE;
-Handle g_hOnAdminMapRemove = INVALID_HANDLE;
+Handle g_hOnMapNominationRemove = INVALID_HANDLE;
 
 // Clients Prefs
 Handle g_hShowUnavailableMaps = INVALID_HANDLE;
@@ -178,15 +178,15 @@ public void OnPluginStart()
 	g_hAdminNomBan = RegClientCookie("NE_nomban_admin", "Admin who nombanned", CookieAccess_Protected);
 
 	if(g_bLate)
-    {
-        for(int i = 1; i <= MaxClients; i++)
-        {
-            if(IsClientInGame(i) && !IsFakeClient(i) && AreClientCookiesCached(i))
-            {
-                OnClientCookiesCached(i);
-            }
-        }
-    }
+	{
+		for(int i = 1; i <= MaxClients; i++)
+		{
+			if(IsClientInGame(i) && !IsFakeClient(i) && AreClientCookiesCached(i))
+			{
+				OnClientCookiesCached(i);
+			}
+		}
+	}
 
 	g_mapTrie = CreateTrie();
 
@@ -209,7 +209,7 @@ public APLRes AskPluginLoad2(Handle hThis, bool bLate, char[] err, int iErrLen)
 	g_hOnPublicMapInsert = CreateGlobalForward("NE_OnPublicMapInsert", ET_Ignore, Param_Cell, Param_String, Param_Cell, Param_Cell);
 	g_hOnPublicMapReplaced = CreateGlobalForward("NE_OnPublicMapReplaced", ET_Ignore, Param_Cell, Param_String, Param_Cell, Param_Cell);
 	g_hOnAdminMapInsert = CreateGlobalForward("NE_OnAdminMapInsert", ET_Ignore, Param_Cell, Param_String);
-	g_hOnAdminMapRemove = CreateGlobalForward("NE_OnAdminMapRemove", ET_Ignore, Param_Cell, Param_String);
+	g_hOnMapNominationRemove = CreateGlobalForward("NE_OnMapNominationRemove", ET_Ignore, Param_Cell, Param_String);
 
 	return APLRes_Success;
 }
@@ -515,7 +515,7 @@ public Action Command_Removemap(int client, int args)
 
 	CReplyToCommand(client, "{green}[NE]{default} Map '%s' removed from the nominations list.", mapname);
 	LogAction(client, -1, "\"%L\" has removed map \"%s\" from nominations.", client, mapname);
-	Forward_OnAdminMapRemove(client, mapname);
+	Forward_OnMapNominationRemove(client, mapname);
 
 	CPrintToChatAll("{green}[NE]{default} %N has removed %s from nominations", client, mapname);
 
@@ -1322,6 +1322,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 					RemoveNominationByOwner(param1);
 					CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", name, sNominated);
 					LogAction(param1, -1, "\"%L\" has removed his nomination \"%s\".", param1, sNominated);
+					Forward_OnMapNominationRemove(param1, sNominated);
 					return 0;
 				}
 			}
@@ -1670,7 +1671,7 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 			CPrintToChatAll("{green}[NE]{default} %N has removed %s from nominations", param1, map);
 
 			LogAction(param1, -1, "\"%L\" has removed map \"%s\" from nominations.", param1, map);
-			Forward_OnAdminMapRemove(param1, map);
+			Forward_OnMapNominationRemove(param1, map);
 		}
 	}
 
@@ -2199,9 +2200,9 @@ stock void Forward_OnAdminMapInsert(int client, char[] mapname)
 	Call_Finish();
 }
 
-stock void Forward_OnAdminMapRemove(int client, char[] mapname)
+stock void Forward_OnMapNominationRemove(int client, char[] mapname)
 {
-	Call_StartForward(g_hOnAdminMapRemove);
+	Call_StartForward(g_hOnMapNominationRemove);
 	Call_PushCell(client);
 	Call_PushString(mapname);
 	Call_Finish();
