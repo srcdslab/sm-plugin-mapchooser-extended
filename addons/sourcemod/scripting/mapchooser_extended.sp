@@ -61,7 +61,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.11.4"
+#define MCE_VERSION "1.11.5"
 
 #define NV "nativevotes"
 #define ZLEADER "zleader"
@@ -186,6 +186,7 @@ ConVar g_Cvar_NoRestrictionTimeframeMinTime;
 ConVar g_Cvar_NoRestrictionTimeframeMaxTime;
 ConVar g_Cvar_TimerUnlockNoms;
 ConVar g_Cvar_LockNominationsAtWarning;
+ConVar g_Cvar_ShowNominator;
 
 /* Mapchooser Extended Data Handles */
 Handle g_OfficialList = INVALID_HANDLE;
@@ -207,6 +208,8 @@ bool g_AddNoVote = false;
 bool g_SaveCDOnMapEnd = true;
 bool g_ZLeader = false;
 bool g_DynamicChannels = false;
+
+char g_sNominations[MAXPLAYERS+1][PLATFORM_MAX_PATH];
 
 RoundCounting g_RoundCounting = RoundCounting_Standard;
 
@@ -302,6 +305,7 @@ public void OnPluginStart()
 	g_Cvar_NoRestrictionTimeframeMaxTime = CreateConVar("mce_no_restriction_timeframe_maxtime", "0700", "End of the timeframe where all nomination restrictions and cooldowns are disabled (Format: HHMM)", _, true, 0000.0, true, 2359.0);
 	g_Cvar_LockNominationsAtWarning = CreateConVar("mce_locknominationswarning", "1", "Lock nominations when the warning start for vote", _, true, 0.0, true, 1.0);
 	g_Cvar_TimerUnlockNoms = CreateConVar("mce_locknominations_timer", "15.0", "Unlock nominations after a vote. Time in seconds.", _, true, 0.0, true, 60.0);
+	g_Cvar_ShowNominator = CreateConVar("mce_shownominator", "1", "See who nominated the map which won the vote", _, true, 0.0, true, 1.0);
 
 	
 	RegAdminCmd("sm_mapvote", Command_Mapvote, ADMFLAG_CHANGEMAP, "sm_mapvote - Forces MapChooser to attempt to run a map vote now.");
@@ -312,6 +316,13 @@ public void OnPluginStart()
 
 	RegConsoleCmd("sm_extends", Command_ExtendsLeft, "sm_extends - Shows how many extends are left on the current map.");
 	RegConsoleCmd("sm_extendsleft", Command_ExtendsLeft, "sm_extendsleft - Shows how many extends are left on the current map.");
+
+	RegConsoleCmd("sm_showmapcfg", Command_ShowConfig, "Shows all config information about the current map.");
+	RegConsoleCmd("sm_showmapconfig", Command_ShowConfig, "Shows all config information about the current map.");
+
+	RegConsoleCmd("sm_mcversion", Command_Version, "Mapchooser version");
+	RegConsoleCmd("sm_mceversion", Command_Version, "Mapchooser version");
+
 
 	g_Cvar_Winlimit = FindConVar("mp_winlimit");
 	g_Cvar_Maxrounds = FindConVar("mp_maxrounds");
@@ -465,6 +476,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("IsClientMapLeaderRestricted", Native_IsClientMapLeaderRestricted);
 	CreateNative("IsMapLeaderRestricted", Native_IsMapLeaderRestricted);
 	CreateNative("GetExtendsLeft", Native_GetExtendsLeft);
+	CreateNative("GetMapMaxExtends", Native_GetMapMaxExtends);
 	CreateNative("AreRestrictionsActive", Native_AreRestrictionsActive);
 	CreateNative("SimulateMapEnd", Native_SimulateMapEnd);
 
@@ -557,9 +569,9 @@ public void OnMapStart()
 public void OnConfigsExecuted()
 {
 	if(ReadMapList(g_MapList,
-					 g_mapFileSerial,
-					 "mapchooser",
-					 MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_MAPSFOLDER)
+					g_mapFileSerial,
+					"mapchooser",
+					MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_MAPSFOLDER)
 		!= INVALID_HANDLE)
 
 	{
@@ -677,7 +689,14 @@ public void OnClientDisconnect(int client)
 
 	RemoveFromArray(g_NominateOwners, index);
 	RemoveFromArray(g_NominateList, index);
+	g_sNominations[client] = "";
 	g_NominateCount--;
+}
+
+public Action Command_Version(int client, int args)
+{
+    CPrintToChat(client, "{green}[MCE]{default} Version %s", MCE_VERSION);
+    return Plugin_Handled;
 }
 
 public Action Command_SetNextmap(int client, int args)
@@ -713,9 +732,67 @@ public Action Command_ReloadMaps(int client, int args)
 	return Plugin_Handled;
 }
 
+public Action Command_ShowConfig(int client, int args)
+{
+	char map[PLATFORM_MAX_PATH];
+
+	if(args == 0)
+		GetCurrentMap(map, sizeof(map));
+	else
+	{
+		GetCmdArg(1, map, sizeof(map));
+		if(FindStringInArray(g_MapList, map) == -1)
+		{
+			CReplyToCommand(client, "{green}[MCE]{default} %t", "Map was not found", map);
+			return Plugin_Handled;
+		}
+	}
+
+	int extends = InternalGetMapMaxExtends(map);
+	int cooldown = InternalGetMapCooldown(map);
+	int minplayer = InternalGetMapMinPlayers(map);
+	int maxplayer = InternalGetMapMaxPlayers(map);
+	int mintime = InternalGetMapMinTime(map);
+	int maxtime = InternalGetMapMaxTime(map);
+	bool adminonly = InternalGetMapAdminRestriction(map);
+	bool viponly = InternalGetMapVIPRestriction(map);
+	bool leaderonly = InternalGetMapLeaderRestriction(map);
+	// char desc[MAX_DESCRIPTION_LENGTH];
+	// bool descr = InternalGetMapDescription(map, desc, sizeof(desc));
+
+	if(GetCmdReplySource() == SM_REPLY_TO_CHAT)
+	{
+		CPrintToChat(client, "{green}[MCE]{default} %t", "See console for output");
+	}
+	
+	PrintToConsole(client, "-----------------------------------------");
+	PrintToConsole(client, "Showing config info for: %s", map);
+	PrintToConsole(client, "-----------------------------------------");
+	PrintToConsole(client, "%-15s %5d", "Extends: ", extends);
+	PrintToConsole(client, "%-15s %5d", "Cooldown: ", cooldown);
+	PrintToConsole(client, "%-15s %5d", "Min Players: ", minplayer);
+	PrintToConsole(client, "%-15s %5d", "Max Players: ", maxplayer);
+	PrintToConsole(client, "%-15s %5d", "MinTime: ", mintime);
+	PrintToConsole(client, "%-15s %5d", "MaxTime: ", maxtime);
+	PrintToConsole(client, "%-15s %5b", "Admin Only: ", adminonly);
+	PrintToConsole(client, "%-15s %5b", "VIP Only: ", viponly);
+	PrintToConsole(client, "%-15s %5b", "Leader Only: ", leaderonly);
+	// PrintToConsole(client, "%-15s %5s %s", "Description: ", descr?"Yes:":"No", desc);
+	PrintToConsole(client, "-----------------------------------------");
+	ShowMapGroups(client, map);
+	return Plugin_Handled;
+}
+
 public Action Command_ExtendsLeft(int client, int args)
 {
-	CReplyToCommand(client, "{green}[MCE]{default} Available Extends:{green} %d", GetConVarInt(g_Cvar_Extend) - g_Extends);
+	char map[PLATFORM_MAX_PATH];
+	GetCurrentMap(map, sizeof(map));
+
+	int max = InternalGetMapMaxExtends(map);
+	int left = max - g_Extends;
+
+	// Todo: Add translation support
+	CReplyToCommand(client, "{green}[MCE]{default} Available Extends:{green} %d", left);
 	return Plugin_Handled;
 }
 
@@ -1261,7 +1338,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			{
 				voteSize--;
 			}
-			else if (GetConVarBool(g_Cvar_Extend) && g_Extends < GetConVarInt(g_Cvar_Extend))
+			else if (GetConVarBool(g_Cvar_Extend) && g_Extends < InternalGetMapMaxExtends(map))
 			{
 				voteSize--;
 			}
@@ -1370,7 +1447,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		ClearArray(g_NominateList);
 
 		if(!extendFirst) {
-			if (GetConVarInt(g_Cvar_Extend) - g_Extends > 0)
+			if (InternalGetMapMaxExtends(map) - g_Extends > 0)
 				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
 			AddExtendToMenu(g_VoteMenu, when);
 			MenuRandomShuffleStop++;
@@ -1411,7 +1488,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			}
 			else if(strcmp(map, VOTE_EXTEND) == 0)
 			{
-				if (GetConVarInt(g_Cvar_Extend) - g_Extends > 0)
+				if (InternalGetMapMaxExtends(map) - g_Extends > 0)
 					FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
 
 				if (g_NativeVotes)
@@ -1537,9 +1614,14 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 #endif
 		}
 
+		int iExentedLeft = InternalGetMapMaxExtends(map) - g_Extends;
+
 		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Extended", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
-		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nThe current map has been extended. (Received \"%d\"\%% of %d votes) \nAvailable Extends: %d", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes, GetConVarInt(g_Cvar_Extend) - g_Extends);
-		CPrintToChatAll("{green}[MCE]{default} Available Extends:{green} %d", GetConVarInt(g_Cvar_Extend) - g_Extends);
+		CPrintToChatAll("{green}[MCE]{default} Available Extends:{green} %d", iExentedLeft);
+
+		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nThe current map has been extended. (Received \"%d\"\%% of %d votes) \nAvailable Extends: %d", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes, iExentedLeft);
+
+
 		if(g_Cvar_LockNominationsAtWarning.IntValue > 0)
 		{
 			CreateTimer(GetConVarFloat(g_Cvar_TimerUnlockNoms), UnlockNominations, _, TIMER_FLAG_NO_MAPCHANGE);
@@ -1615,8 +1697,36 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		g_HasVoteStarted = false;
 		g_MapVoteCompleted = true;
 
-		CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", map, RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
-		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes)", map, RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
+		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
+
+		// Check who nominated the map
+		char sPlayer[32], sBuffer[64];
+		for(int i = 1; i <= MaxClients; i++)
+		{
+			if(strcmp(g_sNominations[i], map, false) != 0)
+				continue;
+
+			if(!IsClientInGame(i))
+				continue;
+
+			FormatEx(sPlayer, sizeof(sPlayer), "%N", i);
+			break;
+		}
+
+		if (sPlayer[0] && GetConVarBool(g_Cvar_ShowNominator))
+			FormatEx(sBuffer, sizeof(sBuffer), "- %t %s", "Nominated by", sPlayer);
+
+		CPrintToChatAll("{green}[MCE]{default} %t %s", "Nextmap Voting Finished", map, percent, num_votes, sBuffer);
+		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) %s", map, percent, num_votes, sBuffer);
+
+		// Vote has finished, clear nominations
+		for (int i = 1; i <= MaxClients; i++)
+		{
+			if (!IsClientConnected(i) || !IsClientInGame(i) || IsFakeClient(i))
+				continue;
+			
+			g_sNominations[i] = "";
+		}
 	}
 }
 
@@ -2101,6 +2211,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 		GetArrayString(g_NominateList, index, oldmap, PLATFORM_MAX_PATH);
 		Forward_OnNominationRemoved(oldmap, owner);
 
+		strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
 		SetArrayString(g_NominateList, index, map);
 		return Nominate_Replaced;
 	}
@@ -2128,12 +2239,15 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 
 		RemoveFromArray(g_NominateList, 0);
 		RemoveFromArray(g_NominateOwners, 0);
+		g_sNominations[owner] = "";
+
 		if(owner_ == 0)
 			g_NominateReservedCount--;
 		else
 			g_NominateCount--;
 	}
 
+	strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
 	return Nominate_Added;
 }
 
@@ -2196,6 +2310,7 @@ bool InternalRemoveNominationByMap(char[] map)
 
 			RemoveFromArray(g_NominateList, i);
 			RemoveFromArray(g_NominateOwners, i);
+			g_sNominations[owner] = "";
 
 			return true;
 		}
@@ -2232,6 +2347,7 @@ bool InternalRemoveNominationByOwner(int owner)
 
 		RemoveFromArray(g_NominateList, index);
 		RemoveFromArray(g_NominateOwners, index);
+		g_sNominations[owner] = "";
 		g_NominateCount--;
 
 		return true;
@@ -2848,7 +2964,22 @@ public int Native_IsMapLeaderRestricted(Handle plugin, int numParams)
 
 public int Native_GetExtendsLeft(Handle plugin, int numParams)
 {
-	return GetConVarInt(g_Cvar_Extend) - g_Extends;
+	char map[PLATFORM_MAX_PATH];
+	GetCurrentMap(map, sizeof(map));
+	return InternalGetMapMaxExtends(map) - g_Extends;
+}
+
+public int Native_GetMapMaxExtends(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+
+	if(len <= 0) return false;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	return InternalGetMapMaxExtends(map);
 }
 
 public int Native_AreRestrictionsActive(Handle plugin, int numParams)
@@ -2895,6 +3026,9 @@ stock void AddExtendToMenu(Handle menu, MapChange when)
 	/* Do we add any special items? */
 	// Moved for Mapchooser Extended
 
+	char map[PLATFORM_MAX_PATH];
+	GetCurrentMap(map, sizeof(map));
+
 	if((when == MapChange_Instant || when == MapChange_RoundEnd) && GetConVarBool(g_Cvar_DontChange))
 	{
 		if (g_NativeVotes)
@@ -2909,7 +3043,7 @@ stock void AddExtendToMenu(Handle menu, MapChange when)
 			AddMenuItem(menu, VOTE_DONTCHANGE, "Don't Change");
 		}
 	}
-	else if(GetConVarBool(g_Cvar_Extend) && g_Extends < GetConVarInt(g_Cvar_Extend))
+	else if(GetConVarBool(g_Cvar_Extend) && g_Extends < InternalGetMapMaxExtends(map))
 	{
 		if (g_NativeVotes)
 		{
@@ -2962,6 +3096,19 @@ stock int InternalGetMapCooldown(const char[] map)
 	}
 
 	return Cooldown;
+}
+
+public int InternalGetMapMaxExtends(const char[] map)
+{
+	int extends = g_Cvar_Extend.IntValue;
+	if(!g_Config)
+		return extends;
+
+	g_Config.Rewind();
+	if(!g_Config.JumpToKey(map))
+		return extends;
+
+	return g_Config.GetNum("Extends", extends);
 }
 
 stock int InternalGetMapCooldownTime(const char[] map)
@@ -3031,6 +3178,7 @@ void CheckMapRestrictions(bool time = false, bool players = false)
 
 			RemoveFromArray(g_NominateList, i);
 			RemoveFromArray(g_NominateOwners, i);
+			g_sNominations[i] = "";
 			g_NominateCount--;
 		}
 	}
@@ -3400,6 +3548,60 @@ stock void InternalStoreMapCooldowns()
 	}
 
 	delete Cooldowns;
+}
+
+stock void ShowMapGroups(int client, const char[] map)
+{
+	if(!g_Config) 
+	{
+		PrintToConsole(client, "Config is not loaded, no group information.");
+		return;
+	}
+	g_Config.Rewind();
+	PrintToConsole(client, "-----------------------------------------");
+	PrintToConsole(client, "Group information");
+	PrintToConsole(client, "-----------------------------------------");
+	if(!g_Config.JumpToKey("Groups"))
+	{
+		PrintToConsole(client, "No groups in the config.");
+		return;
+	}
+
+	if(!g_Config.GotoFirstSubKey())
+	{
+		PrintToConsole(client, "No groups in the config.");
+		return;
+	}
+
+	char groupName[PLATFORM_MAX_PATH];
+	int count = 0;
+	
+	do
+	{
+		if(!g_Config.JumpToKey(map)) continue;
+		g_Config.GoBack();
+		
+		count++;
+		g_Config.GetSectionName(groupName, sizeof(groupName));
+		PrintToConsole(client, "[%03d] Group Name: \"%s\"", count, groupName);
+
+		int max = g_Config.GetNum("Max", -1);
+		int cd = g_Config.GetNum("Cooldown", -1);
+
+		if(max > 0)
+		{
+			PrintToConsole(client, "[%03d] Group Max: %d", count, max);
+		}
+		if(cd > 0)
+		{
+			PrintToConsole(client, "[%03d] Group Cooldown: %d", count, cd);
+		}
+		PrintToConsole(client, "-----------------------------------");
+	}
+	while(g_Config.GotoNextKey());
+
+	PrintToConsole(client, "%s is in %d groups", map, count);
+	PrintToConsole(client, "-----------------------------------------");
 }
 
 stock int TimeStrToSeconds(const char[] str)

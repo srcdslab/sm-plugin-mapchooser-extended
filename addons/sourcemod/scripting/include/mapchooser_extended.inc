@@ -171,6 +171,14 @@ native bool IsClientMapLeaderRestricted(const char[] map, int client = 0);
 */
 native int GetExtendsLeft();
 
+/**
+ * Gets the maximum number of extends for a given map
+ * 
+ * @param map     Name of map
+ * @return        Maximum of number of extends (-1 if invalid map)
+ */
+native int GetMapMaxExtends(const char[] map);
+
 native bool AreRestrictionsActive();
 
 native int SimulateMapEnd();
