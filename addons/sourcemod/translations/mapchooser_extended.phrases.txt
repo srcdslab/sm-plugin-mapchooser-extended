@@ -231,4 +231,128 @@
 	{
 		"en"		"Can not load cookies settings."
 	}
+
+	"Map was not found"
+	{
+		// 1: Name of map
+		"#format"	"{1:s}"
+		"en"		"Map '{1}' was not found."
+	}
+
+	"Unnominate"
+	{
+		"en"		"Unnominate"
+	}
+
+	"Map Unnominated"
+	{
+		"#format"	"{1:s},{2:s}"
+		"en"		"{1} has unnominated {2}."
+	}
+
+	"Unable To Unnominate"
+	{
+		"en"		"You have not nominated a map."
+	}
+
+	"NomStatus Menu Title"
+	{
+		// 1: Client name
+		"#format"	"{1:N}"
+		"en"		"Nomban Status for: {1}"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"en"		"Not nombanned"
+	}
+
+	"Menu - Nomban Duration"
+	{
+		// 1: String with the duration in days/hours/minutes as appropriate
+		"#format"	"{1:s}"
+		"en"		"Duration: {1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		// 1: Formatted date string
+		"#format"	"{1:s}"
+		"en"		"End Date: {1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		// 1: String with the time left in days/hours/minutes as appropriate
+		"#format"	"{1:s}"
+		"en"		"Time left: {1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		// 1: Name + Steamid of the admin
+		"#format"	"{1:s}"
+		"en"		"Admin: {1}"
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"en"		"You cannot nominate a map because you have been nombanned. Use {green}!nomstatus{default} for more information."
+	}
+
+	"Nombanned"
+	{
+		"#format"	"{1:N},{2:d}"
+		"en"		"nombanned {1} for {2} minutes."
+	}
+
+	"Nomination removed on nomban"
+	{
+		"en"		"Your nomination was removed because you were nombanned."
+	}
+
+	"UnNomban usage"
+	{
+		"en"		"Usage: sm_unnomban <target>"
+	}
+
+	"Nomban usage"
+	{
+		"en"		"Usage: sm_nomban <target> <duration (in minutes)>"
+	}
+
+	"Already not nombanned"
+	{
+		"#format"	"{1:N}"
+		"en"		"{1} is already not nombanned!"
+	}
+
+	"Already nombanned"
+	{
+		"#format"	"{1:N}"
+		"en"		"{1} is already nombanned!"
+	}
+
+	"Nombanned permanent"
+	{
+		"#format"	"{1:N}"
+		"en"		"nombanned {1} permanently."
+	}
+
+	"UnNombanned"
+	{
+		"#format"	"{1:N}"
+		"en"		"unnombanned {1}"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"en"		"You have been unnombanned."
+	}
+
+	"Nominated by"
+	{
+		"en"		"Nominated by:"
+	}
+
 }
