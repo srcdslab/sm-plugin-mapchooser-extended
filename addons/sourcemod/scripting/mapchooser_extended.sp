@@ -477,6 +477,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("IsMapLeaderRestricted", Native_IsMapLeaderRestricted);
 	CreateNative("GetExtendsLeft", Native_GetExtendsLeft);
 	CreateNative("GetMapMaxExtends", Native_GetMapMaxExtends);
+	CreateNative("GetMapExtendTime", Native_GetMapExtendTime);
+	CreateNative("GetMapExtendRounds", Native_GetMapExtendRound);
+	CreateNative("GetMapExtendFrags", Native_GetMapExtendFrag);
 	CreateNative("AreRestrictionsActive", Native_AreRestrictionsActive);
 	CreateNative("SimulateMapEnd", Native_SimulateMapEnd);
 
@@ -749,6 +752,9 @@ public Action Command_ShowConfig(int client, int args)
 	}
 
 	int extends = InternalGetMapMaxExtends(map);
+	int extendtime = InternalGetMapExtendTime(map);
+	int extendround = InternalGetMapExtendRound(map);
+	int extendfrag = InternalGetMapExtendFrag(map);
 	int cooldown = InternalGetMapCooldown(map);
 	int minplayer = InternalGetMapMinPlayers(map);
 	int maxplayer = InternalGetMapMaxPlayers(map);
@@ -769,6 +775,9 @@ public Action Command_ShowConfig(int client, int args)
 	PrintToConsole(client, "Showing config info for: %s", map);
 	PrintToConsole(client, "-----------------------------------------");
 	PrintToConsole(client, "%-15s %5d", "Extends: ", extends);
+	PrintToConsole(client, "%-15s %5d", "Extend Time: ", extendtime);
+	PrintToConsole(client, "%-15s %5d", "Extend Round: ", extendround);
+	PrintToConsole(client, "%-15s %5d", "Extend Frag: ", extendfrag);
 	PrintToConsole(client, "%-15s %5d", "Cooldown: ", cooldown);
 	PrintToConsole(client, "%-15s %5d", "Min Players: ", minplayer);
 	PrintToConsole(client, "%-15s %5d", "Max Players: ", maxplayer);
@@ -1583,28 +1592,28 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		if(GetMapTimeLimit(time))
 		{
 			if(time > 0)
-				ExtendMapTimeLimit(GetConVarInt(g_Cvar_ExtendTimeStep)*60);
+				ExtendMapTimeLimit(InternalGetMapExtendTime(map)*60);
 		}
 
 		if(g_Cvar_Winlimit != INVALID_HANDLE)
 		{
 			int winlimit = GetConVarInt(g_Cvar_Winlimit);
 			if(winlimit)
-				SetConVarInt(g_Cvar_Winlimit, winlimit + GetConVarInt(g_Cvar_ExtendRoundStep));
+				SetConVarInt(g_Cvar_Winlimit, winlimit + InternalGetMapExtendRound(map));
 		}
 
 		if(g_Cvar_Maxrounds != INVALID_HANDLE)
 		{
 			int maxrounds = GetConVarInt(g_Cvar_Maxrounds);
 			if(maxrounds)
-				SetConVarInt(g_Cvar_Maxrounds, maxrounds + GetConVarInt(g_Cvar_ExtendRoundStep));
+				SetConVarInt(g_Cvar_Maxrounds, maxrounds + InternalGetMapExtendRound(map));
 		}
 
 		if(g_Cvar_Fraglimit != INVALID_HANDLE)
 		{
 			int fraglimit = GetConVarInt(g_Cvar_Fraglimit);
 			if(fraglimit)
-				SetConVarInt(g_Cvar_Fraglimit, fraglimit + GetConVarInt(g_Cvar_ExtendFragStep));
+				SetConVarInt(g_Cvar_Fraglimit, fraglimit + InternalGetMapExtendFrag(map));
 		}
 
 		if (g_NativeVotes)
@@ -2982,6 +2991,45 @@ public int Native_GetMapMaxExtends(Handle plugin, int numParams)
 	return InternalGetMapMaxExtends(map);
 }
 
+public int Native_GetMapExtendTime(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+
+	if(len <= 0) return false;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	return InternalGetMapExtendTime(map);
+}
+
+public int Native_GetMapExtendRound(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+
+	if(len <= 0) return false;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	return InternalGetMapExtendRound(map);
+}
+
+public int Native_GetMapExtendFrag(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+
+	if(len <= 0) return false;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	return InternalGetMapExtendFrag(map);
+}
+
 public int Native_AreRestrictionsActive(Handle plugin, int numParams)
 {
 	return InternalAreRestrictionsActive();
@@ -3088,14 +3136,14 @@ stock int GetVoteSize(int what = 0)
 stock int InternalGetMapCooldown(const char[] map)
 {
 	int Cooldown = g_Cvar_ExcludeMaps.IntValue;
+	if(!g_Config)
+		return Cooldown;
 
-	if(g_Config && g_Config.JumpToKey(map))
-	{
-		Cooldown = g_Config.GetNum("Cooldown", Cooldown);
-		g_Config.Rewind();
-	}
+	g_Config.Rewind();
+	if(!g_Config.JumpToKey(map))
+		return Cooldown;
 
-	return Cooldown;
+	return g_Config.GetNum("Cooldown", Cooldown);
 }
 
 public int InternalGetMapMaxExtends(const char[] map)
@@ -3109,6 +3157,45 @@ public int InternalGetMapMaxExtends(const char[] map)
 		return extends;
 
 	return g_Config.GetNum("Extends", extends);
+}
+
+public int InternalGetMapExtendTime(const char[] map)
+{
+	int time = g_Cvar_ExtendTimeStep.IntValue;
+	if(!g_Config)
+		return time;
+
+	g_Config.Rewind();
+	if(!g_Config.JumpToKey(map))
+		return time;
+
+	return g_Config.GetNum("ExtendTime", time);
+}
+
+public int InternalGetMapExtendRound(const char[] map)
+{
+	int round = g_Cvar_ExtendRoundStep.IntValue;
+	if(!g_Config)
+		return round;
+
+	g_Config.Rewind();
+	if(!g_Config.JumpToKey(map))
+		return round;
+
+	return g_Config.GetNum("ExtendRound", round);
+}
+
+public int InternalGetMapExtendFrag(const char[] map)
+{
+	int frag = g_Cvar_ExtendFragStep.IntValue;
+	if(!g_Config)
+		return frag;
+
+	g_Config.Rewind();
+	if(!g_Config.JumpToKey(map))
+		return frag;
+
+	return g_Config.GetNum("ExtendRound", frag);
 }
 
 stock int InternalGetMapCooldownTime(const char[] map)
