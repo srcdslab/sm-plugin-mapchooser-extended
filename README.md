@@ -38,6 +38,9 @@ Advanced Automated Map Voting with Extensions
         "Admin"         "1" // Map can only be nominated by Admins
         "Leader"        "1" // Map can only be nominated by Leaders
         "Extends"       "3" // Numbers of extends available
+        "ExtendTime"    "15" // Duration of an Extend in minutes
+        "ExtendRound"   "3" // Numbers of rounds to extend
+        "ExtendFrag"    "100" // Numbers of frags to extend
     }
 }
 ```
