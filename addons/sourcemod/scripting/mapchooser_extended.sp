@@ -3195,7 +3195,7 @@ public int InternalGetMapExtendFrag(const char[] map)
 	if(!g_Config.JumpToKey(map))
 		return frag;
 
-	return g_Config.GetNum("ExtendRound", frag);
+	return g_Config.GetNum("ExtendFrag", frag);
 }
 
 stock int InternalGetMapCooldownTime(const char[] map)
