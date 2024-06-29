@@ -171,6 +171,38 @@ native bool IsClientMapLeaderRestricted(const char[] map, int client = 0);
 */
 native int GetExtendsLeft();
 
+/**
+ * Gets the maximum number of extends for a given map
+ * 
+ * @param map     Name of map
+ * @return        Maximum of number of extends (-1 if invalid map)
+ */
+native int GetMapMaxExtends(const char[] map);
+
+/**
+ * Gets the time for a given map map extend
+ * 
+ * @param map     Name of map
+ * @return        Time for map extend (-1 if invalid map)
+ */
+native int GetMapExtendTime(const char[] map);
+
+/**
+ * Gets the number of rounds for a given map map extend
+ * 
+ * @param map     Name of map
+ * @return        Number of rounds for map extend (-1 if invalid map)
+ */
+native int GetMapExtendRounds(const char[] map);
+
+/**
+ * Gets the number of frags for a given map map extend
+ * 
+ * @param map     Name of map
+ * @return        Number of frags for map extend (-1 if invalid map)
+ */
+native int GetMapExtendFrags(const char[] map);
+
 native bool AreRestrictionsActive();
 
 native int SimulateMapEnd();

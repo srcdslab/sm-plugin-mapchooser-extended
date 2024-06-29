@@ -35,6 +35,12 @@ Advanced Automated Map Voting with Extensions
         "CooldownTime"  "24h" // Map CooldownTime (Example: after this map played players should wait another 24 hours to nominate this map again)        
         "Cooldown"      "20" // Map cooldown (Example: after this map played players should play another 20 maps to nominate this map again)        
         "VIP"           "1" // Map can only be nominated by VIPs
+        "Admin"         "1" // Map can only be nominated by Admins
+        "Leader"        "1" // Map can only be nominated by Leaders
+        "Extends"       "3" // Numbers of extends available
+        "ExtendTime"    "15" // Duration of an Extend in minutes
+        "ExtendRound"   "3" // Numbers of rounds to extend
+        "ExtendFrag"    "100" // Numbers of frags to extend
     }
 }
 ```
@@ -131,3 +137,11 @@ Advanced Automated Map Voting with Extensions
 - Botox
 - zaCade
 - neon
+- maxime1907
+- .Rushaway
+- tilgep
+- notkoen
+- JMorell
+- tokKurumi
+- lameskydiver
+- TR1D

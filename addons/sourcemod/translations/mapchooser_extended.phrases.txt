@@ -231,4 +231,11 @@
 	{
 		"en"		"Can not load cookies settings."
 	}
+
+	"Map was not found"
+	{
+		// 1: Name of map
+		"#format"	"{1:s}"
+		"en"		"Map '{1}' was not found."
+	}
 }
