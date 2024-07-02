@@ -1700,14 +1700,10 @@ public void ReadClientCookies(int client) {
 		return;
 	}
 
-	PrintToChatAll("Debug cookie: %s - strlen %d", buffer, strlen(buffer));
-
 	char sBuffer[2][64];
 	ExplodeString(buffer, ":", sBuffer, sizeof(sBuffer), sizeof(sBuffer[]), true);
 	g_iNomBanLength[client] = StringToInt(sBuffer[0]);
 	g_iNomBanStart[client] = StringToInt(sBuffer[1]);
-
-	PrintToChatAll("Debug cookie: %d - %d", g_iNomBanLength[client], g_iNomBanStart[client]);
 
 	if(IsClientNomBanned(client))
 		RemoveNominationByOwner(client);
