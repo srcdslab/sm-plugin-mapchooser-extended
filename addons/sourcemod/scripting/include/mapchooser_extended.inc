@@ -39,7 +39,7 @@
 #define _mapchooser_extended_included_
 #include <mapchooser>
 
-// MCE 1.9 series
+// MCE 1.12 series
 
 enum CanNominateResult
 {
@@ -125,43 +125,157 @@ native CanNominateResult CanNominate();
  * @return 			true on success
  */
 native bool ExcludeMap(const char[] map, int cooldown = 0, int mode = 0);
-// Cooldown in seconds
+
+/**
+ * Add map to nomination exclude list with time restriction.
+ * Known as cooldown.
+ *
+ * @param map 		Name of map
+ * @param cooldown 	Cooldown, interpretation depends on mode. (in seconds)
+ * @param mode 		0: Normal, use cooldown value from config/default.
+ *					1: Set or replace cooldown with cooldown value
+ *					2: Set or replace cooldown with cooldown value if greater than current cooldown.
+ * @return 			true on success
+ */
 native bool ExcludeMapTime(const char[] map, int cooldown = 0, int mode = 0);
 
+/**
+ * Get the cooldown for a map
+ * Numbers of maps who need to be played before it can be nominated again
+ * 
+ * @param map     Name of map
+ * @return        Cooldown for map (0 if no cooldown or invalid map)
+ */
 native int GetMapCooldown(const char[] map);
-native int GetMapCooldownTime(const char[] map); // in unix time
+
+/**
+ * Get the time restriction for a map
+ * Time in seconds before it can be nominated again
+ * Time is in unix time
+ * 
+ * @param map     Name of map
+ * @return        Time restriction for map (0 if no restriction or invalid map)
+ */
+native int GetMapCooldownTime(const char[] map);
+
+/**
+ * Minimum server time for make map available to nominate
+ * 
+ * @param map     Name of map
+ * @return        Minimum time for map (0 if no restriction or invalid map)
+ */
 native int GetMapMinTime(const char[] map);
+
+/**
+ * Maximum server time for make map available to nominate
+ * 
+ * @param map     Name of map
+ * @return        Maximum time for map (0 if no restriction or invalid map)
+ */
 native int GetMapMaxTime(const char[] map);
+
+/**
+ * Minimum number of players required for map
+ * 
+ * @param map     Name of map
+ * @return        Minimum number of players for map (0 if no restriction or invalid map)
+ */
 native int GetMapMinPlayers(const char[] map);
+
+/**
+ * Maximum number of players required for map
+ * 
+ * @param map     Name of map
+ * @return        Maximum number of players for map (0 if no restriction or invalid map)
+ */
 native int GetMapMaxPlayers(const char[] map);
 
 // 0 = Okay
 // >0 = Minutes till Okay
+/**
+ * Time restriction for map
+ * 
+ * @param map     Name of map
+ * @return        Time restriction for map (0 if no restriction or invalid map | >0 = Minutes till Okay)
+ */
 native int GetMapTimeRestriction(const char[] map);
 
-// <0 = Less than MinPlayers
-// 0 = Okay
-// >0 = More than MaxPlayers
+/**
+ * Player restriction for map
+ * 
+ * @param map     Name of map
+ * @return        Player restriction for map (<0 = Less than MinPlayers | 0 = Okay | >0 = More than MaxPlayers)
+ */
 native int GetMapPlayerRestriction(const char[] map);
 
-// <=0 = No group
-// >0 = Groups found
+/**
+ * Get the groups for a map
+ * 
+ * @param map     Name of map
+ * @param groups  Array to store groups
+ * @param size    Size of array
+ * @return        Number of groups found (<=0 = No group | >0 = Groups found)
+ */
 native int GetMapGroups(const char[] map, int[] groups, int size);
 
-// <0 = No restriction
-// >=0 = Group _max -> Group full
+/**
+ * Get the group restriction for a map
+ * 
+ * @param map     Name of map
+ * @param client  Client index
+ * @return        Group restriction for map (<0 = No restriction | >=0 = Group _max -> Group full)
+ */
 native int GetMapGroupRestriction(const char[] map, int client = 0);
 
+/**
+ * Is map restricted to admins only?
+ * 
+ * @param map     Name of map
+ * @return        true if map is restricted to admins only
+ */
 native bool IsMapAdminRestricted(const char[] map);
 
+/**
+ * Do client have access to nominate admin restricted map?
+ * 
+ * @param map     Name of map
+ * @param client  Client index
+ * @return        true if map is restricted to admins only
+ */
 native bool IsClientMapAdminRestricted(const char[] map, int client = 0);
 
+/**
+ * Is map restricted to VIPs only?
+ * 
+ * @param map     Name of map
+ * @return        true if map is restricted to VIPs only
+ */
 native bool IsMapVIPRestricted(const char[] map);
 
+/**
+ * Do client have access to nominate VIP restricted map?
+ * 
+ * @param map     Name of map
+ * @param client  Client index
+ * @return        true if map is restricted to VIPs only
+ */
 native bool IsClientMapVIPRestricted(const char[] map, int client = 0);
 
+/**
+ * Is map restricted to leaders only?
+ * 
+ * @param map     Name of map
+ * @return        true if map is restricted to leaders only
+ */
 native bool IsMapLeaderRestricted(const char[] map);
 
+/**
+ * Do client have access to nominate leader restricted map?
+ * 
+ * @param map     Name of map
+ * @param client  Client index
+ * @return        true if map is restricted to leaders only
+ */
 native bool IsClientMapLeaderRestricted(const char[] map, int client = 0);
 
 /**
@@ -203,8 +317,19 @@ native int GetMapExtendRounds(const char[] map);
  */
 native int GetMapExtendFrags(const char[] map);
 
+/**
+ * Verify if mapchooser allow time frame where all nomination restrictions and cooldowns are disabled
+ * 
+ * @return		true if time frame is active, false otherwise
+ */
 native bool AreRestrictionsActive();
 
+/**
+ * Simulate map end, used for testing purposes
+ * Do not use this native if you don't know what you are doing
+ * 
+ * @noreturn
+ */
 native int SimulateMapEnd();
 
 public SharedPlugin __pl_mapchooser_extended =

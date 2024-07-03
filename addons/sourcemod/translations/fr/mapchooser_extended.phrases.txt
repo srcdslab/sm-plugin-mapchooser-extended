@@ -1,5 +1,6 @@
 "Phrases"
 {
+	// French translation by .Rushaway (Discord: 282291207324041216)
 	"Vote Nextmap"
 	{
 		"fr"            "Votez pour la prochaine map!"
@@ -88,5 +89,295 @@
 	"Tie Vote"
 	{
 		"fr"		"{1} maps ont eu un même nombre de voix.\nUn nouveau vote est nécessaire!"
+	}
+
+	"Custom Marked"
+	{
+		"fr"		"*{1}"
+	}
+
+	"Map Cooldown Time Error"
+	{
+		"fr"		"Cette carte est en recharge pour les prochaines {1} heures et {2} minutes."
+	}
+
+	"Nominated by Admin"
+	{
+		"fr"		"Sélectionnée par un Admin"
+	}
+
+	"Admin Nomination"
+	{
+		"fr"		"Admin"
+	}
+
+	"VIP Nomination"
+	{
+		"fr"		"VIP"
+	}
+    
+    "Leader Nomination"
+	{
+		"fr"		"Leader"
+	}
+
+	"Map Nominate Admin Error"
+	{
+		"fr"		"Seuls les admins peuvent sélectionner cette carte."
+	}
+
+	"Map Nominate VIP Error"
+	{
+		"fr"		"Seuls les VIPs peuvent sélectionner cette carte."
+	}
+    
+    "Map Nominate Leader Error"
+	{
+		"fr"		"Seuls les Leaders peuvent sélectionner cette carte."
+	}
+
+	"Map Nominate Time Error"
+	{
+		"fr"		"Vous pouvez sélectionner cette carte dans {1} heures et {2} minutes."
+	}
+
+	"Map Nominate MinPlayers Error"
+	{
+		"fr"		"La carte nécessite {1} plus de joueurs."
+	}
+
+	"Map Nominate MaxPlayers Error"
+	{
+		"fr"		"La carte nécessite {1} moins de joueurs."
+	}
+
+	"Map Nominate Group Error"
+	{
+		"fr"		"Le nombre maximal ({1}) de cartes de ce groupe a déjà été sélectionner."
+	}
+
+	"Map Time Restriction"
+	{
+		"fr"		"Temps{1}{2}H{3}M"
+	}
+
+	"Map Player Restriction"
+	{
+		"fr"		"Joueurs{1}{2}"
+	}
+
+	"Map Group Restriction"
+	{
+		"fr"		"Groupe max: {1}"
+	}
+
+	"Admin Restriction"
+	{
+		"fr"		"Admin uniquement"
+	}
+
+	"VIP Restriction"
+	{
+		"fr"		"VIP uniquement"
+	}
+    
+    "Leader Restriction"
+	{
+		"fr"		"Leader uniquement"
+	}
+
+	"Nomination Removed Time Error"
+	{
+		"fr"		"Votre nomination {1} a été retirée parce qu'elle ne respecte pas les exigences de temps."
+	}
+
+	"Nomination Removed MinPlayers Error"
+	{
+		"fr"		"Votre nomination {1} a été retirée parce qu'elle ne répond pas aux exigences minimales du nombre de joueurs."
+	}
+
+	"Nomination Removed MaxPlayers Error"
+	{
+		"fr"		"Votre nomination {1} a été retirée parce qu'elle ne répond pas aux exigences maximales du nombre de joueurs."
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"fr"		"Afficher les cartes non disponibles"
+	}
+
+	"Can not Load Cookies"
+	{
+		"fr"		"Impossible de charger les paramètres des cookies."
+	}
+
+	"Map was not found"
+	{
+		"fr"		"La carte '{1}' n'a pas été trouvée."
+	}
+
+	"Unnominate"
+	{
+		"fr"		"Désélectionner"
+	}
+
+	"Map Unnominated"
+	{
+		"fr"		"{1} a désélectionner {2}."
+	}
+
+	"Unable To Unnominate"
+	{
+		"fr"		"Vous n'avez pas sélectionner de carte."
+	}
+
+	"NomStatus Menu Title"
+	{
+		"fr"		"Status de la restrictiion de nomination pour: {1}"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"fr"		"Pas de restriction pour les nominations."
+	}
+
+	"Menu - Nomban Duration"
+	{
+		"fr"		"Durée: {1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		"fr"		"Date de fin: {1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		"fr"		"Temps restant: {1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		"fr"		"Admin: {1}"
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"fr"		"Vous ne pouvez pas sélectionner une carte parce que vous avez été restrient. Utilisez {green}!nomstatus{default} pour plus d'informations."
+	}
+
+	"Nombanned"
+	{
+		"fr"		"restrient les nominations de {1} pendant {2} minutes."
+	}
+
+	"Nomination removed on nomban"
+	{
+		"fr"		"Votre sélection a été retirée parce que vous avez été restrient."
+	}
+
+	"UnNomban usage"
+	{
+		"fr"		"Utilisation: sm_unnomban <cible>"
+	}
+
+	"Nomban usage"
+	{
+		"fr"		"Utilisation: sm_nomban <cible> <durée (en minutes)>"
+	}
+
+	"Already not nombanned"
+	{
+		"fr"		"{1} n'est pas encore restrient pour les nominations!"
+	}
+
+	"Already nombanned"
+	{
+		"fr"		"{1} est déjà restreint pour les nominations!"
+	}
+
+	"Nombanned permanent"
+	{
+		"fr"		"restreint les nominations de {1} pour toujours."
+	}
+
+	"UnNombanned"
+	{
+		"fr"		"dérestreint {1}"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"fr"		"Votre resitrction pour la nommination a été levée."
+	}
+
+	"Nominated by"
+	{
+		"fr"		"Séléctionné par:"
+	}
+
+	"Client inserted Map"
+	{
+		"fr"		"{1} a inséré {2} dans les nominations."
+	}
+
+	"Client removed Map"
+	{
+		"fr"		"{1} a retiré {2} des nominations."
+	}
+
+	"Map Removed"
+	{
+		"fr"		"La carte '{1}' a été retirée des nominations."
+	}
+
+	"Nominations Locked"
+	{
+		"fr"		"Les nominations sont actuellement verrouillées."
+	}
+
+	"Nominations Unlocked"
+	{
+		"fr"		"Les nominations sont maintenant déverrouillées."
+	}
+
+	"Nominations already disabled"
+	{
+		"fr"		"Les nominations sont déjà désactivées."
+	}
+
+	"Nominations already enabled"
+	{
+		"fr"		"Les nominations sont déjà activées."
+	}
+
+	"Nominations unlock countdown"
+	{
+		"fr"		"Les nominations seront déverrouillées dans {1} secondes."
+	}
+
+	"Wait to Nominate"
+	{
+		"fr"		"Vous devez attendre {1} secondes avant de pouvoir sélectionner autre chose."
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"fr"		"Vous ne pouvez pas sélectionner cette carte pour le moment."
+	}
+
+	"No Maps Nominated"
+	{
+		"fr"		"Aucune carte n'a été sélectionnée."
+	}
+
+	"Available Extends"
+	{
+		"fr"		"Extends disponnible: {green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"fr"		"{lightgreen}Prochaine carte: {green}{1}"
 	}
 }
