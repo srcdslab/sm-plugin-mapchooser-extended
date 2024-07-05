@@ -83,10 +83,14 @@ Advanced Automated Map Voting with Extensions
 - mce_no_restriction_timeframe_enable - Enable timeframe where all nomination restrictions and cooldowns are disabled?
 - mce_no_restriction_timeframe_mintime - Start of the timeframe where all nomination restrictions and cooldowns are disabled (Format: HHMM).
 - mce_no_restriction_timeframe_maxtime - End of the timeframe where all nomination restrictions and cooldowns are disabled (Format: HHMM).
+- mce_locknominationswarning - Lock nominations when the warning start for vote.
+- mce_locknominations_timer - Unlock nominations after a vote. Time in seconds.
+- mce_shownominator - See who nominated the map which won the vote.
 ### Commands
 #### Public
-- sm_extends - Shows how many extends are left on the current map.
-- sm_extendsleft - Shows how many extends are left on the current map.
+- sm_extends, sm_extendsleft - Shows how many extends are left on the current map.
+- sm_showmapcfg, sm_showmapconfig - Shows all config information about the map.
+- sm_mcversion, sm_mceversion - Print current Mapchooser version
 #### Admin
 - mce_reload_maplist - Reload the Official Maplist file.
 - sm_mapvote - Forces MapChooser to attempt to run a map vote now.
@@ -101,15 +105,23 @@ Advanced Automated Map Voting with Extensions
 - sm_nominate_vip_timeframe - Specifies if the should be a timeframe where only VIPs can nominate maps
 - sm_nominate_vip_timeframe_mintime - Start of the timeframe where only VIPs can nominate maps (Format: HHMM)
 - sm_nominate_vip_timeframe_maxtime - End of the timeframe where only VIPs can nominate maps (Format: HHMM)
+- sm_nominate_max_ban_time - Maximum time a client can be nombanned in minutes (for non rcon+)
 ### Commands
 #### Public
-- sm_nominate - Nominate a map
-- sm_nomlist - List of nominated maps
+- sm_nom, sm_nominate - Nominate a map
+- sm_noms, sm_nomlist - List of nominated maps
+- sm_unnominate, sm_unnom - Removes your nomination
+- sm_nomstatus - Shows the current nomban status of a player
 #### Admin
+- sm_nominate_force_lock - Forces to lock nominations
+- sm_nominate_force_unlock - Forces to unlock nominations
 - sm_nominate_addmap - Forces a map to be on the next mapvote.
 - sm_nominate_removemap - Removes a map from Nominations.
 - sm_nominate_exclude - Forces a map to be inserted into the recently played maps. Effectively blocking the map from being nominated.
 - sm_nominate_exclude_time - Forces a map to be inserted into the recently played maps. Effectively blocking the map from being nominated.
+- sm_nomban - Ban a client from nominating.
+- sm_nombanlist - View a list of nombanned clients.
+- sm_unnomban, sm_nomunban, sm_unomban - Unban a client from nominating.
 ## Rockthevote Extended:
 ### Cvars
 - sm_rtv_steam_needed - Percentage of players needed to rockthevote (Def 60%).
@@ -145,3 +157,5 @@ Advanced Automated Map Voting with Extensions
 - tokKurumi
 - lameskydiver
 - TR1D
+- Vauff
+- Snowy

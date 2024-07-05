@@ -12,12 +12,12 @@
 
 	"Nextmap Voting Finished"
 	{
-		"chi"		" 地图投票已结束. 下一幅地图将为 {1}. ( 得票{2}%% , {3}票)"
+		"chi"		" 地图投票已结束. 下一幅地图将为 {1}. ( 得票{2}%% , {3}票 )"
 	}
 
 	"Current Map Extended"
 	{
-		"chi"		"当前地图已被延长."
+		"chi"		"当前地图已被延长. ( 得票{1}%% , {2}票 )"
 	}
 
 	"Extend Map"
@@ -38,6 +38,346 @@
 	"Changed Next Map"
 	{
 		"chi"		"更换下一幅地图为 \"{1}\"."
+	}
+
+	"Runoff Vote Nextmap"
+	{
+		"chi"		"为下一张地图进行决选投票！"
+	}
+
+	"Number Of Votes"
+	{
+		"chi"		"投票数"
+	}
+
+	"Custom"
+	{
+		"chi"		"{1} (风俗)"
+	}
+
+	"Revote Is Needed"
+	{
+		"chi"		"没有一张地图获得超过 {1}%% 的选票. \n{green}[MCE] {default}那么，哪张地图会获胜？需要重新投票！"
+	}
+
+	"Revote Warning"
+	{
+		"chi"		"第二轮投票将于：{1} 秒后开始"
+	}
+
+	"Vote Warning"
+	{
+		"chi"		"警告！下一张地图的投票将在以下时间开始：{1} 秒"
+	}
+
+	"Line One"
+	{
+		"chi"		"考虑一下你想玩哪张地图..."
+	}
+
+	"Line Two"
+	{
+		"chi"		"...不要盲目地点击按钮 ;-)"
+	}
+
+	"Cannot Start Vote"
+	{
+		"chi"		"投票已在进行中. {1} 秒后重试."
+	}
+
+	"Tie Vote"
+	{
+		"chi"		"前 {1} 张地图的投票数相同. \n{green}[MCE] {default}需要重新投票！"
+	}
+
+	"Custom Marked"
+	{
+		"chi"		"*{1}"
+	}
+
+	"Map Cooldown Time Error"
+	{
+		"chi"		"此地图将在接下来的 {1} 小时 {2} 分钟内处于冷却状态."
+	}
+
+	"Nominated by Admin"
+	{
+		"chi"		"行政提名"
+	}
+
+	"Admin Nomination"
+	{
+		"chi"		"行政"
+	}
+
+	"VIP Nomination"
+	{
+		"chi"		"贵宾"
+	}
+    
+    "Leader Nomination"
+	{
+		"chi"		"领导者"
+	}
+
+	"Map Nominate Admin Error"
+	{
+		"chi"		"只有管​​理员可以提名此地图."
+	}
+
+	"Map Nominate VIP Error"
+	{
+		"chi"		"只有 VIP 可以提名此地图."
+	}
+    
+    "Map Nominate Leader Error"
+	{
+		"chi"		"只有领导者可以提名此地图."
+	}
+
+	"Map Nominate Time Error"
+	{
+		"chi"		"您可以在 {1} 小时 {2} 分钟内提名此地图."
+	}
+
+	"Map Nominate MinPlayers Error"
+	{
+		"chi"		"地图需要 {1} 名玩家."
+	}
+
+	"Map Nominate MaxPlayers Error"
+	{
+		"chi"		"地图需要的玩家数量少于 {1} 名."
+	}
+
+	"Map Nominate Group Error"
+	{
+		"chi"		"该群组中已提名了最大数量 ({1}) 的地图."
+	}
+
+	"Map Time Restriction"
+	{
+		"chi"		"时间{1}{2}时{3}分"
+	}
+
+	"Map Player Restriction"
+	{
+		"chi"		"玩家{1}{2}"
+	}
+
+	"Map Group Restriction"
+	{
+		"chi"		"群组最大数量：{1}"
+	}
+
+	"Admin Restriction"
+	{
+		"chi"		"仅限管理员"
+	}
+
+	"VIP Restriction"
+	{
+		"chi"		"贵宾 仅有的"
+	}
+    
+    "Leader Restriction"
+	{
+		"chi"		"仅限领导者"
+	}
+
+	"Nomination Removed Time Error"
+	{
+		"chi"		"您的提名{1}已被删除，因为它不符合时间要求."
+	}
+
+	"Nomination Removed MinPlayers Error"
+	{
+		"chi"		"您的提名 {1} 已被删除，因为它不符合最低玩家要求."
+	}
+
+	"Nomination Removed MaxPlayers Error"
+	{
+		"chi"		"您的提名{1}已被删除，因为它超出了最大玩家限制."
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"chi"		"显示不可用的地图"
+	}
+
+	"Can not Load Cookies"
+	{
+		"chi"		"无法加载用户设置."
+	}
+
+	"Map was not found"
+	{
+		"chi"		"未找到地图 '{1}'."
+	}
+
+	"Unnominate"
+	{
+		"chi"		"未提名"
+	}
+
+	"Map Unnominated"
+	{
+		"chi"		"{1} 未提名 {2}."
+	}
+
+	"Unable To Unnominate"
+	{
+		"chi"		"您没有提名地图."
+	}
+
+	"NomStatus Menu Title"
+	{
+		"chi"		"提名禁令状态：{1}"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"chi"		"未被禁止"
+	}
+
+	"Menu - Nomban Duration"
+	{
+		"chi"		"持续时间：{1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		"chi"		"结束日期：{1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		"chi"		"剩余时间：{1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		"chi"		"管理员：{1}"
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"chi"		"您无法提名地图，因为您已被禁止。使用 {green}!nomstatus{default} 了解更多信息."
+	}
+
+	"Nombanned"
+	{
+		"chi"		"禁止{1} {2} 分钟."
+	}
+
+	"Nomination removed on nomban"
+	{
+		"chi"		"由于您被禁止提名，您的提名已被取消."
+	}
+
+	"UnNomban usage"
+	{
+		"chi"		"用法: sm_unnomban <目标>"
+	}
+
+	"Nomban usage"
+	{
+		"chi"		"用法: sm_nomban <目标> <持续时间（分钟）>"
+	}
+
+	"Already not nombanned"
+	{
+		"chi"		"{1} 尚未被禁止！"
+	}
+
+	"Already nombanned"
+	{
+		"chi"		"{1} 已被禁止！"
+	}
+
+	"Nombanned permanent"
+	{
+		"chi"		"永久禁止{1}."
+	}
+
+	"UnNombanned"
+	{
+		"chi"		"未受阻拦 {1}"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"chi"		"您的禁令已解除."
+	}
+
+	"Nominated by"
+	{
+		"chi"		"提名人："
+	}
+
+	"Client inserted Map"
+	{
+		"chi"		"{1} 将 {2} 插入到提名中."
+	}
+
+	"Client removed Map"
+	{
+		"chi"		"{1}已将{2}从提名中移除."
+	}
+
+	"Map Removed"
+	{
+		"chi"		"地图“{1}”已从提名列表中删除."
+	}
+
+	"Nominations Locked"
+	{
+		"chi"		"目前提名已被锁定."
+	}
+
+	"Nominations Unlocked"
+	{
+		"chi"		"地图提名现已开放！"
+	}
+
+	"Nominations already disabled"
+	{
+		"chi"		"提名已被禁用."
+	}
+
+	"Nominations already enabled"
+	{
+		"chi"		"提名已开始."
+	}
+
+	"Nominations unlock countdown"
+	{
+		"chi"		"提名将在{1}秒内解锁."
+	}
+
+	"Wait to Nominate"
+	{
+		"chi"		"请等待 {1} 秒才能再次提名."
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"chi"		"您现在不能提名此地图."
+	}
+
+	"No Maps Nominated"
+	{
+		"chi"		"尚无任何地图被提名."
+	}
+
+	"Available Extends"
+	{
+		"chi"		"可用扩展：{green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"chi"		"{lightgreen}下一张地图：{green}{1}"
 	}
 
 }

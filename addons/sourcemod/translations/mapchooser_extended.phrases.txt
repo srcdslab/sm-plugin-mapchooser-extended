@@ -355,4 +355,76 @@
 		"en"		"Nominated by:"
 	}
 
+	"Client inserted Map"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"		"{1} inserted {2} into nominations."
+	}
+
+	"Client removed Map"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"		"{1} has removed {2} from nominations."
+	}
+
+	"Map Removed"
+	{
+		"#format"	"{1:s}"
+		"en"		"Map '{1}' has been removed from the nominations list."
+	}
+
+	"Nominations Locked"
+	{
+		"en"		"Nominations are currently locked."
+	}
+
+	"Nominations Unlocked"
+	{
+		"en"		"Map nominations are available now!"
+	}
+
+	"Nominations already disabled"
+	{
+		"en"		"Nominations are already disabled."
+	}
+
+	"Nominations already enabled"
+	{
+		"en"		"Nominations are already enabled."
+	}
+
+	"Nominations unlock countdown"
+	{
+		"#format"	"{1:i}"
+		"en"		"Nominations will be unlocked in {1} seconds."
+	}
+
+	"Wait to Nominate"
+	{
+		"#format"	"{1:i}"
+		"en"		"Please wait {1} seconds before you can nominate again."
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"en"		"You can't nominate this map right now."
+	}
+
+	"No Maps Nominated"
+	{
+		"en"		"No maps have been nominated."
+	}
+
+	"Available Extends"
+	{
+		"#format"	"{1:i}"
+		"en"		"Available extends: {green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"#format"	"{1:s}"
+		"en"		"{lightgreen}Next Map: {green}{1}"
+	}
+
 }

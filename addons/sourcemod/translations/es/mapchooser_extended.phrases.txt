@@ -1,5 +1,6 @@
 "Phrases"
 {
+	// Español traduction by _LowParty (Discord: 331905492634828800)
 	"Vote Nextmap"
 	{
 		"es"			"Vota para el siguiente mapa!"
@@ -57,7 +58,7 @@
 
 	"Revote Is Needed"
 	{
-		"es"		"No hay ningun mapa que haya recibido el {1}%% de votaciones.\nEntonces, que mapa ganara? Es necesario otra votacion!"
+		"es"		"No hay ningun mapa que haya recibido el {1}%% de votaciones.\n{green}[MCE] {default}Entonces, que mapa ganara? Es necesario otra votacion!"
 	}
 
 	"Revote Warning"
@@ -87,6 +88,297 @@
 
 	"Tie Vote"
 	{
-		"es"		"El top {1} de mapas tienen el mismo numero de votaciones.\nSe necesita una nueva votacion!"
+		"es"		"El top {1} de mapas tienen el mismo numero de votaciones.\n{green}[MCE] {default}Se necesita una nueva votacion!"
 	}
+
+	"Custom Marked"
+	{
+		"es"		"*{1}"
+	}
+
+	"Map Cooldown Time Error"
+	{
+		"es"		"Este mapa esta en tiempo de espera por las proximas {1} horas y {2} minutos."
+	}
+
+	"Nominated by Admin"
+	{
+		"es"		"Nominacion de Admin"
+	}
+
+	"Admin Nomination"
+	{
+		"es"		"Admin"
+	}
+
+	"VIP Nomination"
+	{
+		"es"		"VIP"
+	}
+    
+    "Leader Nomination"
+	{
+		"es"		"Lider"
+	}
+
+	"Map Nominate Admin Error"
+	{
+		"es"		"Solo Admins pueden nominar este mapa."
+	}
+
+	"Map Nominate VIP Error"
+	{
+		"es"		"Solo VIPs pueden nominar este mapa."
+	}
+    
+    "Map Nominate Leader Error"
+	{
+		"es"		"Solo Lideres pueden nominar este mapa."
+	}
+
+	"Map Nominate Time Error"
+	{
+		"es"		"Puedes nominar este mapa en {1} horas y {2} minutos."
+	}
+
+	"Map Nominate MinPlayers Error"
+	{
+		"es"		"El mapa requiere {1} jugadores mas."
+	}
+
+	"Map Nominate MaxPlayers Error"
+	{
+		"es"		"El mmapa requiere {1} jugadores menos."
+	}
+
+	"Map Nominate Group Error"
+	{
+		"es"		"La cantidad maxima ({1}) de mapas de este grupo ya han sido nominados."
+	}
+
+	"Map Time Restriction"
+	{
+		"es"		"Tiempo{1}{2}H{3}M"
+	}
+
+	"Map Player Restriction"
+	{
+		"es"		"Jugadores{1}{2}"
+	}
+
+	"Map Group Restriction"
+	{
+		"es"		"Grupo maximo: {1}"
+	}
+
+	"Admin Restriction"
+	{
+		"es"		"Solo Admin"
+	}
+
+	"VIP Restriction"
+	{
+		"es"		"Solo VIP"
+	}
+    
+    "Leader Restriction"
+	{
+		"es"		"Solo Lider"
+	}
+
+	"Nomination Removed Time Error"
+	{
+		"es"		"Tu nominacion {1} ha sido eliminada porque no cumple con los requisitos del tiempo."
+	}
+
+	"Nomination Removed MinPlayers Error"
+	{
+		"es"		"Tu nominacion {1} ha sido eliminada porque no cumple con el requisito minimo de jugadores."
+	}
+
+	"Nomination Removed MaxPlayers Error"
+	{
+		"es"		"Tu nominacion {1} ha sido eliminada porque excede el requisito maximo de jugadores."
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"es"		"Mostrar mapas no disponibles"
+	}
+
+	"Can not Load Cookies"
+	{
+		"es"		"No se puede cargar la configuracion de las cookies."
+	}
+
+	"Map was not found"
+	{
+		"es"		"El mapa '{1}' no se ha encontrado."
+	}
+
+	"Unnominate"
+	{
+		"es"		"Quitar nominacion"
+	}
+
+	"Map Unnominated"
+	{
+		"es"		"{1} ha quitado {2} de las nominaciones."
+	}
+
+	"Unable To Unnominate"
+	{
+		"es"		"No has nominado ningun mapa."
+	}
+
+	"NomStatus Menu Title"
+	{
+		"es"		"Estado para nominar de: {1}"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"es"		"No baneado para nominar."
+	}
+
+	"Menu - Nomban Duration"
+	{
+		"es"		"Duracion: {1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		"es"		"Fecha de finalizacion: {1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		"es"		"Tiempo restante: {1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		"es"		"Admin: {1}"
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"es"		"No puedes nominar mapas porque has sido baneado para las nominaciones. Usa {green}!nomstatus{default} para mas informacion."
+	}
+
+	"Nombanned"
+	{
+		"es"		"Se ha baneado de las nominaciones a {1} por {2} minutos."
+	}
+
+	"Nomination removed on nomban"
+	{
+		"es"		"Tu nominacion se ha quitado porque fuiste baneado de las nominaciones."
+	}
+
+	"UnNomban usage"
+	{
+		"es"		"Uso: sm_unnomban <objetivo>"
+	}
+
+	"Nomban usage"
+	{
+		"es"		"Uso: sm_nomban <objetivo> <duracion (en minutos)>"
+	}
+
+	"Already not nombanned"
+	{
+		"es"		"{1} no esta baneado de nominar mapas!"
+	}
+
+	"Already nombanned"
+	{
+		"es"		"{1} ya esta baneado de nominar mapas!"
+	}
+
+	"Nombanned permanent"
+	{
+		"es"		"Se ha baneado de las nominaciones a {1} de forma permanente."
+	}
+
+	"UnNombanned"
+	{
+		"es"		"Se ha desbaneado de las nominaciones a {1}"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"es"		"Has sido desbaneado de las nominaciones."
+	}
+
+	"Nominated by"
+	{
+		"es"		"Nominado por:"
+	}
+
+	"Client inserted Map"
+	{
+		"es"		"{1} ha insertado {2} en las nominaciones."
+	}
+
+	"Client removed Map"
+	{
+		"es"		"{1} ha eliminado {2} de las nominaciones."
+	}
+
+	"Map Removed"
+	{
+		"es"		"El mapa '{1}' se ha eliminado de la lista de nominaciones."
+	}
+
+	"Nominations Locked"
+	{
+		"es"		"Las nominaciones actualmente estan bloqueadas."
+	}
+
+	"Nominations Unlocked"
+	{
+		"es"		"Las nominaciones ahora estan disponibles!"
+	}
+
+	"Nominations already disabled"
+	{
+		"es"		"Las nominaciones ya estan desactivadas."
+	}
+
+	"Nominations already enabled"
+	{
+		"es"		"Las nominaciones ya estan activadas."
+	}
+
+	"Nominations unlock countdown"
+	{
+		"es"		"Las nominaciones se abriran en {1} segundos."
+	}
+
+	"Wait to Nominate"
+	{
+		"es"		"Por favor, espera {1} segundos antes de volver a nominar."
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"es"		"No puedes nominar este mapa ahora mismo."
+	}
+
+	"No Maps Nominated"
+	{
+		"es"		"Ningun mapa ha sido nominado."
+	}
+
+	"Available Extends"
+	{
+		"es"		"Extensiones disponibles: {green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"es"		"{lightgreen}Siguiente mapa: {green}{1}"
+	}
+
 }
