@@ -55,15 +55,13 @@
 #include <multicolors>
 
 #undef REQUIRE_PLUGIN
-#tryinclude <nativevotes>
 #tryinclude <DynamicChannels>
 #tryinclude <nominations_extended>
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.12.0"
+#define MCE_VERSION "1.12.1"
 
-#define NV "nativevotes"
 #define ZLEADER "zleader"
 #define DYNCHANNELS "DynamicChannels"
 
@@ -201,7 +199,6 @@ Handle g_MapVoteRunoffStartForward = INVALID_HANDLE;
 /* Mapchooser Extended Globals */
 int g_RunoffCount = 0;
 int g_mapOfficialFileSerial = -1;
-bool g_NativeVotes = false;
 char g_GameModName[64];
 bool g_WarningInProgress = false;
 bool g_AddNoVote = false;
@@ -338,7 +335,7 @@ public void OnPluginStart()
 	g_Cvar_EnableStartTimePercent = CreateConVar("mce_start_percent_enable", "0", "Enable or Disable percentage calculations when to start vote.", _, true, 0.0, true, 1.0);
 	g_Cvar_WarningTime = CreateConVar("mce_warningtime", "15.0", "Warning time in seconds.", _, true, 0.0, true, 60.0);
 	g_Cvar_RunOffWarningTime = CreateConVar("mce_runoffvotewarningtime", "5.0", "Warning time for runoff vote in seconds.", _, true, 0.0, true, 30.0);
-	g_Cvar_MenuStyle = CreateConVar("mce_menustyle", "0", "Menu Style.  0 is the game's default, 1 is the older Valve style that requires you to press Escape to see the menu, 2 is the newer 1-9 button Voice Command style, unavailable in some games. Ignored on TF2 if NativeVotes Plugin is loaded.", _, true, 0.0, true, 2.0);
+	g_Cvar_MenuStyle = CreateConVar("mce_menustyle", "0", "Menu Style.  0 is the game's default, 1 is the older Valve style that requires you to press Escape to see the menu, 2 is the newer 1-9 button Voice Command style, unavailable in some games.", _, true, 0.0, true, 2.0);
 	g_Cvar_TimerLocation = CreateConVar("mce_warningtimerlocation", "0", "Location for the warning timer text. 0 is HintBox, 1 is Center text, 2 is Chat.  Defaults to HintBox.", _, true, 0.0, true, 2.0);
 	g_Cvar_MarkCustomMaps = CreateConVar("mce_markcustommaps", "1", "Mark custom maps in the vote list. 0 = Disabled, 1 = Mark with *, 2 = Mark with phrase.", _, true, 0.0, true, 2.0);
 	g_Cvar_ExtendPosition = CreateConVar("mce_extendposition", "0", "Position of Extend/Don't Change options. 0 = at end, 1 = at start.", _, true, 0.0, true, 1.0);
@@ -623,25 +620,12 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 public void OnAllPluginsLoaded()
 {
-#if defined _nativevotes_included
-	g_NativeVotes = LibraryExists(NV) && NativeVotes_IsVoteTypeSupported(NativeVotesType_NextLevelMult);
-#else
-	g_NativeVotes = LibraryExists(NV);
-#endif
 	g_ZLeader = LibraryExists(ZLEADER);
 	g_DynamicChannels = LibraryExists(DYNCHANNELS);
 }
 
 public void OnLibraryAdded(const char[] name)
 {
-	if (strcmp(name, NV) == 0)
-	{
-#if defined _nativevotes_included
-		g_NativeVotes = NativeVotes_IsVoteTypeSupported(NativeVotesType_NextLevelMult);
-#else
-		g_NativeVotes = true;
-#endif
-	}
 	if (strcmp(name, ZLEADER) == 0)
 		g_ZLeader = true;
 	if (strcmp(name, DYNCHANNELS) == 0)
@@ -650,8 +634,6 @@ public void OnLibraryAdded(const char[] name)
 
 public void OnLibraryRemoved(const char[] name)
 {
-	if (strcmp(name, NV) == 0)
-		g_NativeVotes = false;
 	if (strcmp(name, ZLEADER) == 0)
 		g_ZLeader = false;
 	if (strcmp(name, DYNCHANNELS) == 0)
@@ -1441,11 +1423,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 	int MenuRandomShuffleStop = 0;
 
 	// Check if a vote is in progress first
-#if defined _nativevotes_included
-	if (IsVoteInProgress() || (g_NativeVotes && NativeVotes_IsVoteInProgress()))
-#else
 	if (IsVoteInProgress())
-#endif
 	{
 		// Can't start a vote, try again in 5 seconds.
 		//g_RetryTimer = CreateTimer(5.0, Timer_StartMapVote, _, TIMER_FLAG_NO_MAPCHANGE);
@@ -1482,53 +1460,43 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 
 	g_HasVoteStarted = true;
 
-	if (g_NativeVotes)
+	Handle menuStyle = GetMenuStyleHandle(view_as<MenuStyle>(g_iMenuStyle));
+	if (menuStyle != INVALID_HANDLE)
 	{
-#if defined _nativevotes_included
-		g_VoteMenu = NativeVotes_Create(Handler_MapVoteMenu, NativeVotesType_NextLevelMult, MenuAction_End | MenuAction_VoteCancel | MenuAction_Display | MenuAction_DisplayItem);
-		NativeVotes_SetResultCallback(g_VoteMenu, Handler_NativeVoteFinished);
-#endif
+		g_VoteMenu = CreateMenuEx(menuStyle, Handler_MapVoteMenu, MenuAction_End | MenuAction_Display | MenuAction_DisplayItem | MenuAction_VoteCancel);
 	}
 	else
 	{
-		Handle menuStyle = GetMenuStyleHandle(view_as<MenuStyle>(g_iMenuStyle));
-		if (menuStyle != INVALID_HANDLE)
+		// You chose... poorly
+		g_VoteMenu = CreateMenu(Handler_MapVoteMenu, MenuAction_End | MenuAction_Display | MenuAction_DisplayItem | MenuAction_VoteCancel);
+	}
+
+	// Block Vote Slots
+	if(g_bBlockSlots)
+	{
+		Handle radioStyle = GetMenuStyleHandle(MenuStyle_Radio);
+
+		if(GetMenuStyle(g_VoteMenu) == radioStyle)
 		{
-			g_VoteMenu = CreateMenuEx(menuStyle, Handler_MapVoteMenu, MenuAction_End | MenuAction_Display | MenuAction_DisplayItem | MenuAction_VoteCancel);
+			g_BlockedSlots = true;
+			AddMenuItem(g_VoteMenu, LINE_ONE, "Choose something...", ITEMDRAW_DISABLED);
+			AddMenuItem(g_VoteMenu, LINE_TWO, "...will ya?", ITEMDRAW_DISABLED);
+			MenuRandomShuffleStart += 2;
+
+			if(!g_bNoVoteOption) {
+				AddMenuItem(g_VoteMenu, LINE_SPACER, "", ITEMDRAW_SPACER);
+				MenuRandomShuffleStart++;
+			}
 		}
 		else
-		{
-			// You chose... poorly
-			g_VoteMenu = CreateMenu(Handler_MapVoteMenu, MenuAction_End | MenuAction_Display | MenuAction_DisplayItem | MenuAction_VoteCancel);
-		}
-
-		// Block Vote Slots
-		if(g_bBlockSlots)
-		{
-			Handle radioStyle = GetMenuStyleHandle(MenuStyle_Radio);
-
-			if(GetMenuStyle(g_VoteMenu) == radioStyle)
-			{
-				g_BlockedSlots = true;
-				AddMenuItem(g_VoteMenu, LINE_ONE, "Choose something...", ITEMDRAW_DISABLED);
-				AddMenuItem(g_VoteMenu, LINE_TWO, "...will ya?", ITEMDRAW_DISABLED);
-				MenuRandomShuffleStart += 2;
-
-				if(!g_bNoVoteOption) {
-					AddMenuItem(g_VoteMenu, LINE_SPACER, "", ITEMDRAW_SPACER);
-					MenuRandomShuffleStart++;
-				}
-			}
-			else
-				g_BlockedSlots = false;
-		}
-
-		if(g_bNoVoteOption)
-			SetMenuOptionFlags(g_VoteMenu, MENUFLAG_BUTTON_NOVOTE);
-
-		SetMenuTitle(g_VoteMenu, "Vote Nextmap");
-		SetVoteResultCallback(g_VoteMenu, Handler_MapVoteFinished);
+			g_BlockedSlots = false;
 	}
+
+	if(g_bNoVoteOption)
+		SetMenuOptionFlags(g_VoteMenu, MENUFLAG_BUTTON_NOVOTE);
+
+	SetMenuTitle(g_VoteMenu, "Vote Nextmap");
+	SetVoteResultCallback(g_VoteMenu, Handler_MapVoteFinished);
 
 	/* Call OnMapVoteStarted() Forward */
 	//	Call_StartForward(g_MapVoteStartedForward);
@@ -1556,20 +1524,6 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		int nominateCount = GetArraySize(g_NominateList);
 
 		int voteSize = GetVoteSize(2);
-
-		// The if and else if could be combined, but it looks extremely messy
-		// This is a hack to lower the vote menu size by 1 when Don't Change or Extend Map should appear
-		if (g_NativeVotes)
-		{
-			if ((when == MapChange_Instant || when == MapChange_RoundEnd) && g_bDontChange)
-			{
-				voteSize--;
-			}
-			else if (view_as<bool>(g_iMaxExtends) && g_Extends < InternalGetMapMaxExtends(map))
-			{
-				voteSize--;
-			}
-		}
 
 		/* Smaller of the two - It should be impossible for nominations to exceed the size though (cvar changed mid-map?) */
 		int nominationsToAdd = nominateCount >= voteSize ? voteSize : nominateCount;
@@ -1700,32 +1654,14 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			// New in Mapchooser Extended
 			else if(strcmp(map, VOTE_DONTCHANGE) == 0)
 			{
-				if (g_NativeVotes)
-				{
-#if defined _nativevotes_included
-					NativeVotes_AddItem(g_VoteMenu, VOTE_DONTCHANGE, "Don't Change");
-#endif
-				}
-				else
-				{
-					AddMenuItem(g_VoteMenu, VOTE_DONTCHANGE, "Don't Change");
-				}
+				AddMenuItem(g_VoteMenu, VOTE_DONTCHANGE, "Don't Change");
 			}
 			else if(strcmp(map, VOTE_EXTEND) == 0)
 			{
 				if (InternalGetMapMaxExtends(map) - g_Extends > 0)
 					FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
 
-				if (g_NativeVotes)
-				{
-#if defined _nativevotes_included
-					NativeVotes_AddItem(g_VoteMenu, VOTE_EXTEND, "Extend Map");
-#endif
-				}
-				else
-				{
-					AddMenuItem(g_VoteMenu, VOTE_EXTEND, "Extend Map");
-				}
+				AddMenuItem(g_VoteMenu, VOTE_EXTEND, "Extend Map");
 			}
 		}
 		delete inputlist;
@@ -1736,27 +1672,18 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 
 	int voteDuration = view_as<int>(g_fVoteDuration);
 
-	if (g_NativeVotes)
+	//SetMenuExitButton(g_VoteMenu, false);
+
+	if(GetVoteSize(2) <= GetMaxPageItems(GetMenuStyle(g_VoteMenu)))
 	{
-#if defined _nativevotes_included
-		NativeVotes_DisplayToAll(g_VoteMenu, voteDuration);
-#endif
+		//This is necessary to get items 9 and 0 as usable voting items
+		SetMenuPagination(g_VoteMenu, MENU_NO_PAGINATION);
 	}
-	else
-	{
-		//SetMenuExitButton(g_VoteMenu, false);
 
-		if(GetVoteSize(2) <= GetMaxPageItems(GetMenuStyle(g_VoteMenu)))
-		{
-			//This is necessary to get items 9 and 0 as usable voting items
-			SetMenuPagination(g_VoteMenu, MENU_NO_PAGINATION);
-		}
+	if(g_bShufflePerClient)
+		MenuShufflePerClient(g_VoteMenu, MenuRandomShuffleStart, GetMenuItemCount(g_VoteMenu) - MenuRandomShuffleStop);
 
-		if(g_bShufflePerClient)
-			MenuShufflePerClient(g_VoteMenu, MenuRandomShuffleStart, GetMenuItemCount(g_VoteMenu) - MenuRandomShuffleStop);
-
-		VoteMenuToAll(g_VoteMenu, voteDuration);
-	}
+	VoteMenuToAll(g_VoteMenu, voteDuration);
 
 	/* Call OnMapVoteStarted() Forward */
 	Call_StartForward(g_MapVoteStartForward); // Deprecated
@@ -1832,13 +1759,6 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 				SetConVarInt(g_Cvar_Fraglimit, fraglimit + InternalGetMapExtendFrag(map));
 		}
 
-		if (g_NativeVotes)
-		{
-#if defined _nativevotes_included
-			NativeVotes_DisplayPassEx(menu, NativeVotesPass_Extend);
-#endif
-		}
-
 		int iExentedLeft = InternalGetMapMaxExtends(map) - g_Extends;
 
 		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Extended", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
@@ -1860,13 +1780,6 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 	}
 	else if(strcmp(map, VOTE_DONTCHANGE, false) == 0)
 	{
-		if (g_NativeVotes)
-		{
-#if defined _nativevotes_included
-			NativeVotes_DisplayPassEx(menu, NativeVotesPass_Extend);
-#endif
-		}
-
 		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Stays", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
 		LogAction(-1, -1, "[MCE] Current map continues! The Vote has spoken! (Received \"%d\"\%% of %d votes)", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
 
@@ -1885,12 +1798,6 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		{
 			SetNextMap(map);
 			Forward_OnSetNextMap(map);
-			if (g_NativeVotes)
-			{
-#if defined _nativevotes_included
-				NativeVotes_DisplayPass(menu, map);
-#endif
-			}
 		}
 		else if(g_ChangeTime == MapChange_Instant)
 		{
@@ -1898,25 +1805,12 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 			CreateDataTimer(4.0, Timer_ChangeMap, data);
 			WritePackString(data, map);
 			g_ChangeMapInProgress = false;
-			if (g_NativeVotes)
-			{
-#if defined _nativevotes_included
-				NativeVotes_DisplayPassEx(menu, NativeVotesPass_ChgLevel, map);
-#endif
-			}
 		}
 		else // MapChange_RoundEnd
 		{
 			SetNextMap(map);
 			Forward_OnSetNextMap(map);
 			g_ChangeMapAtRoundEnd = true;
-
-			if (g_NativeVotes)
-			{
-#if defined _nativevotes_included
-				NativeVotes_DisplayPass(menu, map);
-#endif
-			}
 		}
 
 		g_HasVoteStarted = false;
@@ -1990,13 +1884,6 @@ public void Handler_MapVoteFinished(Handle menu,
 					break;
 			}
 
-			if (g_NativeVotes)
-			{
-#if defined _nativevotes_included
-				NativeVotes_DisplayFail(menu, NativeVotesFail_NotEnoughVotes);
-#endif
-			}
-
 			LogAction(-1, -1, "[MCE] The top maps had the same number of votes. A revote is needed!");
 			CPrintToChatAll("{green}[MCE]{default} %t", "Tie Vote", GetArraySize(mapList));
 			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
@@ -2027,13 +1914,6 @@ public void Handler_MapVoteFinished(Handle menu,
 					break;
 			}
 
-			if (g_NativeVotes)
-			{
-#if defined _nativevotes_included
-				NativeVotes_DisplayFail(menu, NativeVotesFail_NotEnoughVotes);
-#endif
-			}
-
 			LogAction(-1, -1, "[MCE] No map has received more than \"%d\"\%% of the vote.\nA revote is needed!", required_percent);
 			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed", required_percent);
 			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
@@ -2052,29 +1932,16 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 		case MenuAction_End:
 		{
 			g_VoteMenu = INVALID_HANDLE;
-			if (g_NativeVotes)
-			{
-#if defined _nativevotes_included
-				NativeVotes_Close(menu);
-#endif
-			}
-			else
-			{
-				delete menu;
-			}
+			delete menu;
 		}
 
 		case MenuAction_Display:
 		{
-			// NativeVotes uses the standard TF2/CSGO vote screen
-			if (!g_NativeVotes)
-			{
-				static char buffer[255];
-				Format(buffer, sizeof(buffer), "%T", "Vote Nextmap", param1);
-				Handle panel = view_as<Handle>(param2);
-				SetPanelTitle(panel, buffer);
-				//DrawPanelText(panel, "Warning: The Position of the Maps are different for each Player.");
-			}
+			static char buffer[255];
+			Format(buffer, sizeof(buffer), "%T", "Vote Nextmap", param1);
+			Handle panel = view_as<Handle>(param2);
+			SetPanelTitle(panel, buffer);
+			//DrawPanelText(panel, "Warning: The Position of the Maps are different for each Player.");
 		}
 
 		case MenuAction_DisplayItem:
@@ -2082,16 +1949,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 			char map[PLATFORM_MAX_PATH];
 			char buffer[255];
 
-			if (g_NativeVotes)
-			{
-#if defined _nativevotes_included
-				NativeVotes_GetItem(menu, param2, map, PLATFORM_MAX_PATH);
-#endif
-			}
-			else
-			{
-				GetMenuItem(menu, param2, map, PLATFORM_MAX_PATH, _, _, _, param1);
-			}
+			GetMenuItem(menu, param2, map, PLATFORM_MAX_PATH, _, _, _, param1);
 
 			if(strcmp(map, VOTE_EXTEND, false) == 0)
 			{
@@ -2133,17 +1991,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 
 			if(buffer[0] != '\0')
 			{
-				if (g_NativeVotes)
-				{
-#if defined _nativevotes_included
-					NativeVotes_RedrawVoteItem(buffer);
-					return view_as<int>(Plugin_Continue);
-#endif
-				}
-				else
-				{
-					return RedrawMenuItem(buffer);
-				}
+				return RedrawMenuItem(buffer);
 			}
 			// End Mapchooser Extended
 		}
@@ -2153,17 +2001,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 			// If we receive 0 votes, pick at random.
 			if(param1 == VoteCancel_NoVotes && g_bNoVoteMode)
 			{
-				int count;
-				if (g_NativeVotes)
-				{
-#if defined _nativevotes_included
-					count = NativeVotes_GetItemCount(menu);
-#endif
-				}
-				else
-				{
-					count = GetMenuItemCount(menu);
-				}
+				int count = GetMenuItemCount(menu);
 
 				int item;
 				static char map[PLATFORM_MAX_PATH];
@@ -2171,7 +2009,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 				do
 				{
 					int startInt = 0;
-					if (!g_NativeVotes && g_BlockedSlots)
+					if (g_BlockedSlots)
 					{
 						if(g_AddNoVote)
 						{
@@ -2183,16 +2021,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 						}
 					}
 					item = GetRandomInt(startInt, count - 1);
-					if (g_NativeVotes)
-					{
-#if defined _nativevotes_included
-						NativeVotes_GetItem(menu, item, map, PLATFORM_MAX_PATH);
-#endif
-					}
-					else
-					{
-						GetMenuItem(menu, item, map, PLATFORM_MAX_PATH, _, _, _, param1);
-					}
+					GetMenuItem(menu, item, map, PLATFORM_MAX_PATH, _, _, _, param1);
 				}
 				while(strcmp(map, VOTE_EXTEND, false) == 0);
 
@@ -2200,24 +2029,6 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 				Forward_OnSetNextMap(map);
 				LogAction(-1, -1, "[MCE] No votes has been receive. Pickup a random map. Nextmap is : %s", map);
 				g_MapVoteCompleted = true;
-				if (g_NativeVotes)
-				{
-#if defined _nativevotes_included
-					NativeVotes_DisplayPass(menu, map);
-#endif
-				}
-			}
-			else if (g_NativeVotes)
-			{
-#if defined _nativevotes_included
-				NativeVotesFailType reason = NativeVotesFail_Generic;
-				if (param1 == VoteCancel_NoVotes)
-				{
-					reason = NativeVotesFail_NotEnoughVotes;
-				}
-
-				NativeVotes_DisplayFail(menu, reason);
-#endif
 			}
 			else
 				LogAction(-1, -1, "[MCE] No votes has been receive.");
@@ -3261,30 +3072,12 @@ public int Native_SimulateMapEnd(Handle plugin, int numParams)
 
 stock void AddMapItem(const char[] map)
 {
-	if (g_NativeVotes)
-	{
-#if defined _nativevotes_included
-		NativeVotes_AddItem(g_VoteMenu, map, map);
-#endif
-	}
-	else
-	{
-		AddMenuItem(g_VoteMenu, map, map);
-	}
+	AddMenuItem(g_VoteMenu, map, map);
 }
 
 stock void GetMapItem(Handle menu, int position, char[] map, int mapLen)
 {
-	if (g_NativeVotes)
-	{
-#if defined _nativevotes_included
-		NativeVotes_GetItem(menu, position, map, mapLen);
-#endif
-	}
-	else
-	{
-		GetMenuItem(menu, position, map, mapLen, _, _, _, -1);
-	}
+	GetMenuItem(menu, position, map, mapLen, _, _, _, -1);
 }
 
 stock void AddExtendToMenu(Handle menu, MapChange when)
@@ -3297,30 +3090,11 @@ stock void AddExtendToMenu(Handle menu, MapChange when)
 
 	if((when == MapChange_Instant || when == MapChange_RoundEnd) && g_bDontChange)
 	{
-		if (g_NativeVotes)
-		{
-#if defined _nativevotes_included
-			// Built-in votes don't have "Don't Change", send Extend instead
-			NativeVotes_AddItem(menu, VOTE_DONTCHANGE, "Don't Change");
-#endif
-		}
-		else
-		{
-			AddMenuItem(menu, VOTE_DONTCHANGE, "Don't Change");
-		}
+		AddMenuItem(menu, VOTE_DONTCHANGE, "Don't Change");
 	}
 	else if(view_as<bool>(g_iMaxExtends) && g_Extends < InternalGetMapMaxExtends(map))
 	{
-		if (g_NativeVotes)
-		{
-#if defined _nativevotes_included
-			NativeVotes_AddItem(menu, VOTE_EXTEND, "Extend Map");
-#endif
-		}
-		else
-		{
-			AddMenuItem(menu, VOTE_EXTEND, "Extend Map");
-		}
+		AddMenuItem(menu, VOTE_EXTEND, "Extend Map");
 	}
 }
 
@@ -3334,19 +3108,6 @@ stock int GetVoteSize(int what = 0)
 		voteSize = includeMapsReserved;
 	else if (what == 2)
 		voteSize = voteSize + includeMapsReserved;
-
-	// New in 1.9.5 to let us bump up the included maps count
-	if (g_NativeVotes)
-	{
-#if defined _nativevotes_included
-		int max = NativeVotes_GetMaxItems();
-
-		if (max < voteSize)
-		{
-			voteSize = max;
-		}
-#endif
-	}
 
 	return voteSize;
 }

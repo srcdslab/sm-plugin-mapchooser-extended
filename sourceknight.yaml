@@ -10,13 +10,6 @@ project:
       - source: /addons
         dest: /addons
 
-    - name: nativevotes
-      type: git
-      repo: https://github.com/srcdslab/sm-plugin-nativevotes
-      unpack:
-      - source: /addons
-        dest: /addons
-
     - name: multicolors
       type: git
       repo: https://github.com/srcdslab/sm-plugin-MultiColors
