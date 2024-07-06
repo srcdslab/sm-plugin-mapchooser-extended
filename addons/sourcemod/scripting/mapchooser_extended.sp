@@ -60,7 +60,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.12.1"
+#define MCE_VERSION "1.12.2"
 
 #define ZLEADER "zleader"
 #define DYNCHANNELS "DynamicChannels"
@@ -269,9 +269,12 @@ int g_iExcludeMaps;
 int g_iIncludeMaps;
 int g_iIncludeMapsReserved;
 int g_iMaxExtends;
+int g_iVoteDuration;
 int g_iPercentRunOff;
 int g_iMaxRunOffs;
+int g_iRunOffWarningTime;
 int g_iStartTimePercent;
+int g_iWarningTime;
 int g_iStartTime;
 int g_iMenuStyle;
 int g_iTimerLocation;
@@ -280,9 +283,6 @@ int g_iTimeFrameMin;
 int g_iTimeFrameMax;
 
 float g_fRandomStartTime;
-float g_fVoteDuration;
-float g_fWarningTime;
-float g_fRunOffWarningTime;
 float g_fTimerUnlockNoms;
 
 public void OnPluginStart()
@@ -423,9 +423,12 @@ public void OnPluginStart()
 	g_iIncludeMaps = GetConVarInt(g_Cvar_IncludeMaps);
 	g_iIncludeMapsReserved = GetConVarInt(g_Cvar_IncludeMapsReserved);
 	g_iMaxExtends = GetConVarInt(g_Cvar_Extends);
+	g_iVoteDuration = GetConVarInt(g_Cvar_VoteDuration);
 	g_iPercentRunOff = GetConVarInt(g_Cvar_RunOffPercent);
 	g_iMaxRunOffs = GetConVarInt(g_Cvar_MaxRunOffs);
 	g_iStartTimePercent = GetConVarInt(g_Cvar_StartTimePercent);
+	g_iWarningTime = GetConVarInt(g_Cvar_WarningTime);
+	g_iRunOffWarningTime = GetConVarInt(g_Cvar_RunOffWarningTime);
 	g_iStartTime = GetConVarInt(g_Cvar_StartTime);
 	g_iMenuStyle = GetConVarInt(g_Cvar_MenuStyle);
 	g_iTimerLocation = GetConVarInt(g_Cvar_TimerLocation);
@@ -434,9 +437,6 @@ public void OnPluginStart()
 	g_iTimeFrameMax = GetConVarInt(g_Cvar_NoRestrictionTimeframeMaxTime);
 
 	g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
-	g_fVoteDuration = GetConVarFloat(g_Cvar_VoteDuration);
-	g_fWarningTime = GetConVarFloat(g_Cvar_WarningTime);
-	g_fRunOffWarningTime = GetConVarFloat(g_Cvar_RunOffWarningTime);
 	g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
 
 
@@ -677,7 +677,7 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 	else if (convar == g_Cvar_DontChange)
 		g_bDontChange = GetConVarBool(g_Cvar_DontChange);
 	else if (convar == g_Cvar_VoteDuration)
-		g_fVoteDuration = GetConVarFloat(g_Cvar_VoteDuration);
+		g_iVoteDuration = GetConVarInt(g_Cvar_VoteDuration);
 	else if (convar == g_Cvar_CountBots)
 		g_bCountBots = GetConVarBool(g_Cvar_CountBots);
 	else if (convar == g_Cvar_RunOff)
@@ -693,9 +693,9 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 	else if (convar == g_Cvar_EnableStartTimePercent)
 		g_bEnableStartPercent = GetConVarBool(g_Cvar_EnableStartTimePercent);
 	else if (convar == g_Cvar_WarningTime)
-		g_fWarningTime = GetConVarFloat(g_Cvar_WarningTime);
+		g_iWarningTime = GetConVarInt(g_Cvar_WarningTime);
 	else if (convar == g_Cvar_RunOffWarningTime)
-		g_fRunOffWarningTime = GetConVarFloat(g_Cvar_RunOffWarningTime);
+		g_iRunOffWarningTime = GetConVarInt(g_Cvar_RunOffWarningTime);
 	else if (convar == g_Cvar_MenuStyle)
 		g_iMenuStyle = GetConVarInt(g_Cvar_MenuStyle);
 	else if (convar == g_Cvar_TimerLocation)
@@ -810,7 +810,7 @@ public void OnConfigsExecuted()
 	/* Check if mapchooser will attempt to start mapvote during bonus round time */
 	if((g_Cvar_Bonusroundtime != INVALID_HANDLE) && !g_iStartRounds)
 	{
-		if(!g_iStartTime && GetConVarFloat(g_Cvar_Bonusroundtime) <= g_fVoteDuration)
+		if(!g_iStartTime && GetConVarFloat(g_Cvar_Bonusroundtime) <= view_as<float>(g_iVoteDuration))
 			LogError("Warning - Bonus Round Time shorter than Vote Time. Votes during bonus round may not have time to complete");
 	}
 
@@ -1670,7 +1670,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			LogAction(-1, -1, "[MCE] Maps List: %s", allMapsBuffer);
 	}
 
-	int voteDuration = view_as<int>(g_fVoteDuration);
+	int voteDuration = g_iVoteDuration;
 
 	//SetMenuExitButton(g_VoteMenu, false);
 
@@ -2485,21 +2485,21 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 	if(g_bLockNominationsAtWarning)
 		LockNominations();
 
-	float cvarTime;
+	int cvarTime;
 	static char translationKey[64];
 
 	switch(type)
 	{
 		case WarningType_Vote:
 		{
-			cvarTime = g_fWarningTime;
+			cvarTime = g_iWarningTime;
 			strcopy(translationKey, sizeof(translationKey), "Vote Warning");
 			LogAction(-1, -1, "[MCE] Voting for next map has started.");
 		}
 
 		case WarningType_Revote:
 		{
-			cvarTime = g_fRunOffWarningTime;
+			cvarTime = g_iRunOffWarningTime;
 			strcopy(translationKey, sizeof(translationKey), "Revote Warning");
 			LogAction(-1, -1, "[MCE] Revote for next map has started.");
 		}
