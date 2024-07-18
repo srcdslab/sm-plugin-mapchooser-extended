@@ -60,7 +60,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.12.2"
+#define MCE_VERSION "1.12.3"
 
 #define ZLEADER "zleader"
 #define DYNCHANNELS "DynamicChannels"
@@ -1759,7 +1759,9 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 				SetConVarInt(g_Cvar_Fraglimit, fraglimit + InternalGetMapExtendFrag(map));
 		}
 
-		int iExentedLeft = InternalGetMapMaxExtends(map) - g_Extends;
+		char sCurrentMap[64];
+		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+		int iExentedLeft = InternalGetMapMaxExtends(sCurrentMap) - g_Extends;
 
 		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Extended", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
 		CPrintToChatAll("{green}[MCE]{default} %t", "Available Extends", iExentedLeft);
