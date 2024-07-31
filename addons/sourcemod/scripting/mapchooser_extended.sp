@@ -64,15 +64,15 @@
 #define ZLEADER "zleader"
 #define DYNCHANNELS "DynamicChannels"
 
-#include "mce/mce_globals_variables.inc"
-#include "mce/mce_cvars.inc"
-#include "mce/mce_forwards.inc"
-#include "mce/mce_functions.inc"
-#include "mce/mce_commands.inc"
-#include "mce/mce_events.inc"
-#include "mce/mce_internal_functions.inc"
-#include "mce/mce_natives.inc"
-#include "mce/mce_menus.inc"
+#include "mce_globals_variables.inc"
+#include "mce_cvars.inc"
+#include "mce_forwards.inc"
+#include "mce_functions.inc"
+#include "mce_commands.inc"
+#include "mce_events.inc"
+#include "mce_internal_functions.inc"
+#include "mce_natives.inc"
+#include "mce_menus.inc"
 
 public Plugin myinfo =
 {
