@@ -3,7 +3,7 @@
 *
 *  MapChooser Extended
 *
-*  File:          mce_internal_functions.inc
+*  File:          mce/internal_functions.inc
 *  Description:   All internal functions mostly used by mce_functions + natives
 * 
 * ============================================================================

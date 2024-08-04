@@ -3,7 +3,7 @@
 *
 *  MapChooser Extended
 *
-*  File:          mce_cvars.inc
+*  File:          mce/cvars.inc
 *  Description:   Config creation and cvar control
 * 
 * ============================================================================

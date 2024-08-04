@@ -3,7 +3,7 @@
 *
 *  MapChooser Extended
 *
-*  File:          mce_menus.inc
+*  File:          mce/menus.inc
 *  Description:   Base menu functions for the plugin
 * 
 * ============================================================================

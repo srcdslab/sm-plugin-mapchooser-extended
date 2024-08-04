@@ -3,7 +3,7 @@
 *
 *  MapChooser Extended
 *
-*  File:          mce_natives.inc
+*  File:          mce/natives.inc
 *  Description:   Natives handlers for the MCE API
 * 
 * ============================================================================

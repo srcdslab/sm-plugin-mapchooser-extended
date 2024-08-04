@@ -4,7 +4,7 @@
  *
  *  MapChooser Extended
  *
- *  File:          mce_globals_variables.inc
+ *  File:          mce/globals_variables.inc
  *  Description:   Storage of non specific global variables
  * 
  * ============================================================================

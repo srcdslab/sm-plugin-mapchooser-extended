@@ -3,7 +3,7 @@
 *
 *  MapChooser Extended
 *
-*  File:          mce_events.inc
+*  File:          mce/events.inc
 *  Description:   Event hooking and forwarding
 * 
 * ============================================================================

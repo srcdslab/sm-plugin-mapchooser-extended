@@ -3,7 +3,7 @@
 *
 *  MapChooser Extended
 *
-*  File:          mce_forwards.inc
+*  File:          mce/forwards.inc
 *  Description:   Forwards handlers for the MCE API
 * 
 * ============================================================================

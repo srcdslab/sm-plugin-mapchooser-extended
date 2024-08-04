@@ -3,7 +3,7 @@
 *
 *  MapChooser Extended
 *
-*  File:          mce_commands.inc
+*  File:          mce/commands.inc
 *  Description:   Console command creation and hooking
 * 
 * ============================================================================

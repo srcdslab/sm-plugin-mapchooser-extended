@@ -3,7 +3,7 @@
 *
 *  MapChooser Extended
 *
-*  File:          mce_functions.inc
+*  File:          mce/functions.inc
 *  Description:   Handles MCE functions
 * 
 * ============================================================================
