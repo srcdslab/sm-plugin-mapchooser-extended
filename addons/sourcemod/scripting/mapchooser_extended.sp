@@ -59,7 +59,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.12.4"
+#define MCE_VERSION "1.12.5"
 
 #define ZLEADER "zleader"
 #define DYNCHANNELS "DynamicChannels"
@@ -142,6 +142,7 @@ public void OnLibraryRemoved(const char[] name)
 public void OnMapStart()
 {
 	InitializeGameModeSettings();
+	InitializeGroupSettings();
 }
 
 public void OnConfigsExecuted()

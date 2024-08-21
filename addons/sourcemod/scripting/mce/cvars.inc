@@ -64,6 +64,7 @@ ConVar g_Cvar_NoRestrictionTimeframeMaxTime;
 ConVar g_Cvar_TimerUnlockNoms;
 ConVar g_Cvar_LockNominationsAtWarning;
 ConVar g_Cvar_ShowNominator;
+ConVar g_Cvar_SharedCDMode;
 
 /* Cache convars values */
 bool g_bEndOfMapVote;
@@ -105,6 +106,7 @@ int g_iTimerLocation;
 int g_iMarkCustomMaps;
 int g_iTimeFrameMin;
 int g_iTimeFrameMax;
+int g_iSharedCDMode;
 
 float g_fRandomStartTime;
 float g_fTimerUnlockNoms;
@@ -197,6 +199,7 @@ stock void CvarsInit()
 	g_Cvar_LockNominationsAtWarning = CreateConVar("mce_locknominationswarning", "1", "Lock nominations when the warning start for vote", _, true, 0.0, true, 1.0);
 	g_Cvar_TimerUnlockNoms = CreateConVar("mce_locknominations_timer", "15.0", "Unlock nominations after a vote. Time in seconds.", _, true, 0.0, true, 60.0);
 	g_Cvar_ShowNominator = CreateConVar("mce_shownominator", "1", "See who nominated the map which won the vote", _, true, 0.0, true, 1.0);
+	g_Cvar_SharedCDMode = CreateConVar("mce_sharedcd_mode", "1", "Group maps with shared cooldowns mode (See ExcludeMap native docs for mode)", _, true, 0.0, true, 2.0);
 
 	AutoExecConfig(true, "mapchooser_extended");
 
@@ -242,6 +245,7 @@ stock void CvarsInit()
 	g_Cvar_TimerUnlockNoms.AddChangeHook(OnConVarChanged);
 	g_Cvar_LockNominationsAtWarning.AddChangeHook(OnConVarChanged);
 	g_Cvar_ShowNominator.AddChangeHook(OnConVarChanged);
+	g_Cvar_SharedCDMode.AddChangeHook(OnConVarChanged);
 
 	// Cache cvars values
 	g_bEndOfMapVote = GetConVarBool(g_Cvar_EndOfMapVote);
@@ -285,6 +289,7 @@ stock void CvarsInit()
 	g_iMarkCustomMaps = GetConVarInt(g_Cvar_MarkCustomMaps);
 	g_iTimeFrameMin = GetConVarInt(g_Cvar_NoRestrictionTimeframeMinTime);
 	g_iTimeFrameMax = GetConVarInt(g_Cvar_NoRestrictionTimeframeMaxTime);
+	g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
 
 	g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
 	g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
@@ -374,4 +379,6 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 		g_bLockNominationsAtWarning = GetConVarBool(g_Cvar_LockNominationsAtWarning);
 	else if (convar == g_Cvar_ShowNominator)
 		g_bShowNominator = GetConVarBool(g_Cvar_ShowNominator);
+	else if (convar == g_Cvar_SharedCDMode)
+		g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
 }
