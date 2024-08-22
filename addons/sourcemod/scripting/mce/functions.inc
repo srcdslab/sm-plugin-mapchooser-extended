@@ -74,6 +74,35 @@ stock void InitializeGameModeSettings()
 		g_SaveCDOnMapEnd = false;
 }
 
+stock void InitializeGroupSettings()
+{
+	if (!g_Config)
+		return;
+
+	char sCurrentMap[PLATFORM_MAX_PATH];
+	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+
+	int groups[32];
+	int groupsfound = (InternalGetMapGroups(sCurrentMap, groups, sizeof(groups)));
+
+	if (groupsfound != 1)
+	{
+		if (groupsfound > 1)
+			LogMessage("Map %s is in more than one group. No shared cooldown will be applied.", sCurrentMap);
+
+		return;
+	}
+
+	int iGrpCooldown = -1;
+	int igrp = InternalGetMapGroupID(sCurrentMap);
+	iGrpCooldown = InternalGetGroupCooldown(igrp);
+
+	if (iGrpCooldown < 0)
+		return;
+
+	InternalSetGroupCooldownToMaps(igrp, iGrpCooldown);
+}
+
 stock void InitializeMapVoteSettings()
 {
 	if(ReadMapList(g_MapList, g_mapFileSerial, "mapchooser", MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_MAPSFOLDER) != INVALID_HANDLE)

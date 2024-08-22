@@ -11,7 +11,9 @@ Advanced Automated Map Voting with Extensions
     {
         "1" // Numbers start from 1 to infinite but make sure its ordered correctly
         {
+            "_name" "Final Fantasy" // Group name (Optional) 
             "_max" "1" // Maximum 1 consecutive map from this group
+            "_cooldown" "10" // Shared cooldown mode to all these maps (cvar: mce_sharedcd_mode)
             "ze_ffvii_mako_reactor_v2_2" {}
             "ze_ffvii_mako_reactor_v3_1" {}
             "ze_ffvii_mako_reactor_v5_3" {}
@@ -19,7 +21,9 @@ Advanced Automated Map Voting with Extensions
         }
         "2" // wanderers
         {
+            "_name" "Wanderers marathon" // Group name (Optional) 
             "_max" "2" // Maximum 2 consecutive maps from this group
+            "_cooldown" "44" // Shared cooldown mode to all these maps (cvar: mce_sharedcd_mode)
             "ze_ffxiv_wanderers_palace_css" {}
             "ze_ffxiv_wanderers_palace_v4_5s" {}
             "ze_ffxiv_wanderers_palace_v5_2f" {}

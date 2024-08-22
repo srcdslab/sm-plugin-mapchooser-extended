@@ -277,6 +277,36 @@ stock int InternalGetMapMaxPlayers(const char[] map)
 	return MaxPlayers;
 }
 
+stock int InternalGetMapGroupID(const char[] map)
+{
+	int group = 0;
+	if(g_Config && g_Config.JumpToKey("_groups"))
+	{
+		if(!g_Config.GotoFirstSubKey(false))
+		{
+			g_Config.Rewind();
+			return group;
+		}
+
+		do
+		{
+			char groupstr[8];
+			g_Config.GetSectionName(groupstr, sizeof(groupstr));
+			int group_ = StringToInt(groupstr);
+			if(g_Config.JumpToKey(map, false))
+			{
+				group = group_;
+				g_Config.Rewind();
+				return group;
+			}
+		} while(g_Config.GotoNextKey());
+
+		g_Config.Rewind();
+	}
+
+	return group;
+}
+
 stock int InternalGetMapGroups(const char[] map, int[] groups, int size)
 {
 	int found = 0;
@@ -328,6 +358,75 @@ stock int InternalGetGroupMax(int group)
 	}
 
 	return -1;
+}
+
+stock int InternalGetGroupCooldown(int group)
+{
+	char groupstr[8];
+	IntToString(group, groupstr, sizeof(groupstr));
+	if (g_Config && g_Config.JumpToKey("_groups"))
+	{
+		if(g_Config.JumpToKey(groupstr, false))
+		{
+			int cd = g_Config.GetNum("_cooldown", -1);
+			g_Config.Rewind();
+			return cd;
+		}
+
+		g_Config.Rewind();
+	}
+
+	return -1;
+}
+
+stock void InternalSetGroupCooldownToMaps(int group, int cooldown)
+{
+	if (g_Config && g_Config.JumpToKey("_groups"))
+	{
+		char groupstr[8];
+		IntToString(group, groupstr, sizeof(groupstr));
+		if(g_Config.JumpToKey(groupstr, false))
+		{
+			if(!g_Config.GotoFirstSubKey(false))
+			{
+				g_Config.Rewind();
+				return;
+			}
+
+			do
+			{
+				char map[PLATFORM_MAX_PATH];
+				g_Config.GetSectionName(map, sizeof(map));
+				if (strncmp(map, "_", 1) == 0) // Skip: All groups settings, always starting with "_"
+                    continue;
+
+				ExcludeMap(map, cooldown, g_iSharedCDMode);
+			}
+			while (g_Config.GotoNextKey());
+
+			g_Config.Rewind();
+		}
+	}
+}
+
+stock void InternalGetGroupName(int group)
+{
+	char groupstr[8];
+	IntToString(group, groupstr, sizeof(groupstr));
+	if (g_Config && g_Config.JumpToKey("_groups"))
+	{
+		if(g_Config.JumpToKey(groupstr, false))
+		{
+			char sGrpName[PLATFORM_MAX_PATH];
+			g_Config.GetString("_name", sGrpName, sizeof(sGrpName), "This group has no name configured.");
+			g_Config.Rewind();
+			return;
+		}
+
+		g_Config.Rewind();
+	}
+
+	return;
 }
 
 // 0 = Okay
@@ -576,7 +675,7 @@ stock void InternalShowMapGroups(int client, const char[] map)
 	PrintToConsole(client, "-----------------------------------------");
 	PrintToConsole(client, "Group information");
 	PrintToConsole(client, "-----------------------------------------");
-	if(!g_Config.JumpToKey("Groups"))
+	if(!g_Config.JumpToKey("_groups"))
 	{
 		PrintToConsole(client, "No groups in the config.");
 		return;
@@ -598,11 +697,11 @@ stock void InternalShowMapGroups(int client, const char[] map)
 		g_Config.GoBack();
 		
 		count++;
-		g_Config.GetSectionName(groupName, sizeof(groupName));
+		g_Config.GetString("_name", groupName, sizeof(groupName), "This group has no name configured.");
 		PrintToConsole(client, "[%03d] Group Name: \"%s\"", count, groupName);
 
-		int max = g_Config.GetNum("Max", -1);
-		int cd = g_Config.GetNum("Cooldown", -1);
+		int max = g_Config.GetNum("_max", -1);
+		int cd = g_Config.GetNum("_cooldown", -1);
 
 		if(max > 0)
 		{
