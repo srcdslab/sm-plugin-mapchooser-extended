@@ -11,7 +11,7 @@
 
 public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, int param2)
 {
-	switch(action)
+	switch (action)
 	{
 		case MenuAction_End:
 		{
@@ -268,7 +268,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 	int iCurrentTime = GetTime();
 	bool restrictionsActive = AreRestrictionsActive();
 
-	switch(action)
+	switch (action)
 	{
 		case MenuAction_End:
 		{
@@ -405,7 +405,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 
 			if (mark && !official)
 			{
-				switch(mark)
+				switch (mark)
 				{
 					case 1:
 					{
@@ -531,7 +531,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 
 public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, int param2)
 {
-	switch(action)
+	switch (action)
 	{
 		case MenuAction_End:
 		{
@@ -592,7 +592,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 
 public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, int param2)
 {
-	switch(action)
+	switch (action)
 	{
 		case MenuAction_End:
 		{

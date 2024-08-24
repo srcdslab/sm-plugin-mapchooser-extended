@@ -191,7 +191,7 @@ stock bool IsNominateAllowed(int client)
 
 	CanNominateResult result = CanNominate();
 
-	switch(result)
+	switch (result)
 	{
 		case CanNominate_No_VoteInProgress:
 		{

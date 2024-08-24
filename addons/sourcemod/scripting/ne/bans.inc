@@ -121,7 +121,7 @@ public void PrepareNomStatusMenu(int client, int target)
 
 public int NomStatusMenu_Handler(Menu menu, MenuAction action, int param1, int param2)
 {
-	switch(action)
+	switch (action)
 	{
 		case MenuAction_End:
 			delete menu;
@@ -161,7 +161,7 @@ public void PrepareNombanListMenu(int client)
 
 public int Nombanlist_Handler(Menu menu, MenuAction action, int param1, int param2)
 {
-	switch(action)
+	switch (action)
 	{
 		case MenuAction_Select:
 		{
@@ -274,6 +274,7 @@ stock bool IsClientNomBanned(int client)
 
 Action Timer_NomBansChecker(Handle timer)
 {
+	int iCurrentTime = GetTime();
 	for (int i=1; i<MaxClients+1; i++)
 	{
 		if (!IsClientInGame(i) || IsFakeClient(i))
@@ -284,7 +285,7 @@ Action Timer_NomBansChecker(Handle timer)
 			continue;
 
 		// Check the time of the nomban and compare it to the current time to see if it has expired
-		if (g_iNomBanStart[i] + g_iNomBanLength[i] < GetTime())
+		if (g_iNomBanStart[i] + g_iNomBanLength[i] < iCurrentTime)
 			UnNomBanClient(i, 0);
 	}
 
