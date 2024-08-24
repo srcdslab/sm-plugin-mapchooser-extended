@@ -59,7 +59,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.12.5"
+#define MCE_VERSION "1.12.6"
 
 #define ZLEADER "zleader"
 #define DYNCHANNELS "DynamicChannels"
@@ -102,7 +102,7 @@ public void OnPluginStart()
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
-	if(LibraryExists("mapchooser"))
+	if (LibraryExists("mapchooser"))
 	{
 		strcopy(error, err_max, "MapChooser already loaded, aborting.");
 		return APLRes_Failure;
@@ -174,6 +174,6 @@ public void OnClientDisconnect(int client)
 
 public void OnMapTimeLeftChanged()
 {
-	if(GetArraySize(g_MapList))
+	if (GetArraySize(g_MapList))
 		SetupTimeleftTimer();
 }

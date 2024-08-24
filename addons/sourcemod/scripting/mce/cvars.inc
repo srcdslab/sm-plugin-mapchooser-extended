@@ -113,7 +113,7 @@ float g_fTimerUnlockNoms;
 
 stock void CvarsEngineInit(EngineVersion version)
 {
-	switch(version)
+	switch (version)
 	{
 		case Engine_TF2:
 		{
@@ -293,6 +293,33 @@ stock void CvarsInit()
 
 	g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
 	g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
+
+	// Verify All values are within range - Note: We dont check bool and string values
+	VerifyCachedValue(g_cvHUDChannel);
+	VerifyCachedValue(g_Cvar_StartTime);
+	VerifyCachedValue(g_Cvar_RandomStartTime);
+	VerifyCachedValue(g_Cvar_StartRounds);
+	VerifyCachedValue(g_Cvar_StartFrags);
+	VerifyCachedValue(g_Cvar_ExtendTimeStep);
+	VerifyCachedValue(g_Cvar_ExtendRoundStep);
+	VerifyCachedValue(g_Cvar_ExtendFragStep);
+	VerifyCachedValue(g_Cvar_ExcludeMaps);
+	VerifyCachedValue(g_Cvar_IncludeMaps);
+	VerifyCachedValue(g_Cvar_IncludeMapsReserved);
+	VerifyCachedValue(g_Cvar_Extends);
+	VerifyCachedValue(g_Cvar_VoteDuration);
+	VerifyCachedValue(g_Cvar_RunOffPercent);
+	VerifyCachedValue(g_Cvar_MaxRunOffs);
+	VerifyCachedValue(g_Cvar_StartTimePercent);
+	VerifyCachedValue(g_Cvar_WarningTime);
+	VerifyCachedValue(g_Cvar_RunOffWarningTime);
+	VerifyCachedValue(g_Cvar_MenuStyle);
+	VerifyCachedValue(g_Cvar_TimerLocation);
+	VerifyCachedValue(g_Cvar_MarkCustomMaps);
+	VerifyCachedValue(g_Cvar_NoRestrictionTimeframeMinTime);
+	VerifyCachedValue(g_Cvar_NoRestrictionTimeframeMaxTime);
+	VerifyCachedValue(g_Cvar_TimerUnlockNoms);
+	VerifyCachedValue(g_Cvar_SharedCDMode);
 }
 
 public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
@@ -381,4 +408,149 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 		g_bShowNominator = GetConVarBool(g_Cvar_ShowNominator);
 	else if (convar == g_Cvar_SharedCDMode)
 		g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
+
+	VerifyCachedValue(convar);
+}
+
+stock void VerifyCachedValue(ConVar convar)
+{
+	if (convar == g_cvHUDChannel)
+	{
+		if (g_iHUDChannel < 1)
+			g_iHUDChannel = 1;
+		else if (g_iHUDChannel > 6)
+			g_iHUDChannel = 6;
+	}
+	else if (convar == g_Cvar_StartTime)
+	{
+		if (g_iStartTime < 0)
+			g_iStartTime = 0;
+	}
+	else if (convar == g_Cvar_RandomStartTime)
+	{
+		if (g_fRandomStartTime < 0.0)
+			g_fRandomStartTime = 0.0;
+	}
+	else if (convar == g_Cvar_StartRounds)
+	{
+		if (g_iStartRounds < 0)
+			g_iStartRounds = 0;
+	}
+	else if (convar == g_Cvar_StartFrags)
+	{
+		if (g_iStartFrags < 0)
+			g_iStartFrags = 0;
+	}
+	else if (convar == g_Cvar_ExtendTimeStep)
+	{
+		if (g_iExtendTimeStep < 0)
+			g_iExtendTimeStep = 0;
+	}
+	else if (convar == g_Cvar_ExtendRoundStep)
+	{
+		if (g_iExtendRoundStep < 0)
+			g_iExtendRoundStep = 0;
+	}
+	else if (convar == g_Cvar_ExtendFragStep)
+	{
+		if (g_iExtendFragStep < 0)
+			g_iExtendFragStep = 0;
+	}
+	else if (convar == g_Cvar_ExcludeMaps)
+	{
+		if (g_iExcludeMaps < 0)
+			g_iExcludeMaps = 0;
+	}
+	else if (convar == g_Cvar_IncludeMaps)
+	{
+		if (g_iIncludeMaps < 2)
+			g_iIncludeMaps = 2;
+	}
+	else if (convar == g_Cvar_IncludeMapsReserved)
+	{
+		if (g_iIncludeMapsReserved < 0)
+			g_iIncludeMapsReserved = 0;
+	}
+	else if (convar == g_Cvar_Extends)
+	{
+		if (g_iMaxExtends < 0)
+			g_iMaxExtends = 0;
+	}
+	else if (convar == g_Cvar_VoteDuration)
+	{
+		if (g_iVoteDuration < 5)
+			g_iVoteDuration = 5;
+	}
+	else if (convar == g_Cvar_RunOffPercent)
+	{
+		if (g_iPercentRunOff < 0)
+			g_iPercentRunOff = 0;
+		else if (g_iPercentRunOff > 100)
+			g_iPercentRunOff = 100;
+	}
+	else if (convar == g_Cvar_MaxRunOffs)
+	{
+		if (g_iMaxRunOffs < 0)
+			g_iMaxRunOffs = 0;
+	}
+	else if (convar == g_Cvar_StartTimePercent)
+	{
+		if (g_iStartTimePercent < 0)
+			g_iStartTimePercent = 0;
+		else if (g_iStartTimePercent > 100)
+			g_iStartTimePercent = 100;
+	}
+	else if (convar == g_Cvar_WarningTime)
+	{
+		if (g_iWarningTime < 0)
+			g_iWarningTime = 0;
+	}
+	else if (convar == g_Cvar_RunOffWarningTime)
+	{
+		if (g_iRunOffWarningTime < 0)
+			g_iRunOffWarningTime = 0;
+	}
+	else if (convar == g_Cvar_MenuStyle)
+	{
+		if (g_iMenuStyle < 0)
+			g_iMenuStyle = 0;
+		else if (g_iMenuStyle > 2)
+			g_iMenuStyle = 2;
+	}
+	else if (convar == g_Cvar_TimerLocation)
+	{
+		if (g_iTimerLocation < 0)
+			g_iTimerLocation = 0;
+		else if (g_iTimerLocation > 2)
+			g_iTimerLocation = 2;
+	}
+	else if (convar == g_Cvar_MarkCustomMaps)
+	{
+		if (g_iMarkCustomMaps < 0)
+			g_iMarkCustomMaps = 0;
+		else if (g_iMarkCustomMaps > 2)
+			g_iMarkCustomMaps = 2;
+	}
+	else if (convar == g_Cvar_NoRestrictionTimeframeMinTime)
+	{
+		if (g_iTimeFrameMin < 0)
+			g_iTimeFrameMin = 0;
+	}
+	else if (convar == g_Cvar_NoRestrictionTimeframeMaxTime)
+	{
+		if (g_iTimeFrameMax < 0)
+			g_iTimeFrameMax = 0;
+	}
+	else if (convar == g_Cvar_TimerUnlockNoms)
+	{
+		if (g_fTimerUnlockNoms < 0.0)
+			g_fTimerUnlockNoms = 0.0;
+	}
+	else if (convar == g_Cvar_SharedCDMode)
+	{
+		if (g_iSharedCDMode < 0)
+			g_iSharedCDMode = 0;
+		else if (g_iSharedCDMode > 2)
+			g_iSharedCDMode = 2;
+	}
 }
