@@ -35,7 +35,7 @@ public Action Command_Version(int client, int args)
 
 public Action Command_SetNextmap(int client, int args)
 {
-	if(args < 1)
+	if (args < 1)
 	{
 		CReplyToCommand(client, "{green}[MCE]{default} Usage: {lightgreen}sm_setnextmap <map>");
 		return Plugin_Handled;
@@ -44,7 +44,7 @@ public Action Command_SetNextmap(int client, int args)
 	static char map[PLATFORM_MAX_PATH];
 	GetCmdArg(1, map, PLATFORM_MAX_PATH);
 
-	if(!IsMapValid(map))
+	if (!IsMapValid(map))
 	{
 		CReplyToCommand(client, "{green}[MCE]{default} %t", "Map was not found", map);
 		return Plugin_Handled;
@@ -70,12 +70,12 @@ public Action Command_ShowConfig(int client, int args)
 {
 	char map[PLATFORM_MAX_PATH];
 
-	if(args == 0)
+	if (args == 0)
 		GetCurrentMap(map, sizeof(map));
 	else
 	{
 		GetCmdArg(1, map, sizeof(map));
-		if(FindStringInArray(g_MapList, map) == -1)
+		if (FindStringInArray(g_MapList, map) == -1)
 		{
 			CReplyToCommand(client, "{green}[MCE]{default} %t", "Map was not found", map);
 			return Plugin_Handled;
@@ -97,7 +97,7 @@ public Action Command_ShowConfig(int client, int args)
 	// char desc[MAX_DESCRIPTION_LENGTH];
 	// bool descr = InternalGetMapDescription(map, desc, sizeof(desc));
 
-	if(GetCmdReplySource() == SM_REPLY_TO_CHAT)
+	if (GetCmdReplySource() == SM_REPLY_TO_CHAT)
 	{
 		CPrintToChat(client, "{green}[MCE]{default} %t", "See console for output");
 	}

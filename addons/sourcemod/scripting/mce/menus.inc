@@ -35,7 +35,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		/* Mapchooser Extended */
 		WritePackCell(data, FAILURE_TIMER_LENGTH);
 
-		if(g_bRunOff && g_RunoffCount > 0)
+		if (g_bRunOff && g_RunoffCount > 0)
 			WritePackString(data, "Revote Warning");
 		else
 			WritePackString(data, "Vote Warning");
@@ -48,7 +48,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 	}
 
 	/* If the main map vote has completed (and chosen result) and its currently changing (not a delayed change) we block further attempts */
-	if(g_MapVoteCompleted && g_ChangeMapInProgress)
+	if (g_MapVoteCompleted && g_ChangeMapInProgress)
 		return;
 
 	CheckMapRestrictions(true, true);
@@ -72,18 +72,18 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 	}
 
 	// Block Vote Slots
-	if(g_bBlockSlots)
+	if (g_bBlockSlots)
 	{
 		Handle radioStyle = GetMenuStyleHandle(MenuStyle_Radio);
 
-		if(GetMenuStyle(g_VoteMenu) == radioStyle)
+		if (GetMenuStyle(g_VoteMenu) == radioStyle)
 		{
 			g_BlockedSlots = true;
 			AddMenuItem(g_VoteMenu, LINE_ONE, "Choose something...", ITEMDRAW_DISABLED);
 			AddMenuItem(g_VoteMenu, LINE_TWO, "...will ya?", ITEMDRAW_DISABLED);
 			MenuRandomShuffleStart += 2;
 
-			if(!g_bNoVoteOption) {
+			if (!g_bNoVoteOption) {
 				AddMenuItem(g_VoteMenu, LINE_SPACER, "", ITEMDRAW_SPACER);
 				MenuRandomShuffleStart++;
 			}
@@ -92,7 +92,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			g_BlockedSlots = false;
 	}
 
-	if(g_bNoVoteOption)
+	if (g_bNoVoteOption)
 		SetMenuOptionFlags(g_VoteMenu, MENUFLAG_BUTTON_NOVOTE);
 
 	SetMenuTitle(g_VoteMenu, "Vote Nextmap");
@@ -112,13 +112,13 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 	static char map[PLATFORM_MAX_PATH];
 
 	/* No input given - User our internal nominations and maplist */
-	if(inputlist == INVALID_HANDLE)
+	if (inputlist == INVALID_HANDLE)
 	{
 		int allMapsSize = (PLATFORM_MAX_PATH * 3);
 		char[] allMapsBuffer = new char[allMapsSize];
 		
 		Handle randomizeList = INVALID_HANDLE;
-		if(g_bRandomizeNominations)
+		if (g_bRandomizeNominations)
 			randomizeList = CloneArray(g_NominateList);
 
 		int nominateCount = GetArraySize(g_NominateList);
@@ -128,16 +128,16 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		/* Smaller of the two - It should be impossible for nominations to exceed the size though (cvar changed mid-map?) */
 		int nominationsToAdd = nominateCount >= voteSize ? voteSize : nominateCount;
 
-		if(g_bExtendPositionTop) {
+		if (g_bExtendPositionTop) {
 			AddExtendToMenu(g_VoteMenu, when);
 			MenuRandomShuffleStart++;
 		}
 
-		for(int i = 0; i < nominationsToAdd; i++)
+		for (int i = 0; i < nominationsToAdd; i++)
 		{
 			GetArrayString(g_NominateList, i, map, PLATFORM_MAX_PATH);
 
-			if(randomizeList == INVALID_HANDLE)
+			if (randomizeList == INVALID_HANDLE)
 			{
 				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
@@ -150,7 +150,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		}
 
 		/* Clear out the rest of the nominations array */
-		for(int i = nominationsToAdd; i < nominateCount; i++)
+		for (int i = nominationsToAdd; i < nominateCount; i++)
 		{
 			GetArrayString(g_NominateList, i, map, PLATFORM_MAX_PATH);
 			/* These maps shouldn't be excluded from the vote as they weren't really nominated at all */
@@ -165,9 +165,9 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		int count = 0;
 		int availableMaps = GetArraySize(g_NextMapList);
 
-		if(i < voteSize && availableMaps == 0)
+		if (i < voteSize && availableMaps == 0)
 		{
-			if(i == 0)
+			if (i == 0)
 			{
 				LogError("No maps available for vote.");
 				return;
@@ -184,7 +184,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			GetArrayString(g_NextMapList, count, map, PLATFORM_MAX_PATH);
 			count++;
 
-			if(randomizeList == INVALID_HANDLE)
+			if (randomizeList == INVALID_HANDLE)
 			{
 				/* Insert the map and increment our count */
 				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
@@ -195,20 +195,20 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			i++;
 
 			//Run out of maps, this will have to do.
-			if(count >= availableMaps)
+			if (count >= availableMaps)
 				break;
 		}
 
-		if(randomizeList != INVALID_HANDLE)
+		if (randomizeList != INVALID_HANDLE)
 		{
 			// Fisher-Yates Shuffle
-			for(int j = GetArraySize(randomizeList) - 1; j >= 1; j--)
+			for (int j = GetArraySize(randomizeList) - 1; j >= 1; j--)
 			{
 				int k = GetRandomInt(0, j);
 				SwapArrayItems(randomizeList, j, k);
 			}
 
-			for(int j = 0; j < GetArraySize(randomizeList); j++)
+			for (int j = 0; j < GetArraySize(randomizeList); j++)
 			{
 				GetArrayString(randomizeList, j, map, PLATFORM_MAX_PATH);
 				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
@@ -225,14 +225,14 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		ClearArray(g_NominateOwners);
 		ClearArray(g_NominateList);
 
-		if(!g_bExtendPositionTop) {
+		if (!g_bExtendPositionTop) {
 			if (InternalGetMapMaxExtends(map) - g_Extends > 0)
 				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
 			AddExtendToMenu(g_VoteMenu, when);
 			MenuRandomShuffleStop++;
 		}
 		
-		if(allMapsBuffer[0])
+		if (allMapsBuffer[0])
 			LogAction(-1, -1, "[MCE] Maps List: %s", allMapsBuffer);
 	}
 	else //We were given a list of maps to start the vote with
@@ -242,21 +242,21 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		int allMapsSize = (PLATFORM_MAX_PATH * 3);
 		char[] allMapsBuffer = new char[allMapsSize];
 		
-		for(int i = 0; i < size; i++)
+		for (int i = 0; i < size; i++)
 		{
 			GetArrayString(inputlist, i, map, PLATFORM_MAX_PATH);
 
-			if(IsMapValid(map))
+			if (IsMapValid(map))
 			{
 				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 			// New in Mapchooser Extended
-			else if(strcmp(map, VOTE_DONTCHANGE) == 0)
+			else if (strcmp(map, VOTE_DONTCHANGE) == 0)
 			{
 				AddMenuItem(g_VoteMenu, VOTE_DONTCHANGE, "Don't Change");
 			}
-			else if(strcmp(map, VOTE_EXTEND) == 0)
+			else if (strcmp(map, VOTE_EXTEND) == 0)
 			{
 				if (InternalGetMapMaxExtends(map) - g_Extends > 0)
 					FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
@@ -266,7 +266,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		}
 		delete inputlist;
 
-		if(allMapsBuffer[0])
+		if (allMapsBuffer[0])
 			LogAction(-1, -1, "[MCE] Maps List: %s", allMapsBuffer);
 	}
 
@@ -274,13 +274,13 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 
 	//SetMenuExitButton(g_VoteMenu, false);
 
-	if(GetVoteSize(2) <= GetMaxPageItems(GetMenuStyle(g_VoteMenu)))
+	if (GetVoteSize(2) <= GetMaxPageItems(GetMenuStyle(g_VoteMenu)))
 	{
 		//This is necessary to get items 9 and 0 as usable voting items
 		SetMenuPagination(g_VoteMenu, MENU_NO_PAGINATION);
 	}
 
-	if(g_bShufflePerClient)
+	if (g_bShufflePerClient)
 		MenuShufflePerClient(g_VoteMenu, MenuRandomShuffleStart, GetMenuItemCount(g_VoteMenu) - MenuRandomShuffleStop);
 
 	VoteMenuToAll(g_VoteMenu, voteDuration);
@@ -309,35 +309,35 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 	Call_PushString(map);
 	Call_Finish();
 
-	if(strcmp(map, VOTE_EXTEND, false) == 0)
+	if (strcmp(map, VOTE_EXTEND, false) == 0)
 	{
 		g_Extends++;
 
 		int time;
-		if(GetMapTimeLimit(time))
+		if (GetMapTimeLimit(time))
 		{
-			if(time > 0)
+			if (time > 0)
 				ExtendMapTimeLimit(InternalGetMapExtendTime(map)*60);
 		}
 
-		if(g_Cvar_Winlimit != INVALID_HANDLE)
+		if (g_Cvar_Winlimit != INVALID_HANDLE)
 		{
 			int winlimit = GetConVarInt(g_Cvar_Winlimit);
-			if(winlimit)
+			if (winlimit)
 				SetConVarInt(g_Cvar_Winlimit, winlimit + InternalGetMapExtendRound(map));
 		}
 
-		if(g_Cvar_Maxrounds != INVALID_HANDLE)
+		if (g_Cvar_Maxrounds != INVALID_HANDLE)
 		{
 			int maxrounds = GetConVarInt(g_Cvar_Maxrounds);
-			if(maxrounds)
+			if (maxrounds)
 				SetConVarInt(g_Cvar_Maxrounds, maxrounds + InternalGetMapExtendRound(map));
 		}
 
-		if(g_Cvar_Fraglimit != INVALID_HANDLE)
+		if (g_Cvar_Fraglimit != INVALID_HANDLE)
 		{
 			int fraglimit = GetConVarInt(g_Cvar_Fraglimit);
-			if(fraglimit)
+			if (fraglimit)
 				SetConVarInt(g_Cvar_Fraglimit, fraglimit + InternalGetMapExtendFrag(map));
 		}
 
@@ -351,7 +351,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nThe current map has been extended. (Received \"%d\"\%% of %d votes) \nAvailable Extends: %d", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes, iExentedLeft);
 
 
-		if(g_bLockNominationsAtWarning)
+		if (g_bLockNominationsAtWarning)
 		{
 			CreateTimer(g_fTimerUnlockNoms, UnlockNominations, _, TIMER_FLAG_NO_MAPCHANGE);
 		}
@@ -362,12 +362,12 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		SetupTimeleftTimer();
 
 	}
-	else if(strcmp(map, VOTE_DONTCHANGE, false) == 0)
+	else if (strcmp(map, VOTE_DONTCHANGE, false) == 0)
 	{
 		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Stays", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
 		LogAction(-1, -1, "[MCE] Current map continues! The Vote has spoken! (Received \"%d\"\%% of %d votes)", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
 
-		if(g_bLockNominationsAtWarning)
+		if (g_bLockNominationsAtWarning)
 		{
 			CreateTimer(g_fTimerUnlockNoms, UnlockNominations, _, TIMER_FLAG_NO_MAPCHANGE);
 		}
@@ -378,12 +378,12 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 	}
 	else
 	{
-		if(g_ChangeTime == MapChange_MapEnd)
+		if (g_ChangeTime == MapChange_MapEnd)
 		{
 			SetNextMap(map);
 			Forward_OnSetNextMap(map);
 		}
-		else if(g_ChangeTime == MapChange_Instant)
+		else if (g_ChangeTime == MapChange_Instant)
 		{
 			Handle data;
 			CreateDataTimer(4.0, Timer_ChangeMap, data);
@@ -404,12 +404,12 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 
 		// Check who nominated the map
 		char sPlayer[32], sBuffer[64];
-		for(int i = 1; i <= MaxClients; i++)
+		for (int i = 1; i <= MaxClients; i++)
 		{
-			if(strcmp(g_sNominations[i], map, false) != 0)
+			if (strcmp(g_sNominations[i], map, false) != 0)
 				continue;
 
-			if(!IsClientInGame(i))
+			if (!IsClientInGame(i))
 				continue;
 
 			FormatEx(sPlayer, sizeof(sPlayer), "%N", i);
@@ -441,23 +441,23 @@ public void Handler_MapVoteFinished(Handle menu,
 									const int[][] item_info)
 {
 	// Implement revote logic - Only run this` block if revotes are enabled and this isn't the last revote
-	if(g_bRunOff && num_items > 1 && g_RunoffCount < g_iMaxRunOffs)
+	if (g_bRunOff && num_items > 1 && g_RunoffCount < g_iMaxRunOffs)
 	{
 		g_RunoffCount++;
 		int highest_votes = item_info[0][VOTEINFO_ITEM_VOTES];
 		int required_percent = g_iPercentRunOff;
 		int required_votes = RoundToCeil(float(num_votes) * float(g_iPercentRunOff) / 100.0);
 
-		if(highest_votes == item_info[1][VOTEINFO_ITEM_VOTES])
+		if (highest_votes == item_info[1][VOTEINFO_ITEM_VOTES])
 		{
 			g_HasVoteStarted = false;
 
 			//Revote is needed
 			ArrayList mapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH + 1));
 
-			for(int i = 0; i < num_items; i++)
+			for (int i = 0; i < num_items; i++)
 			{
-				if(item_info[i][VOTEINFO_ITEM_VOTES] == highest_votes)
+				if (item_info[i][VOTEINFO_ITEM_VOTES] == highest_votes)
 				{
 					static char map[PLATFORM_MAX_PATH];
 
@@ -473,7 +473,7 @@ public void Handler_MapVoteFinished(Handle menu,
 			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
 			return;
 		}
-		else if(highest_votes < required_votes)
+		else if (highest_votes < required_votes)
 		{
 			g_HasVoteStarted = false;
 
@@ -486,9 +486,9 @@ public void Handler_MapVoteFinished(Handle menu,
 			PushArrayString(mapList, map1);
 
 			// We allow more than two maps for a revote if they are tied
-			for(int i = 1; i < num_items; i++)
+			for (int i = 1; i < num_items; i++)
 			{
-				if(GetArraySize(mapList) < 2 || item_info[i][VOTEINFO_ITEM_VOTES] == item_info[i - 1][VOTEINFO_ITEM_VOTES])
+				if (GetArraySize(mapList) < 2 || item_info[i][VOTEINFO_ITEM_VOTES] == item_info[i - 1][VOTEINFO_ITEM_VOTES])
 				{
 					static char map[PLATFORM_MAX_PATH];
 					GetMapItem(menu, item_info[i][VOTEINFO_ITEM_INDEX], map, PLATFORM_MAX_PATH);
@@ -511,7 +511,7 @@ public void Handler_MapVoteFinished(Handle menu,
 
 public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int param2)
 {
-	switch(action)
+	switch (action)
 	{
 		case MenuAction_End:
 		{
@@ -535,45 +535,45 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 
 			GetMenuItem(menu, param2, map, PLATFORM_MAX_PATH, _, _, _, param1);
 
-			if(strcmp(map, VOTE_EXTEND, false) == 0)
+			if (strcmp(map, VOTE_EXTEND, false) == 0)
 			{
 				Format(buffer, sizeof(buffer), "%T", "Extend Map", param1);
 			}
-			else if(strcmp(map, VOTE_DONTCHANGE, false) == 0)
+			else if (strcmp(map, VOTE_DONTCHANGE, false) == 0)
 			{
 				Format(buffer, sizeof(buffer), "%T", "Dont Change", param1);
 			}
 			// Mapchooser Extended
-			else if(strcmp(map, LINE_ONE, false) == 0)
+			else if (strcmp(map, LINE_ONE, false) == 0)
 			{
 				Format(buffer, sizeof(buffer),"%T", "Line One", param1);
 			}
-			else if(strcmp(map, LINE_TWO, false) == 0)
+			else if (strcmp(map, LINE_TWO, false) == 0)
 			{
 				Format(buffer, sizeof(buffer),"%T", "Line Two", param1);
 			}
 			// Note that the first part is to discard the spacer line
-			else if(strcmp(map, LINE_SPACER, false) != 0)
+			else if (strcmp(map, LINE_SPACER, false) != 0)
 			{
-				if(g_iMarkCustomMaps == 1 && !InternalIsMapOfficial(map))
+				if (g_iMarkCustomMaps == 1 && !InternalIsMapOfficial(map))
 				{
 					Format(buffer, sizeof(buffer), "%T", "Custom Marked", param1, map);
 				}
-				else if(g_iMarkCustomMaps == 2 && !InternalIsMapOfficial(map))
+				else if (g_iMarkCustomMaps == 2 && !InternalIsMapOfficial(map))
 				{
 					Format(buffer, sizeof(buffer), "%T", "Custom", param1, map);
 				}
-				else if(InternalGetMapVIPRestriction(map))
+				else if (InternalGetMapVIPRestriction(map))
 				{
 					Format(buffer, sizeof(buffer), "%s (%T)", map, "VIP Nomination", param1);
 				}
-				else if(InternalGetMapLeaderRestriction(map))
+				else if (InternalGetMapLeaderRestriction(map))
 				{
 					Format(buffer, sizeof(buffer), "%s (%T)", map, "Leader Nomination", param1);
 				}
 			}
 
-			if(buffer[0] != '\0')
+			if (buffer[0] != '\0')
 			{
 				return RedrawMenuItem(buffer);
 			}
@@ -583,7 +583,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 		case MenuAction_VoteCancel:
 		{
 			// If we receive 0 votes, pick at random.
-			if(param1 == VoteCancel_NoVotes && g_bNoVoteMode)
+			if (param1 == VoteCancel_NoVotes && g_bNoVoteMode)
 			{
 				int count = GetMenuItemCount(menu);
 
@@ -595,7 +595,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 					int startInt = 0;
 					if (g_BlockedSlots)
 					{
-						if(g_AddNoVote)
+						if (g_AddNoVote)
 						{
 							startInt = 2;
 						}

@@ -113,7 +113,7 @@ float g_fTimerUnlockNoms;
 
 stock void CvarsEngineInit(EngineVersion version)
 {
-	switch(version)
+	switch (version)
 	{
 		case Engine_TF2:
 		{

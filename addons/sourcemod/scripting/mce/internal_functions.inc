@@ -11,13 +11,13 @@
 
 NominateResult InternalNominateMap(char[] map, bool force, int owner)
 {
-	if(!IsMapValid(map))
+	if (!IsMapValid(map))
 	{
 		return Nominate_InvalidMap;
 	}
 
 	/* Map already in the vote */
-	if(FindStringInArray(g_NominateList, map) != -1)
+	if (FindStringInArray(g_NominateList, map) != -1)
 	{
 		return Nominate_AlreadyInVote;
 	}
@@ -25,7 +25,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	int index;
 
 	/* Look to replace an existing nomination by this client - Nominations made with owner = 0 aren't replaced */
-	if(owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
+	if (owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
 	{
 		char oldmap[PLATFORM_MAX_PATH];
 		GetArrayString(g_NominateList, index, oldmap, PLATFORM_MAX_PATH);
@@ -37,14 +37,14 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	}
 
 	/* Too many nominated maps. */
-	if(g_NominateCount >= GetVoteSize(0) && !force)
+	if (g_NominateCount >= GetVoteSize(0) && !force)
 	{
 		return Nominate_VoteFull;
 	}
 
 	PushArrayString(g_NominateList, map);
 	PushArrayCell(g_NominateOwners, owner);
-	if(owner == 0 && g_NominateReservedCount < GetVoteSize(1))
+	if (owner == 0 && g_NominateReservedCount < GetVoteSize(1))
 		g_NominateReservedCount++;
 	else
 		g_NominateCount++;
@@ -61,7 +61,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 		RemoveFromArray(g_NominateOwners, 0);
 		g_sNominations[owner] = "";
 
-		if(owner_ == 0)
+		if (owner_ == 0)
 			g_NominateReservedCount--;
 		else
 			g_NominateCount--;
@@ -74,7 +74,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 void InternalGetNominationByOwner(int owner, char[] buffer)
 {
 	int index;
-	if(owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
+	if (owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
 	{
 		GetArrayString(g_NominateList, index, buffer, PLATFORM_MAX_PATH);
 	}
@@ -82,17 +82,17 @@ void InternalGetNominationByOwner(int owner, char[] buffer)
 
 bool InternalRemoveNominationByMap(char[] map)
 {
-	for(int i = 0; i < GetArraySize(g_NominateList); i++)
+	for (int i = 0; i < GetArraySize(g_NominateList); i++)
 	{
 		char oldmap[PLATFORM_MAX_PATH];
 		GetArrayString(g_NominateList, i, oldmap, PLATFORM_MAX_PATH);
 
-		if(strcmp(map, oldmap, false) == 0)
+		if (strcmp(map, oldmap, false) == 0)
 		{
 			Forward_OnNominationRemoved(oldmap, GetArrayCell(g_NominateOwners, i));
 
 			int owner = GetArrayCell(g_NominateOwners, i);
-			if(owner)
+			if (owner)
 				g_NominateCount--;
 			else
 				g_NominateReservedCount--;
@@ -112,7 +112,7 @@ bool InternalRemoveNominationByOwner(int owner)
 {
 	int index;
 
-	if(owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
+	if (owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
 	{
 		char oldmap[PLATFORM_MAX_PATH];
 		GetArrayString(g_NominateList, index, oldmap, PLATFORM_MAX_PATH);
@@ -139,11 +139,11 @@ bool InternalIsMapOfficial(const char[] mapname)
 stock int InternalGetMapCooldown(const char[] map)
 {
 	int Cooldown = g_iExcludeMaps;
-	if(!g_Config)
+	if (!g_Config)
 		return Cooldown;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return Cooldown;
 
 	return g_Config.GetNum("Cooldown", Cooldown);
@@ -152,11 +152,11 @@ stock int InternalGetMapCooldown(const char[] map)
 public int InternalGetMapMaxExtends(const char[] map)
 {
 	int extends = g_iMaxExtends;
-	if(!g_Config)
+	if (!g_Config)
 		return extends;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return extends;
 
 	return g_Config.GetNum("Extends", extends);
@@ -165,11 +165,11 @@ public int InternalGetMapMaxExtends(const char[] map)
 public int InternalGetMapExtendTime(const char[] map)
 {
 	int time = g_iExtendTimeStep;
-	if(!g_Config)
+	if (!g_Config)
 		return time;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return time;
 
 	return g_Config.GetNum("ExtendTime", time);
@@ -178,11 +178,11 @@ public int InternalGetMapExtendTime(const char[] map)
 public int InternalGetMapExtendRound(const char[] map)
 {
 	int round = g_iExtendRoundStep;
-	if(!g_Config)
+	if (!g_Config)
 		return round;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return round;
 
 	return g_Config.GetNum("ExtendRound", round);
@@ -191,11 +191,11 @@ public int InternalGetMapExtendRound(const char[] map)
 public int InternalGetMapExtendFrag(const char[] map)
 {
 	int frag = g_iExtendFragStep;
-	if(!g_Config)
+	if (!g_Config)
 		return frag;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return frag;
 
 	return g_Config.GetNum("ExtendFrag", frag);
@@ -204,16 +204,16 @@ public int InternalGetMapExtendFrag(const char[] map)
 stock int InternalGetMapCooldownTime(const char[] map)
 {
 	int Cooldown = 0;
-	if(!g_Config)
+	if (!g_Config)
 		return Cooldown;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return Cooldown;
 
 	char time[16];
 	g_Config.GetString("CooldownTime", time, sizeof(time), "");
-	if(time[0])
+	if (time[0])
 		Cooldown = TimeStrToSeconds(time);
 	else
 		Cooldown = TimeStrToSeconds(g_sExcludeMapsTime);
@@ -228,7 +228,7 @@ stock int InternalGetMapMinTime(const char[] map)
 		return MinTime;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return MinTime;
 	
 	MinTime = g_Config.GetNum("MinTime", MinTime);
@@ -242,7 +242,7 @@ stock int InternalGetMapMaxTime(const char[] map)
 		return MaxTime;
 	
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return MaxTime;
 	
 	MaxTime = g_Config.GetNum("MaxTime", MaxTime);
@@ -256,7 +256,7 @@ stock int InternalGetMapMinPlayers(const char[] map)
 		return MinPlayers;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return MinPlayers;
 
 	MinPlayers = g_Config.GetNum("MinPlayers", MinPlayers);
@@ -270,7 +270,7 @@ stock int InternalGetMapMaxPlayers(const char[] map)
 		return MaxPlayers;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return MaxPlayers;
 
 	MaxPlayers = g_Config.GetNum("MaxPlayers", MaxPlayers);
@@ -280,9 +280,9 @@ stock int InternalGetMapMaxPlayers(const char[] map)
 stock int InternalGetMapGroupID(const char[] map)
 {
 	int group = 0;
-	if(g_Config && g_Config.JumpToKey("_groups"))
+	if (g_Config && g_Config.JumpToKey("_groups"))
 	{
-		if(!g_Config.GotoFirstSubKey(false))
+		if (!g_Config.GotoFirstSubKey(false))
 		{
 			g_Config.Rewind();
 			return group;
@@ -293,7 +293,7 @@ stock int InternalGetMapGroupID(const char[] map)
 			char groupstr[8];
 			g_Config.GetSectionName(groupstr, sizeof(groupstr));
 			int group_ = StringToInt(groupstr);
-			if(g_Config.JumpToKey(map, false))
+			if (g_Config.JumpToKey(map, false))
 			{
 				group = group_;
 				g_Config.Rewind();
@@ -310,9 +310,9 @@ stock int InternalGetMapGroupID(const char[] map)
 stock int InternalGetMapGroups(const char[] map, int[] groups, int size)
 {
 	int found = 0;
-	if(g_Config && g_Config.JumpToKey("_groups"))
+	if (g_Config && g_Config.JumpToKey("_groups"))
 	{
-		if(!g_Config.GotoFirstSubKey(false))
+		if (!g_Config.GotoFirstSubKey(false))
 		{
 			g_Config.Rewind();
 			return -999;
@@ -323,10 +323,10 @@ stock int InternalGetMapGroups(const char[] map, int[] groups, int size)
 			char groupstr[8];
 			g_Config.GetSectionName(groupstr, sizeof(groupstr));
 			int group = StringToInt(groupstr);
-			if(g_Config.JumpToKey(map, false))
+			if (g_Config.JumpToKey(map, false))
 			{
 				groups[found++] = group;
-				if(found >= size)
+				if (found >= size)
 				{
 					g_Config.Rewind();
 					return found;
@@ -345,9 +345,9 @@ stock int InternalGetGroupMax(int group)
 {
 	char groupstr[8];
 	IntToString(group, groupstr, sizeof(groupstr));
-	if(g_Config && g_Config.JumpToKey("_groups"))
+	if (g_Config && g_Config.JumpToKey("_groups"))
 	{
-		if(g_Config.JumpToKey(groupstr, false))
+		if (g_Config.JumpToKey(groupstr, false))
 		{
 			int max = g_Config.GetNum("_max", -1);
 			g_Config.Rewind();
@@ -366,7 +366,7 @@ stock int InternalGetGroupCooldown(int group)
 	IntToString(group, groupstr, sizeof(groupstr));
 	if (g_Config && g_Config.JumpToKey("_groups"))
 	{
-		if(g_Config.JumpToKey(groupstr, false))
+		if (g_Config.JumpToKey(groupstr, false))
 		{
 			int cd = g_Config.GetNum("_cooldown", -1);
 			g_Config.Rewind();
@@ -385,9 +385,9 @@ stock void InternalSetGroupCooldownToMaps(int group, int cooldown)
 	{
 		char groupstr[8];
 		IntToString(group, groupstr, sizeof(groupstr));
-		if(g_Config.JumpToKey(groupstr, false))
+		if (g_Config.JumpToKey(groupstr, false))
 		{
-			if(!g_Config.GotoFirstSubKey(false))
+			if (!g_Config.GotoFirstSubKey(false))
 			{
 				g_Config.Rewind();
 				return;
@@ -415,7 +415,7 @@ stock void InternalGetGroupName(int group)
 	IntToString(group, groupstr, sizeof(groupstr));
 	if (g_Config && g_Config.JumpToKey("_groups"))
 	{
-		if(g_Config.JumpToKey(groupstr, false))
+		if (g_Config.JumpToKey(groupstr, false))
 		{
 			char sGrpName[PLATFORM_MAX_PATH];
 			g_Config.GetString("_name", sGrpName, sizeof(sGrpName), "This group has no name configured.");
@@ -470,10 +470,10 @@ stock int InternalGetMapPlayerRestriction(const char[] map)
 	int MinPlayers = InternalGetMapMinPlayers(map);
 	int MaxPlayers = InternalGetMapMaxPlayers(map);
 
-	if(MinPlayers && NumPlayers < MinPlayers)
+	if (MinPlayers && NumPlayers < MinPlayers)
 		return NumPlayers - MinPlayers;
 
-	if(MaxPlayers && NumPlayers > MaxPlayers)
+	if (MaxPlayers && NumPlayers > MaxPlayers)
 		return NumPlayers - MaxPlayers;
 
 	return 0;
@@ -533,11 +533,11 @@ stock bool InternalGetMapVIPRestriction(const char[] map)
 
 stock bool InternalGetMapLeaderRestriction(const char[] map)
 {
-	if(!g_Config)
+	if (!g_Config)
 		return false;
 
 	g_Config.Rewind();
-	if(!g_Config.JumpToKey(map))
+	if (!g_Config.JumpToKey(map))
 		return false;
 
 	int Leader = 0;
@@ -550,7 +550,7 @@ stock void InternalRestoreMapCooldowns()
 	char sCooldownFile[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, sCooldownFile, sizeof(sCooldownFile), "configs/mapchooser_extended/cooldowns.cfg");
 
-	if(!FileExists(sCooldownFile))
+	if (!FileExists(sCooldownFile))
 	{
 		LogMessage("Could not find cooldown file: \"%s\"", sCooldownFile);
 		return;
@@ -558,14 +558,14 @@ stock void InternalRestoreMapCooldowns()
 
 	KeyValues Cooldowns = new KeyValues("mapchooser_extended");
 
-	if(!Cooldowns.ImportFromFile(sCooldownFile))
+	if (!Cooldowns.ImportFromFile(sCooldownFile))
 	{
 		LogMessage("Unable to load cooldown file: \"%s\"", sCooldownFile);
 		delete Cooldowns;
 		return;
 	}
 
-	if(!Cooldowns.GotoFirstSubKey(true))
+	if (!Cooldowns.GotoFirstSubKey(true))
 	{
 		LogMessage("Unable to goto first sub key: \"%s\"", sCooldownFile);
 		delete Cooldowns;
@@ -577,20 +577,20 @@ stock void InternalRestoreMapCooldowns()
 
 	do
 	{
-		if(!Cooldowns.GetSectionName(map, sizeof(map)))
+		if (!Cooldowns.GetSectionName(map, sizeof(map)))
 		{
 			LogMessage("Unable to get section name: \"%s\"", sCooldownFile);
 			delete Cooldowns;
 			return;
 		}
 
-		if((Cooldown = Cooldowns.GetNum("Cooldown", -1)) > 0)
+		if ((Cooldown = Cooldowns.GetNum("Cooldown", -1)) > 0)
 		{
 			LogMessage("Restored cooldown: %s -> %d", map, Cooldown);
 			g_OldMapList.SetValue(map, Cooldown, true);
 		}
 
-		if((Cooldown = Cooldowns.GetNum("CooldownTime", -1)) > 0)
+		if ((Cooldown = Cooldowns.GetNum("CooldownTime", -1)) > 0)
 		{
 			LogMessage("Restored time cooldown: %s -> %d", map, Cooldown);
 			g_TimeMapList.SetValue(map, Cooldown, true);
@@ -605,7 +605,7 @@ stock void InternalStoreMapCooldowns()
 	char sCooldownFile[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, sCooldownFile, sizeof(sCooldownFile), "configs/mapchooser_extended/cooldowns.cfg");
 
-	if(!FileExists(sCooldownFile))
+	if (!FileExists(sCooldownFile))
 	{
 		LogMessage("Could not find cooldown file: \"%s\"", sCooldownFile);
 		return;
@@ -617,7 +617,7 @@ stock void InternalStoreMapCooldowns()
 	char map[PLATFORM_MAX_PATH];
 
 	StringMapSnapshot OldMapListSnapshot = g_OldMapList.Snapshot();
-	for(int i = 0; i < OldMapListSnapshot.Length; i++)
+	for (int i = 0; i < OldMapListSnapshot.Length; i++)
 	{
 		OldMapListSnapshot.GetKey(i, map, sizeof(map));
 		g_OldMapList.GetValue(map, Cooldown);
@@ -636,7 +636,7 @@ stock void InternalStoreMapCooldowns()
 	delete OldMapListSnapshot;
 
 	StringMapSnapshot TimeMapListSnapshot = g_TimeMapList.Snapshot();
-	for(int i = 0; i < TimeMapListSnapshot.Length; i++)
+	for (int i = 0; i < TimeMapListSnapshot.Length; i++)
 	{
 		TimeMapListSnapshot.GetKey(i, map, sizeof(map));
 		g_TimeMapList.GetValue(map, Cooldown);
@@ -654,7 +654,7 @@ stock void InternalStoreMapCooldowns()
 	}
 	delete TimeMapListSnapshot;
 
-	if(!Cooldowns.ExportToFile(sCooldownFile))
+	if (!Cooldowns.ExportToFile(sCooldownFile))
 	{
 		LogMessage("Unable to export cooldown file: \"%s\"", sCooldownFile);
 		delete Cooldowns;
@@ -666,7 +666,7 @@ stock void InternalStoreMapCooldowns()
 
 stock void InternalShowMapGroups(int client, const char[] map)
 {
-	if(!g_Config) 
+	if (!g_Config) 
 	{
 		PrintToConsole(client, "Config is not loaded, no group information.");
 		return;
@@ -675,13 +675,13 @@ stock void InternalShowMapGroups(int client, const char[] map)
 	PrintToConsole(client, "-----------------------------------------");
 	PrintToConsole(client, "Group information");
 	PrintToConsole(client, "-----------------------------------------");
-	if(!g_Config.JumpToKey("_groups"))
+	if (!g_Config.JumpToKey("_groups"))
 	{
 		PrintToConsole(client, "No groups in the config.");
 		return;
 	}
 
-	if(!g_Config.GotoFirstSubKey())
+	if (!g_Config.GotoFirstSubKey())
 	{
 		PrintToConsole(client, "No groups in the config.");
 		return;
@@ -692,7 +692,7 @@ stock void InternalShowMapGroups(int client, const char[] map)
 	
 	do
 	{
-		if(!g_Config.JumpToKey(map))
+		if (!g_Config.JumpToKey(map))
 			continue;
 		g_Config.GoBack();
 		
@@ -703,11 +703,11 @@ stock void InternalShowMapGroups(int client, const char[] map)
 		int max = g_Config.GetNum("_max", -1);
 		int cd = g_Config.GetNum("_cooldown", -1);
 
-		if(max > 0)
+		if (max > 0)
 		{
 			PrintToConsole(client, "[%03d] Group Max: %d", count, max);
 		}
-		if(cd > 0)
+		if (cd > 0)
 		{
 			PrintToConsole(client, "[%03d] Group Cooldown: %d", count, cd);
 		}

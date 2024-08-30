@@ -36,23 +36,23 @@ stock void InitializeGameModeSettings()
 	g_RoundCounting = RoundCounting_Standard;
 	g_ObjectiveEnt = -1;
 
-	if(strcmp(folder, "tf") == 0 && GameRules_GetProp("m_bPlayingMannVsMachine"))
+	if (strcmp(folder, "tf") == 0 && GameRules_GetProp("m_bPlayingMannVsMachine"))
 	{
 		g_RoundCounting = RoundCounting_MvM;
 		g_ObjectiveEnt = EntIndexToEntRef(FindEntityByClassname(-1, "tf_objective_resource"));
 	}
-	else if(strcmp(folder, "csgo") == 0 && GetConVarInt(g_Cvar_GameType) == GameType_GunGame &&
+	else if (strcmp(folder, "csgo") == 0 && GetConVarInt(g_Cvar_GameType) == GameType_GunGame &&
 		GetConVarInt(g_Cvar_GameMode) == GunGameMode_ArmsRace)
 	{
 		g_RoundCounting = RoundCounting_ArmsRace;
 	}
 
-	if(g_Config)
+	if (g_Config)
 		delete g_Config;
 
 	char sConfigFile[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, sConfigFile, sizeof(sConfigFile), "configs/mapchooser_extended.cfg");
-	if(!FileExists(sConfigFile))
+	if (!FileExists(sConfigFile))
 	{
 		LogMessage("Could not find config: \"%s\"", sConfigFile);
 		return;
@@ -60,7 +60,7 @@ stock void InitializeGameModeSettings()
 	LogMessage("Found config: \"%s\"", sConfigFile);
 
 	g_Config = new KeyValues("mapchooser_extended");
-	if(!g_Config.ImportFromFile(sConfigFile))
+	if (!g_Config.ImportFromFile(sConfigFile))
 	{
 		delete g_Config;
 		LogMessage("ImportFromFile() failed!");
@@ -68,7 +68,7 @@ stock void InitializeGameModeSettings()
 	}
 	g_Config.Rewind();
 
-	if(InternalAreRestrictionsActive())
+	if (InternalAreRestrictionsActive())
 		g_SaveCDOnMapEnd = true;
 	else
 		g_SaveCDOnMapEnd = false;
@@ -105,16 +105,16 @@ stock void InitializeGroupSettings()
 
 stock void InitializeMapVoteSettings()
 {
-	if(ReadMapList(g_MapList, g_mapFileSerial, "mapchooser", MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_MAPSFOLDER) != INVALID_HANDLE)
+	if (ReadMapList(g_MapList, g_mapFileSerial, "mapchooser", MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_MAPSFOLDER) != INVALID_HANDLE)
 	{
-		if(g_mapFileSerial == -1)
+		if (g_mapFileSerial == -1)
 			LogError("Unable to create a valid map list.");
 	}
 
 	// Disable the next level vote in TF2 and CS:GO
 	// In TF2, this has two effects: 1. Stop the next level vote (which overlaps rtv functionality).
 	// 2. Stop the built-in end level vote.  This is the only thing that happens in CS:GO
-	if(g_Cvar_VoteNextLevel != INVALID_HANDLE)
+	if (g_Cvar_VoteNextLevel != INVALID_HANDLE)
 		SetConVarBool(g_Cvar_VoteNextLevel, false);
 
 	SetupTimeleftTimer();
@@ -129,13 +129,13 @@ stock void InitializeMapVoteSettings()
 	ClearArray(g_NominateList);
 	ClearArray(g_NominateOwners);
 
-	for(int i = 0; i < MAXTEAMS; i++)
+	for (int i = 0; i < MAXTEAMS; i++)
 		g_winCount[i] = 0;
 
 	/* Check if mapchooser will attempt to start mapvote during bonus round time */
-	if((g_Cvar_Bonusroundtime != INVALID_HANDLE) && !g_iStartRounds)
+	if ((g_Cvar_Bonusroundtime != INVALID_HANDLE) && !g_iStartRounds)
 	{
-		if(!g_iStartTime && GetConVarFloat(g_Cvar_Bonusroundtime) <= view_as<float>(g_iVoteDuration))
+		if (!g_iStartTime && GetConVarFloat(g_Cvar_Bonusroundtime) <= view_as<float>(g_iVoteDuration))
 			LogError("Warning - Bonus Round Time shorter than Vote Time. Votes during bonus round may not have time to complete");
 	}
 }
@@ -144,7 +144,7 @@ stock void ConfigureBonusRoundTime()
 {
 	// Change the mp_bonusroundtime max so that we have time to display the vote
 	// If you display a vote during bonus time good defaults are 17 vote duration and 19 mp_bonustime
-	if(g_Cvar_Bonusroundtime != INVALID_HANDLE)
+	if (g_Cvar_Bonusroundtime != INVALID_HANDLE)
 		SetConVarBounds(g_Cvar_Bonusroundtime, ConVarBound_Upper, true, 30.0);
 }
 
@@ -162,26 +162,27 @@ stock void CleanOnMapEnd()
 	g_RunoffCount = 0;
 
 	static char map[PLATFORM_MAX_PATH];
+	int iCurrentTime = GetTime();
 	int Cooldown;
 
-	if(g_SaveCDOnMapEnd)
+	if (g_SaveCDOnMapEnd)
 	{
 		GetCurrentMap(map, PLATFORM_MAX_PATH);
 		Cooldown = InternalGetMapCooldown(map);
 		g_OldMapList.SetValue(map, Cooldown, true);
 
-		Cooldown = GetTime() + InternalGetMapCooldownTime(map) - RoundToFloor(GetGameTime());
+		Cooldown = iCurrentTime + InternalGetMapCooldownTime(map) - RoundToFloor(GetGameTime());
 		g_TimeMapList.SetValue(map, Cooldown, true);
 	}
 
 	StringMapSnapshot OldMapListSnapshot = g_OldMapList.Snapshot();
-	for(int i = 0; i < OldMapListSnapshot.Length; i++)
+	for (int i = 0; i < OldMapListSnapshot.Length; i++)
 	{
 		OldMapListSnapshot.GetKey(i, map, sizeof(map));
 		g_OldMapList.GetValue(map, Cooldown);
 
 		Cooldown--;
-		if(Cooldown > 0)
+		if (Cooldown > 0)
 			g_OldMapList.SetValue(map, Cooldown, true);
 		else
 			g_OldMapList.Remove(map);
@@ -189,12 +190,12 @@ stock void CleanOnMapEnd()
 	delete OldMapListSnapshot;
 
 	StringMapSnapshot TimeMapListSnapshot = g_TimeMapList.Snapshot();
-	for(int i = 0; i < TimeMapListSnapshot.Length; i++)
+	for (int i = 0; i < TimeMapListSnapshot.Length; i++)
 	{
 		TimeMapListSnapshot.GetKey(i, map, sizeof(map));
 		g_TimeMapList.GetValue(map, Cooldown);
 
-		if(Cooldown < GetTime())
+		if (Cooldown < iCurrentTime)
 			g_TimeMapList.Remove(map);
 	}
 	delete OldMapListSnapshot;
@@ -204,7 +205,7 @@ stock void NominationsOnClientDisconnect(client)
 {
 	int index = FindValueInArray(g_NominateOwners, client);
 
-	if(index == -1)
+	if (index == -1)
 		return;
 
 	char oldmap[PLATFORM_MAX_PATH];
@@ -221,13 +222,13 @@ stock void NominationsOnClientDisconnect(client)
 void SetupTimeleftTimer()
 {
 	int time;
-	if(GetMapTimeLeft(time) && time > 0)
+	if (GetMapTimeLeft(time) && time > 0)
 	{
 		int startTime;
-		if(g_bEnableStartPercent)
+		if (g_bEnableStartPercent)
 		{
 			int timeLimit;
-			if(GetMapTimeLimit(timeLimit) && timeLimit > 0)
+			if (GetMapTimeLimit(timeLimit) && timeLimit > 0)
 			{
 				startTime = g_iStartTimePercent * (timeLimit * 60) / 100;
 			}
@@ -235,15 +236,15 @@ void SetupTimeleftTimer()
 		else
 			startTime = g_iStartTime * 60;
 
-		if(time - startTime < 0 && g_bEndOfMapVote && !g_MapVoteCompleted && !g_HasVoteStarted)
+		if (time - startTime < 0 && g_bEndOfMapVote && !g_MapVoteCompleted && !g_HasVoteStarted)
 		{
 			SetupWarningTimer(WarningType_Vote);
 		}
 		else
 		{
-			if(g_WarningTimer == INVALID_HANDLE)
+			if (g_WarningTimer == INVALID_HANDLE)
 			{
-				if(g_VoteTimer != INVALID_HANDLE)
+				if (g_VoteTimer != INVALID_HANDLE)
 				{
 					KillTimer(g_VoteTimer);
 					g_VoteTimer = INVALID_HANDLE;
@@ -263,7 +264,7 @@ public Action Timer_StartWarningTimer(Handle timer)
 {
 	g_VoteTimer = INVALID_HANDLE;
 
-	if(!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
+	if (!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
 		SetupWarningTimer(WarningType_Vote);
 	return Plugin_Continue;
 }
@@ -273,7 +274,7 @@ public Action Timer_StartMapVote(Handle timer, Handle data)
 	static int timePassed;
 
 	// This is still necessary because InitiateVote still calls this directly via the retry timer
-	if(!GetArraySize(g_MapList) || !g_bEndOfMapVote || g_MapVoteCompleted || g_HasVoteStarted)
+	if (!GetArraySize(g_MapList) || !g_bEndOfMapVote || g_MapVoteCompleted || g_HasVoteStarted)
 	{
 		g_WarningTimer = INVALID_HANDLE;
 		return Plugin_Stop;
@@ -291,11 +292,11 @@ public Action Timer_StartMapVote(Handle timer, Handle data)
 	Call_PushCell(warningTimeRemaining);
 	Call_Finish();
 
-	if(timePassed == 0 || !g_bHideTimer)
+	if (timePassed == 0 || !g_bHideTimer)
 	{
 		TimerLocation timerLocation = view_as<TimerLocation>(g_iTimerLocation);
 
-		switch(timerLocation)
+		switch (timerLocation)
 		{
 			case TimerLocation_Center:
 			{
@@ -314,9 +315,9 @@ public Action Timer_StartMapVote(Handle timer, Handle data)
 		}
 	}
 
-	if(timePassed++ >= warningMaxTime)
+	if (timePassed++ >= warningMaxTime)
 	{
-		if(timer == g_RetryTimer)
+		if (timer == g_RetryTimer)
 		{
 			g_WaitingForVote = false;
 			g_RetryTimer = INVALID_HANDLE;
@@ -338,14 +339,14 @@ public Action Timer_StartMapVote(Handle timer, Handle data)
 
 public void CheckWinLimit(int winner_score)
 {
-	if(g_Cvar_Winlimit != INVALID_HANDLE)
+	if (g_Cvar_Winlimit != INVALID_HANDLE)
 	{
 		int winlimit = GetConVarInt(g_Cvar_Winlimit);
-		if(winlimit)
+		if (winlimit)
 		{
-			if(winner_score >= (winlimit - g_iStartRounds))
+			if (winner_score >= (winlimit - g_iStartRounds))
 			{
-				if(!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
+				if (!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
 				{
 					SetupWarningTimer(WarningType_Vote, MapChange_MapEnd);
 					//InitiateVote(MapChange_MapEnd, INVALID_HANDLE);
@@ -354,18 +355,18 @@ public void CheckWinLimit(int winner_score)
 		}
 	}
 
-	if(g_Cvar_MatchClinch != INVALID_HANDLE && g_Cvar_Maxrounds != INVALID_HANDLE)
+	if (g_Cvar_MatchClinch != INVALID_HANDLE && g_Cvar_Maxrounds != INVALID_HANDLE)
 	{
 		bool clinch = GetConVarBool(g_Cvar_MatchClinch);
 
-		if(clinch)
+		if (clinch)
 		{
 			int maxrounds = GetConVarInt(g_Cvar_Maxrounds);
 			int winlimit = RoundFloat(maxrounds / 2.0);
 
-			if(winner_score == winlimit - 1)
+			if (winner_score == winlimit - 1)
 			{
-				if(!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
+				if (!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
 				{
 					SetupWarningTimer(WarningType_Vote, MapChange_MapEnd);
 					//InitiateVote(MapChange_MapEnd, INVALID_HANDLE);
@@ -379,20 +380,20 @@ public void CheckMaxRounds(int roundcount)
 {
 	int maxrounds = 0;
 
-	if(g_RoundCounting == RoundCounting_ArmsRace)
+	if (g_RoundCounting == RoundCounting_ArmsRace)
 		maxrounds = GameRules_GetProp("m_iNumGunGameProgressiveWeaponsCT");
-	else if(g_RoundCounting == RoundCounting_MvM)
+	else if (g_RoundCounting == RoundCounting_MvM)
 		maxrounds = GetEntProp(g_ObjectiveEnt, Prop_Send, "m_nMannVsMachineMaxWaveCount");
-	else if(g_Cvar_Maxrounds != INVALID_HANDLE)
+	else if (g_Cvar_Maxrounds != INVALID_HANDLE)
 		maxrounds = GetConVarInt(g_Cvar_Maxrounds);
 	else
 		return;
 
-	if(maxrounds)
+	if (maxrounds)
 	{
-		if(roundcount >= (maxrounds - g_iStartRounds))
+		if (roundcount >= (maxrounds - g_iStartRounds))
 		{
-			if(!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
+			if (!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
 			{
 				SetupWarningTimer(WarningType_Vote, MapChange_MapEnd);
 				//InitiateVote(MapChange_MapEnd, INVALID_HANDLE);
@@ -407,9 +408,9 @@ public Action Timer_ChangeMap(Handle hTimer, Handle dp)
 
 	char map[PLATFORM_MAX_PATH];
 
-	if(dp == INVALID_HANDLE)
+	if (dp == INVALID_HANDLE)
 	{
-		if(!GetNextMap(map, PLATFORM_MAX_PATH))
+		if (!GetNextMap(map, PLATFORM_MAX_PATH))
 		{
 			//No passed map and no set nextmap. fail!
 			return Plugin_Stop;
@@ -429,7 +430,7 @@ public Action Timer_ChangeMap(Handle hTimer, Handle dp)
 bool RemoveStringFromArray(Handle array, char[] str)
 {
 	int index = FindStringInArray(array, str);
-	if(index != -1)
+	if (index != -1)
 	{
 		RemoveFromArray(array, index);
 		return true;
@@ -466,10 +467,10 @@ void CreateNextVote()
 	GetCurrentMap(map, PLATFORM_MAX_PATH);
 	RemoveStringFromArray(tempMaps, map);
 
-	if(GetArraySize(tempMaps) > g_iExcludeMaps && InternalAreRestrictionsActive())
+	if (GetArraySize(tempMaps) > g_iExcludeMaps && InternalAreRestrictionsActive())
 	{
 		StringMapSnapshot OldMapListSnapshot = g_OldMapList.Snapshot();
-		for(int i = 0; i < OldMapListSnapshot.Length; i++)
+		for (int i = 0; i < OldMapListSnapshot.Length; i++)
 		{
 			OldMapListSnapshot.GetKey(i, map, sizeof(map));
 			RemoveStringFromArray(tempMaps, map);
@@ -477,16 +478,17 @@ void CreateNextVote()
 		delete OldMapListSnapshot;
 	}
 
-	if(InternalAreRestrictionsActive())
+	if (InternalAreRestrictionsActive())
 	{
+		int iCurrentTime = GetTime();
 		StringMapSnapshot TimeMapListSnapshot = g_TimeMapList.Snapshot();
-		for(int i = 0; i < TimeMapListSnapshot.Length; i++)
+		for (int i = 0; i < TimeMapListSnapshot.Length; i++)
 		{
 			TimeMapListSnapshot.GetKey(i, map, sizeof(map));
 			int Cooldown;
 			g_TimeMapList.GetValue(map, Cooldown);
 
-			if(Cooldown > GetTime())
+			if (Cooldown > iCurrentTime)
 				RemoveStringFromArray(tempMaps, map);
 		}
 		delete TimeMapListSnapshot;
@@ -502,11 +504,11 @@ void CreateNextVote()
 	// populate groupmap with maps from nomination list
 	static char map_[PLATFORM_MAX_PATH];
 	int groups_[32];
-	for(int i = 0; i < GetArraySize(g_NominateList); i++)
+	for (int i = 0; i < GetArraySize(g_NominateList); i++)
 	{
 		GetArrayString(g_NominateList, i, map_, PLATFORM_MAX_PATH);
 		int groupsfound = InternalGetMapGroups(map_, groups_, sizeof(groups_));
-		for(int group = 0; group < groupsfound; group++)
+		for (int group = 0; group < groupsfound; group++)
 		{
 			IntToString(group, groupstr, sizeof(groupstr));
 			int groupcur = 0;
@@ -517,47 +519,47 @@ void CreateNextVote()
 	}
 
 	// find random maps which honor all restrictions
-	for(int i = 0; i < limit; i++)
+	for (int i = 0; i < limit; i++)
 	{
 		int b;
-		for(int j = 0; j < 1000; j++)
+		for (int j = 0; j < 1000; j++)
 		{
 			b = GetRandomInt(0, GetArraySize(tempMaps) - 1);
 			GetArrayString(tempMaps, b, map, PLATFORM_MAX_PATH);
 
-			if(!InternalAreRestrictionsActive())
+			if (!InternalAreRestrictionsActive())
 				break;
 
-			if(InternalGetMapAdminRestriction(map))
+			if (InternalGetMapAdminRestriction(map))
 				continue;
 
-			if(InternalGetMapVIPRestriction(map))
+			if (InternalGetMapVIPRestriction(map))
 				continue;
 
-			if(InternalGetMapLeaderRestriction(map))
+			if (InternalGetMapLeaderRestriction(map))
 				continue;
 
-			if(InternalGetMapTimeRestriction(map) != 0)
+			if (InternalGetMapTimeRestriction(map) != 0)
 				continue;
 
-			if(InternalGetMapPlayerRestriction(map) != 0)
+			if (InternalGetMapPlayerRestriction(map) != 0)
 				continue;
 
 			bool okay = true;
 
 			int groups[32];
 			int groupsfound = InternalGetMapGroups(map, groups, sizeof(groups));
-			for(int group = 0; group < groupsfound; group++)
+			for (int group = 0; group < groupsfound; group++)
 			{
 				IntToString(group, groupstr, sizeof(groupstr));
 
 				int groupmax = InternalGetGroupMax(groups[group]);
-				if(groupmax >= 0)
+				if (groupmax >= 0)
 				{
 					int groupcur = 0;
 					groupmap.GetValue(groupstr, groupcur);
 
-					if(groupcur >= groupmax)
+					if (groupcur >= groupmax)
 					{
 						okay = false;
 						break;
@@ -568,7 +570,7 @@ void CreateNextVote()
 				}
 			}
 
-			if(okay)
+			if (okay)
 				break;
 		}
 		PushArrayString(g_NextMapList, map);
@@ -581,7 +583,7 @@ void CreateNextVote()
 
 bool CanVoteStart()
 {
-	if(g_WaitingForVote || g_HasVoteStarted)
+	if (g_WaitingForVote || g_HasVoteStarted)
 		return false;
 
 	return true;
@@ -590,11 +592,11 @@ bool CanVoteStart()
 // Functions new to Mapchooser Extended
 stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, Handle mapList=INVALID_HANDLE, bool force=false)
 {
-	if(!GetArraySize(g_MapList) || g_ChangeMapInProgress || g_HasVoteStarted || (!force && ((when == MapChange_MapEnd && !g_bEndOfMapVote) || g_MapVoteCompleted)))
+	if (!GetArraySize(g_MapList) || g_ChangeMapInProgress || g_HasVoteStarted || (!force && ((when == MapChange_MapEnd && !g_bEndOfMapVote) || g_MapVoteCompleted)))
 		return;
 
 	bool interrupted = false;
-	if(g_WarningInProgress && g_WarningTimer != INVALID_HANDLE)
+	if (g_WarningInProgress && g_WarningTimer != INVALID_HANDLE)
 	{
 		interrupted = true;
 		KillTimer(g_WarningTimer);
@@ -602,13 +604,13 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 
 	g_WarningInProgress = true;
 
-	if(g_bLockNominationsAtWarning)
+	if (g_bLockNominationsAtWarning)
 		LockNominations();
 
 	int cvarTime;
 	static char translationKey[64];
 
-	switch(type)
+	switch (type)
 	{
 		case WarningType_Vote:
 		{
@@ -625,7 +627,7 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 		}
 	}
 
-	if(!interrupted)
+	if (!interrupted)
 	{
 		Call_StartForward(type == WarningType_Vote ? g_MapVoteWarningStartForward : g_MapVoteRunoffStartForward);
 		Call_Finish();
@@ -643,7 +645,7 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 stock void InitializeOfficialMapList()
 {
 	// If this fails, we want it to have an empty adt_array
-	if(ReadMapList(g_OfficialList,
+	if (ReadMapList(g_OfficialList,
 		g_mapOfficialFileSerial,
 		"official",
 		MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_NO_DEFAULT)
@@ -652,7 +654,7 @@ stock void InitializeOfficialMapList()
 		LogMessage("Loaded map list for %s.", g_sGameModName);
 	}
 	// Check if the map list was ever loaded
-	else if(g_mapOfficialFileSerial == -1)
+	else if (g_mapOfficialFileSerial == -1)
 	{
 		LogMessage("No official map list found for %s. Consider submitting one!", g_sGameModName);
 	}
@@ -660,7 +662,7 @@ stock void InitializeOfficialMapList()
 
 stock bool IsMapEndVoteAllowed()
 {
-	if(!g_bEndOfMapVote || g_MapVoteCompleted || g_HasVoteStarted)
+	if (!g_bEndOfMapVote || g_MapVoteCompleted || g_HasVoteStarted)
 		return false;
 	return true;
 }
@@ -683,11 +685,11 @@ stock void AddExtendToMenu(Handle menu, MapChange when)
 	char map[PLATFORM_MAX_PATH];
 	GetCurrentMap(map, sizeof(map));
 
-	if((when == MapChange_Instant || when == MapChange_RoundEnd) && g_bDontChange)
+	if ((when == MapChange_Instant || when == MapChange_RoundEnd) && g_bDontChange)
 	{
 		AddMenuItem(menu, VOTE_DONTCHANGE, "Don't Change");
 	}
-	else if(view_as<bool>(g_iMaxExtends) && g_Extends < InternalGetMapMaxExtends(map))
+	else if (view_as<bool>(g_iMaxExtends) && g_Extends < InternalGetMapMaxExtends(map))
 	{
 		AddMenuItem(menu, VOTE_EXTEND, "Extend Map");
 	}
@@ -709,17 +711,17 @@ stock int GetVoteSize(int what = 0)
 
 void CheckMapRestrictions(bool time = false, bool players = false)
 {
-	if(!InternalAreRestrictionsActive())
+	if (!InternalAreRestrictionsActive())
 		return;
 
 	static char map[PLATFORM_MAX_PATH];
-	for(int i = 0; i < GetArraySize(g_NominateList); i++)
+	for (int i = 0; i < GetArraySize(g_NominateList); i++)
 	{
 		int client = GetArrayCell(g_NominateOwners, i);
-		if(!client)
+		if (!client)
 			continue;
 
-		if(CheckCommandAccess(client, "sm_nominate_ignore", ADMFLAG_GENERIC, true))
+		if (CheckCommandAccess(client, "sm_nominate_ignore", ADMFLAG_GENERIC, true))
 			continue;
 
 		bool remove;
@@ -728,7 +730,7 @@ void CheckMapRestrictions(bool time = false, bool players = false)
 		if (time)
 		{
 			int TimeRestriction = InternalGetMapTimeRestriction(map);
-			if(TimeRestriction)
+			if (TimeRestriction)
 			{
 				remove = true;
 
@@ -739,11 +741,11 @@ void CheckMapRestrictions(bool time = false, bool players = false)
 		if (players)
 		{
 			int PlayerRestriction = InternalGetMapPlayerRestriction(map);
-			if(PlayerRestriction)
+			if (PlayerRestriction)
 			{
 				remove = true;
 
-				if(PlayerRestriction < 0)
+				if (PlayerRestriction < 0)
 					CPrintToChat(client, "{green}[MCE]{default} %t", "Nomination Removed MinPlayers Error", map);
 				else
 					CPrintToChat(client, "{green}[MCE]{default} %t", "Nomination Removed MaxPlayers Error", map);
@@ -782,9 +784,9 @@ stock int GetClientCountEx(bool countBots)
 
 stock int FindIntInArray(int[] array, int size, int value)
 {
-	for(int i = 0; i < size; i++)
+	for (int i = 0; i < size; i++)
 	{
-		if(array[i] == value)
+		if (array[i] == value)
 			return i;
 	}
 
@@ -795,11 +797,11 @@ stock int TimeStrToSeconds(const char[] str)
 {
 	int seconds = 0;
 	int maxlen = strlen(str);
-	for(int i = 0; i < maxlen;)
+	for (int i = 0; i < maxlen;)
 	{
 		int val = 0;
 		i += StringToIntEx(str[i], val);
-		if(str[i] == 'h')
+		if (str[i] == 'h')
 		{
 			val *= 60;
 			i++;

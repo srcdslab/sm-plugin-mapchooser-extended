@@ -62,7 +62,7 @@ public int Native_NominateMap(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -91,7 +91,7 @@ public int Native_RemoveNominationByMap(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -137,12 +137,12 @@ public int Native_EndOfMapVoteEnabled(Handle plugin, int numParams)
 public int Native_GetExcludeMapList(Handle plugin, int numParams)
 {
 	Handle array = view_as<Handle>(GetNativeCell(1));
-	if(array == INVALID_HANDLE)
+	if (array == INVALID_HANDLE)
 		return 0;
 
 	static char map[PLATFORM_MAX_PATH];
 	StringMapSnapshot OldMapListSnapshot = g_OldMapList.Snapshot();
-	for(int i = 0; i < OldMapListSnapshot.Length; i++)
+	for (int i = 0; i < OldMapListSnapshot.Length; i++)
 	{
 		OldMapListSnapshot.GetKey(i, map, sizeof(map));
 		PushArrayString(array, map);
@@ -156,18 +156,18 @@ public int Native_GetNominatedMapList(Handle plugin, int numParams)
 	Handle maparray = view_as<Handle>(GetNativeCell(1));
 	Handle ownerarray = view_as<Handle>(GetNativeCell(2));
 
-	if(maparray == INVALID_HANDLE)
+	if (maparray == INVALID_HANDLE)
 		return 0;
 
 	static char map[PLATFORM_MAX_PATH];
 
-	for(int i = 0; i < GetArraySize(g_NominateList); i++)
+	for (int i = 0; i < GetArraySize(g_NominateList); i++)
 	{
 		GetArrayString(g_NominateList, i, map, PLATFORM_MAX_PATH);
 		PushArrayString(maparray, map);
 
 		// If the optional parameter for an owner list was passed, then we need to fill that out as well
-		if(ownerarray != INVALID_HANDLE)
+		if (ownerarray != INVALID_HANDLE)
 		{
 			int index = GetArrayCell(g_NominateOwners, i);
 			PushArrayCell(ownerarray, index);
@@ -181,7 +181,7 @@ public int Native_IsMapOfficial(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -197,17 +197,17 @@ public int Native_IsWarningTimer(Handle plugin, int numParams)
 
 public int Native_CanNominate(Handle plugin, int numParams)
 {
-	if(g_HasVoteStarted)
+	if (g_HasVoteStarted)
 	{
 		return view_as<int>(CanNominate_No_VoteInProgress);
 	}
 
-	if(g_MapVoteCompleted)
+	if (g_MapVoteCompleted)
 	{
 		return view_as<int>(CanNominate_No_VoteComplete);
 	}
 
-	if(g_NominateCount >= GetVoteSize())
+	if (g_NominateCount >= GetVoteSize())
 	{
 		return view_as<int>(CanNominate_No_VoteFull);
 	}
@@ -217,13 +217,13 @@ public int Native_CanNominate(Handle plugin, int numParams)
 
 public int Native_ExcludeMap(Handle plugin, int numParams)
 {
-	if(!InternalAreRestrictionsActive())
+	if (!InternalAreRestrictionsActive())
 		return 0;
 
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -232,19 +232,19 @@ public int Native_ExcludeMap(Handle plugin, int numParams)
 	int Cooldown;
 	int Mode = GetNativeCell(3);
 
-	if(Mode == 0)
+	if (Mode == 0)
 	{
 		Cooldown = InternalGetMapCooldown(map);
 	}
-	else if(Mode == 1)
+	else if (Mode == 1)
 	{
 		Cooldown = GetNativeCell(2);
 	}
-	else if(Mode == 2)
+	else if (Mode == 2)
 	{
 		g_OldMapList.GetValue(map, Cooldown);
 		int NewCooldown = GetNativeCell(2);
-		if(NewCooldown > Cooldown)
+		if (NewCooldown > Cooldown)
 			Cooldown = NewCooldown;
 	}
 
@@ -256,13 +256,13 @@ public int Native_ExcludeMap(Handle plugin, int numParams)
 
 public int Native_ExcludeMapTime(Handle plugin, int numParams)
 {
-	if(!InternalAreRestrictionsActive())
+	if (!InternalAreRestrictionsActive())
 		return 0;
 
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -270,24 +270,25 @@ public int Native_ExcludeMapTime(Handle plugin, int numParams)
 
 	int Cooldown;
 	int Mode = GetNativeCell(3);
+	int iCurrentTime = GetTime();
 
-	if(Mode == 0)
+	if (Mode == 0)
 	{
 		Cooldown = InternalGetMapCooldownTime(map);
 	}
-	else if(Mode == 1)
+	else if (Mode == 1)
 	{
 		Cooldown = GetNativeCell(2);
 	}
-	else if(Mode == 2)
+	else if (Mode == 2)
 	{
 		g_TimeMapList.GetValue(map, Cooldown);
-		int NewCooldown = GetTime() + GetNativeCell(2);
-		if(NewCooldown > Cooldown)
+		int NewCooldown = iCurrentTime + GetNativeCell(2);
+		if (NewCooldown > Cooldown)
 			Cooldown = GetNativeCell(2);
 	}
 
-	Cooldown += GetTime();
+	Cooldown += iCurrentTime;
 	g_TimeMapList.SetValue(map, Cooldown, true);
 	InternalStoreMapCooldowns();
 
@@ -296,13 +297,13 @@ public int Native_ExcludeMapTime(Handle plugin, int numParams)
 
 public int Native_GetMapCooldown(Handle plugin, int numParams)
 {
-	if(!InternalAreRestrictionsActive())
+	if (!InternalAreRestrictionsActive())
 		return 0;
 
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -316,13 +317,13 @@ public int Native_GetMapCooldown(Handle plugin, int numParams)
 
 public int Native_GetMapCooldownTime(Handle plugin, int numParams)
 {
-	if(!InternalAreRestrictionsActive())
+	if (!InternalAreRestrictionsActive())
 		return 0;
 
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -339,7 +340,7 @@ public int Native_GetMapMinTime(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -353,7 +354,7 @@ public int Native_GetMapMaxTime(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -367,7 +368,7 @@ public int Native_GetMapMinPlayers(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -381,7 +382,7 @@ public int Native_GetMapMaxPlayers(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -395,7 +396,7 @@ public int Native_GetMapTimeRestriction(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -409,7 +410,7 @@ public int Native_GetMapPlayerRestriction(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -424,7 +425,7 @@ public int Native_GetMapGroups(Handle plugin, int numParams)
 	GetNativeStringLength(1, len);
 	int size = GetNativeCell(3);
 
-	if(len <= 0)
+	if (len <= 0)
 		return -999;
 
 	char[] map = new char[len+1];
@@ -432,7 +433,7 @@ public int Native_GetMapGroups(Handle plugin, int numParams)
 
 	int[] groups = new int[size];
 	int found = InternalGetMapGroups(map, groups, size);
-	if(found >= 0)
+	if (found >= 0)
 		SetNativeArray(2, groups, size);
 	return found;
 }
@@ -443,7 +444,7 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return -999;
 
 	char[] map = new char[len+1];
@@ -452,42 +453,42 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 	int groups[32];
 	int groupsfound = InternalGetMapGroups(map, groups, sizeof(groups));
 
-	for(int group = 0; group < groupsfound; group ++)
+	for (int group = 0; group < groupsfound; group ++)
 	{
 		int groupcur = 0;
 		int groupmax = InternalGetGroupMax(groups[group]);
 
-		if(groupmax >= 0)
+		if (groupmax >= 0)
 		{
 			static char map_[PLATFORM_MAX_PATH];
 			int groups_[32];
-			for(int i = 0; i < GetArraySize(g_NominateList); i++)
+			for (int i = 0; i < GetArraySize(g_NominateList); i++)
 			{
 				GetArrayString(g_NominateList, i, map_, PLATFORM_MAX_PATH);
 				int tmp = InternalGetMapGroups(map_, groups_, sizeof(groups_));
-				if(FindIntInArray(groups_, tmp, groups[group]) != -1)
+				if (FindIntInArray(groups_, tmp, groups[group]) != -1)
 					groupcur++;
 			}
 
-			if(groupcur >= groupmax)
+			if (groupcur >= groupmax)
 			{
 				// Check if client has nominated a map in the same group and can change their nomination
 				bool okay = false;
-				if(client >= 1 && client <= MaxClients)
+				if (client >= 1 && client <= MaxClients)
 				{
 					int index = FindValueInArray(g_NominateOwners, client);
-					if(index != -1)
+					if (index != -1)
 					{
 						static char oldmap[PLATFORM_MAX_PATH];
 						GetArrayString(g_NominateList, index, oldmap, PLATFORM_MAX_PATH);
 						static int oldgroups[32];
 						int tmp = InternalGetMapGroups(oldmap, oldgroups, sizeof(oldgroups));
-						if(FindIntInArray(groups_, tmp, groups[group]) != -1)
+						if (FindIntInArray(groups_, tmp, groups[group]) != -1)
 							okay = true;
 					}
 				}
 
-				if(!okay)
+				if (!okay)
 					return groupmax;
 			}
 		}
@@ -502,21 +503,21 @@ public int Native_IsClientMapAdminRestricted(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
 
 	// Check if client should bypass admin restrictions
-	if(client >= 1 && client <= MaxClients)
+	if (client >= 1 && client <= MaxClients)
 	{
 		// Client has bypass flag, dont return admin restrictions
-		if(CheckCommandAccess(client, "sm_nominate_ignore", ADMFLAG_GENERIC))
+		if (CheckCommandAccess(client, "sm_nominate_ignore", ADMFLAG_GENERIC))
 			return 0;
 
 		// Client has ban flag, dont return admin restrictions
-		if(CheckCommandAccess(client, "sm_nominate_ban", ADMFLAG_BAN))
+		if (CheckCommandAccess(client, "sm_nominate_ban", ADMFLAG_BAN))
 			return 0;
 	}
 
@@ -528,7 +529,7 @@ public int Native_IsMapAdminRestricted(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -543,21 +544,21 @@ public int Native_IsClientMapVIPRestricted(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
 
 	// Check if client should bypass vip restrictions
-	if(client >= 1 && client <= MaxClients)
+	if (client >= 1 && client <= MaxClients)
 	{
 		// Client has bypass flag, dont return vip restrictions
-		if(CheckCommandAccess(client, "sm_nominate_ignore", ADMFLAG_GENERIC))
+		if (CheckCommandAccess(client, "sm_nominate_ignore", ADMFLAG_GENERIC))
 			return 0;
 
 		// Client has vip flag, dont return vip restrictions
-		if(CheckCommandAccess(client, "sm_nominate_vip", ADMFLAG_CUSTOM1))
+		if (CheckCommandAccess(client, "sm_nominate_vip", ADMFLAG_CUSTOM1))
 			return 0;
 	}
 
@@ -569,7 +570,7 @@ public int Native_IsMapVIPRestricted(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -584,7 +585,7 @@ public int Native_IsClientMapLeaderRestricted(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -595,7 +596,7 @@ public int Native_IsClientMapLeaderRestricted(Handle plugin, int numParams)
 	// Check if client should bypass leader restrictions
 	if (bLeaderNativeAvailable)
 	{
-		if(client >= 1 && client <= MaxClients)
+		if (client >= 1 && client <= MaxClients)
 		{
 			// Client has leader.ini access, dont return leader restrictions
 			if (ZL_IsPossibleLeader(client))
@@ -612,7 +613,7 @@ public int Native_IsMapLeaderRestricted(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -633,7 +634,7 @@ public int Native_GetMapMaxExtends(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -647,7 +648,7 @@ public int Native_GetMapExtendTime(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -661,7 +662,7 @@ public int Native_GetMapExtendRound(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
@@ -675,7 +676,7 @@ public int Native_GetMapExtendFrag(Handle plugin, int numParams)
 	int len;
 	GetNativeStringLength(1, len);
 
-	if(len <= 0)
+	if (len <= 0)
 		return 0;
 
 	char[] map = new char[len+1];
