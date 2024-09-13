@@ -83,24 +83,47 @@ stock void InitializeGroupSettings()
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 	int groups[32];
-	int groupsfound = (InternalGetMapGroups(sCurrentMap, groups, sizeof(groups)));
+	int iDefaultGrpCooldown = -1;
+	int iTotalGrpFound = InternalGetMapGroups(sCurrentMap, groups, sizeof(groups));
 
-	if (groupsfound != 1)
+	bool bValidCooldownFound = false;
+	bool bCooldownMatching = true;
+
+	for (int i = 0; i < iTotalGrpFound; ++i)
 	{
-		if (groupsfound > 1)
-			LogMessage("Map %s is in more than one group. No shared cooldown will be applied.", sCurrentMap);
+		int groupID = groups[i];
+		int iGrpCooldown = InternalGetGroupCooldown(groupID);
 
-		return;
+		if (iGrpCooldown >= 0)
+		{
+			if (!bValidCooldownFound) // First valid cooldown found
+			{
+				iDefaultGrpCooldown = iGrpCooldown;
+				bValidCooldownFound = true;
+			}
+			else if (iDefaultGrpCooldown != iGrpCooldown) // Found a different cooldown value in another group
+			{
+				bCooldownMatching = false;
+				LogMessage("Map %s is in multiple groups with different cooldowns. No shared cooldown will be applied.", sCurrentMap);
+				return;
+			}
+		}
 	}
 
-	int iGrpCooldown = -1;
-	int igrp = InternalGetMapGroupID(sCurrentMap);
-	iGrpCooldown = InternalGetGroupCooldown(igrp);
+	if (bValidCooldownFound && bCooldownMatching)
+	{
+		LogMessage("Map %s is in multiple groups with matching cooldowns. Applying shared cooldown to all maps in these groups.", sCurrentMap);
+		// Apply the cooldown to all maps in groups with a matching cooldown
+		for (int i = 0; i < iTotalGrpFound; ++i)
+		{
+			int groupID = groups[i];
+			if (InternalGetGroupCooldown(groupID) == -1) // No cooldown configured for this group
+				continue;
 
-	if (iGrpCooldown < 0)
-		return;
-
-	InternalSetGroupCooldownToMaps(igrp, iGrpCooldown);
+			InternalSetGroupCooldownToMaps(groupID, iDefaultGrpCooldown);
+			LogMessage("Applied shared cooldown to maps in group \"%d\".", groupID);
+		}
+	}
 }
 
 stock void InitializeMapVoteSettings()
