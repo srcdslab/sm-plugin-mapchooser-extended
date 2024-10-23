@@ -31,7 +31,6 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 		GetArrayString(g_NominateList, index, oldmap, PLATFORM_MAX_PATH);
 		Forward_OnNominationRemoved(oldmap, owner);
 
-		strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
 		SetArrayString(g_NominateList, index, map);
 		return Nominate_Replaced;
 	}
@@ -59,7 +58,6 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 
 		RemoveFromArray(g_NominateList, 0);
 		RemoveFromArray(g_NominateOwners, 0);
-		g_sNominations[owner] = "";
 
 		if (owner_ == 0)
 			g_NominateReservedCount--;
@@ -67,8 +65,40 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 			g_NominateCount--;
 	}
 
-	strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
 	return Nominate_Added;
+}
+
+void InternalGetNominatorByMap(char[] map, char[] buffer)
+{
+	int index;
+	if ((index = FindStringInArray(g_NominateList, map)) != -1)
+	{
+		int owner = GetArrayCell(g_NominateOwners, index);
+		if (owner)
+			GetClientName(owner, buffer, PLATFORM_MAX_PATH);
+		else
+			strcopy(buffer, PLATFORM_MAX_PATH, "Unknow");
+	}
+}
+
+void InternalGetStoredNominator(const char[] mapName, char[] nominator, int maxLen)
+{
+	char buffer[128];
+	Format(buffer, sizeof(buffer), "%s:", mapName);
+
+	int start = StrContains(g_sNominatorBuffer, buffer);
+	if (start != -1)
+	{
+		start += strlen(buffer);
+		int end = StrContains(g_sNominatorBuffer[start], ";");
+		if (end != -1)
+		{
+			strcopy(nominator, maxLen, g_sNominatorBuffer[start]);
+			nominator[end] = '\0';
+			return;
+		}
+	}
+	strcopy(nominator, maxLen, "Unknown");
 }
 
 void InternalGetNominationByOwner(int owner, char[] buffer)
@@ -99,8 +129,6 @@ bool InternalRemoveNominationByMap(char[] map)
 
 			RemoveFromArray(g_NominateList, i);
 			RemoveFromArray(g_NominateOwners, i);
-			g_sNominations[owner] = "";
-
 			return true;
 		}
 	}
@@ -121,7 +149,6 @@ bool InternalRemoveNominationByOwner(int owner)
 
 		RemoveFromArray(g_NominateList, index);
 		RemoveFromArray(g_NominateOwners, index);
-		g_sNominations[owner] = "";
 		g_NominateCount--;
 
 		return true;

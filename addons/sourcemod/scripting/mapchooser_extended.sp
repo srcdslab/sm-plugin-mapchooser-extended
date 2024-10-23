@@ -59,7 +59,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.12.7"
+#define MCE_VERSION "1.12.8"
 
 #define ZLEADER "zleader"
 #define DYNCHANNELS "DynamicChannels"

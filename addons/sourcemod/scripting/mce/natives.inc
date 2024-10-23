@@ -25,6 +25,7 @@ stock void API_NativesInit()
 
 	// MapChooser Extended natives
 	CreateNative("GetNominationByOwner", Native_GetNominationByOwner);
+	CreateNative("GetNominationOwnerByMap", Native_GetNominationOwnerByMap);
 	CreateNative("IsMapOfficial", Native_IsMapOfficial);
 	CreateNative("CanNominate", Native_CanNominate);
 	CreateNative("ExcludeMap", Native_ExcludeMap);
@@ -82,6 +83,27 @@ public int Native_GetNominationByOwner(Handle plugin, int numParams)
 		return 0;
 
 	SetNativeString(2, map, PLATFORM_MAX_PATH);
+	return 1;
+}
+
+public int Native_GetNominationOwnerByMap(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+
+	if (len <= 0)
+		return 0;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	char buffer[PLATFORM_MAX_PATH];
+	InternalGetNominatorByMap(map, buffer);
+
+	if (!buffer[0])
+		return 0;
+
+	SetNativeString(2, buffer, PLATFORM_MAX_PATH);
 	return 1;
 }
 
