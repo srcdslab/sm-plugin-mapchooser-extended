@@ -133,20 +133,6 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			MenuRandomShuffleStart++;
 		}
 
-		/**
-		 * We will store all nominations infos into a buffer if it's needed later
-		 * Until we take a final decision on when to clear the nominations list.
-		 * Note: This buffer is cleaned up at the end of the vote, when nextmap is set.
-		 */
-
-		for (int i = 0; i < nominateCount; i++)
-		{
-			char nominator[MAX_NAME_LENGTH];
-			GetArrayString(g_NominateList, i, map, sizeof(map));
-			InternalGetNominatorByMap(map, nominator);
-			Format(g_sNominatorBuffer, sizeof(g_sNominatorBuffer), "%s%s:%s;", g_sNominatorBuffer, map, nominator);
-		}
-
 		for (int i = 0; i < nominationsToAdd; i++)
 		{
 			GetArrayString(g_NominateList, i, map, PLATFORM_MAX_PATH);
@@ -418,7 +404,15 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 
 		// Check who nominated the map
 		char sPlayer[32], sBuffer[64];
-		InternalGetStoredNominator(map, sPlayer, sizeof(sPlayer));
+		for (int i = 1; i <= MaxClients; i++)
+		{
+			if (strcmp(g_sNominations[i], map, false) != 0)
+				continue;
+			if (!IsClientInGame(i))
+				continue;
+			FormatEx(sPlayer, sizeof(sPlayer), "%N", i);
+			break;
+		}
 
 		if (sPlayer[0] && g_bShowNominator)
 			FormatEx(sBuffer, sizeof(sBuffer), "- %t %s", "Nominated by", sPlayer);
@@ -427,7 +421,13 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) %s", map, percent, num_votes, sBuffer);
 
 		// Vote has finished, clear nominations
-		ClearStoredNominators();
+		for (int i = 1; i <= MaxClients; i++)
+		{
+			if (!IsClientConnected(i) || !IsClientInGame(i))
+				continue;
+
+			ClearStoredNomination(i);
+		}
 	}
 }
 

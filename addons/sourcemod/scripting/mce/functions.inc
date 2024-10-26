@@ -188,8 +188,6 @@ stock void CleanOnMapEnd()
 	int iCurrentTime = GetTime();
 	int Cooldown;
 
-	ClearStoredNominators();
-
 	if (g_SaveCDOnMapEnd)
 	{
 		GetCurrentMap(map, PLATFORM_MAX_PATH);
@@ -240,6 +238,7 @@ stock void NominationsOnClientDisconnect(client)
 
 	RemoveFromArray(g_NominateOwners, index);
 	RemoveFromArray(g_NominateList, index);
+	ClearStoredNomination(client);
 	g_NominateCount--;
 }
 
@@ -782,14 +781,10 @@ void CheckMapRestrictions(bool time = false, bool players = false)
 
 			RemoveFromArray(g_NominateList, i);
 			RemoveFromArray(g_NominateOwners, i);
+			ClearStoredNomination(client);
 			g_NominateCount--;
 		}
 	}
-}
-
-stock void ClearStoredNominators()
-{
-    g_sNominatorBuffer[0] = '\0';
 }
 
 stock int GetClientCountEx(bool countBots)
@@ -837,4 +832,9 @@ stock int TimeStrToSeconds(const char[] str)
 		seconds += val * 60;
 	}
 	return seconds;
+}
+
+stock ClearStoredNomination(int client)
+{
+	g_sNominations[client][0] = '\0';
 }

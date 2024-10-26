@@ -160,11 +160,13 @@ public void OnMapEnd()
 public void OnClientPutInServer(int client)
 {
 	CheckMapRestrictions(false, true);
+	ClearStoredNomination(client);
 }
 
 public void OnClientDisconnect_Post(int client)
 {
 	CheckMapRestrictions(false, true);
+	ClearStoredNomination(client);
 }
 
 public void OnClientDisconnect(int client)
