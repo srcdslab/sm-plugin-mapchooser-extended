@@ -65,8 +65,6 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 			g_NominateReservedCount--;
 		else
 			g_NominateCount--;
-
-		strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
 	}
 
 	return Nominate_Added;
