@@ -73,7 +73,7 @@ bool g_SaveCDOnMapEnd = true;
 bool g_ZLeader = false;
 bool g_DynamicChannels = false;
 
-char g_sNominations[MAXPLAYERS+1][PLATFORM_MAX_PATH];
+char g_sNominations[MAXPLAYERS + 1][PLATFORM_MAX_PATH];
 
 RoundCounting g_RoundCounting = RoundCounting_Standard;
 

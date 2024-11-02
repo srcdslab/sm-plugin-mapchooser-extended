@@ -59,7 +59,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 
 		RemoveFromArray(g_NominateList, 0);
 		RemoveFromArray(g_NominateOwners, 0);
-		g_sNominations[owner] = "";
+		ClearStoredNomination(owner_);
 
 		if (owner_ == 0)
 			g_NominateReservedCount--;
@@ -68,6 +68,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	}
 
 	strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
+
 	return Nominate_Added;
 }
 
@@ -99,8 +100,7 @@ bool InternalRemoveNominationByMap(char[] map)
 
 			RemoveFromArray(g_NominateList, i);
 			RemoveFromArray(g_NominateOwners, i);
-			g_sNominations[owner] = "";
-
+			ClearStoredNomination(owner);
 			return true;
 		}
 	}
@@ -121,7 +121,7 @@ bool InternalRemoveNominationByOwner(int owner)
 
 		RemoveFromArray(g_NominateList, index);
 		RemoveFromArray(g_NominateOwners, index);
-		g_sNominations[owner] = "";
+		ClearStoredNomination(owner);
 		g_NominateCount--;
 
 		return true;

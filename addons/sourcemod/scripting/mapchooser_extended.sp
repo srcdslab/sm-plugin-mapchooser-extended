@@ -59,7 +59,7 @@
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
 
-#define MCE_VERSION "1.12.7"
+#define MCE_VERSION "1.12.8"
 
 #define ZLEADER "zleader"
 #define DYNCHANNELS "DynamicChannels"
@@ -160,11 +160,13 @@ public void OnMapEnd()
 public void OnClientPutInServer(int client)
 {
 	CheckMapRestrictions(false, true);
+	ClearStoredNomination(client);
 }
 
 public void OnClientDisconnect_Post(int client)
 {
 	CheckMapRestrictions(false, true);
+	ClearStoredNomination(client);
 }
 
 public void OnClientDisconnect(int client)

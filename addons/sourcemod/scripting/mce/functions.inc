@@ -238,7 +238,7 @@ stock void NominationsOnClientDisconnect(client)
 
 	RemoveFromArray(g_NominateOwners, index);
 	RemoveFromArray(g_NominateList, index);
-	g_sNominations[client] = "";
+	ClearStoredNomination(client);
 	g_NominateCount--;
 }
 
@@ -781,7 +781,7 @@ void CheckMapRestrictions(bool time = false, bool players = false)
 
 			RemoveFromArray(g_NominateList, i);
 			RemoveFromArray(g_NominateOwners, i);
-			g_sNominations[i] = "";
+			ClearStoredNomination(client);
 			g_NominateCount--;
 		}
 	}
@@ -832,4 +832,9 @@ stock int TimeStrToSeconds(const char[] str)
 		seconds += val * 60;
 	}
 	return seconds;
+}
+
+stock ClearStoredNomination(int client)
+{
+	g_sNominations[client][0] = '\0';
 }

@@ -408,10 +408,8 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		{
 			if (strcmp(g_sNominations[i], map, false) != 0)
 				continue;
-
 			if (!IsClientInGame(i))
 				continue;
-
 			FormatEx(sPlayer, sizeof(sPlayer), "%N", i);
 			break;
 		}
@@ -425,10 +423,10 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		// Vote has finished, clear nominations
 		for (int i = 1; i <= MaxClients; i++)
 		{
-			if (!IsClientConnected(i) || !IsClientInGame(i) || IsFakeClient(i))
+			if (!IsClientConnected(i) || !IsClientInGame(i))
 				continue;
-			
-			g_sNominations[i] = "";
+
+			ClearStoredNomination(i);
 		}
 	}
 }
