@@ -39,7 +39,11 @@
 #define _mapchooser_extended_included_
 #include <mapchooser>
 
-// MCE 1.12 series
+#define MCE_V_MAJOR 1
+#define MCE_V_MINOR 13
+#define MCE_V_PATCH 0
+
+#define MCE_VERSION "1.30.0"
 
 enum CanNominateResult
 {
@@ -49,6 +53,20 @@ enum CanNominateResult
 	CanNominate_Yes,				/** Yes, you can nominate */
 };
 
+/**
+ * Called when the plugin becomes available.
+ * 
+ * @noreturn
+ */
+forward void MCE_OnPluginOK();
+
+/**
+ * Called when the plugin becomes unavailable.
+ * This can happen when the plugin is reloaded or unloaded.
+ * 
+ * @noreturn
+ */
+forward void MCE_OnPluginNotOK();
 
 /**
  * Called whenever warning timer starts

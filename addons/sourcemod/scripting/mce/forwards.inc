@@ -9,6 +9,9 @@
 * ============================================================================
 */
 
+GlobalForward g_hForward_StatusOK;
+GlobalForward g_hForward_StatusNotOK;
+
 Handle g_NominationsResetForward = INVALID_HANDLE;
 Handle g_NominationDisconnect = INVALID_HANDLE;
 Handle g_MapVoteStartedForward = INVALID_HANDLE;
@@ -23,6 +26,9 @@ Handle g_MapVoteRunoffStartForward = INVALID_HANDLE;
 
 stock void API_ForwardsInit()
 {
+	g_hForward_StatusOK = CreateGlobalForward("MCE_OnPluginOK", ET_Ignore);
+	g_hForward_StatusNotOK = CreateGlobalForward("MCE_OnPluginNotOK", ET_Ignore);
+
 	g_NominationsResetForward = CreateGlobalForward("OnNominationRemoved", ET_Ignore, Param_String, Param_Cell);
 	g_NominationDisconnect= CreateGlobalForward("OnNominationDisconnect", ET_Ignore, Param_String, Param_Cell);
 	g_MapVoteStartedForward = CreateGlobalForward("OnMapVoteStarted", ET_Ignore);
@@ -34,6 +40,18 @@ stock void API_ForwardsInit()
 	g_MapVoteWarningStartForward = CreateGlobalForward("OnMapVoteWarningStart", ET_Ignore);
 	g_MapVoteWarningTickForward = CreateGlobalForward("OnMapVoteWarningTick", ET_Ignore, Param_Cell);
 	g_MapVoteRunoffStartForward = CreateGlobalForward("OnMapVoteRunnoffWarningStart", ET_Ignore);
+}
+
+stock void SendForward_Available()
+{
+	Call_StartForward(g_hForward_StatusOK);
+	Call_Finish();
+}
+
+stock void SendForward_NotAvailable()
+{
+	Call_StartForward(g_hForward_StatusNotOK);
+	Call_Finish();
 }
 
 stock void Forward_OnNominationRemoved(char[] oldmap, int owner)

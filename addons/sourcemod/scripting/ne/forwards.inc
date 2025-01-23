@@ -9,6 +9,9 @@
 * ============================================================================
 */
 
+GlobalForward g_hForward_StatusOK;
+GlobalForward g_hForward_StatusNotOK;
+
 Handle g_hOnPublicMapInsert = INVALID_HANDLE;
 Handle g_hOnPublicMapReplaced = INVALID_HANDLE;
 Handle g_hOnAdminMapInsert = INVALID_HANDLE;
@@ -16,10 +19,25 @@ Handle g_hOnMapNominationRemove = INVALID_HANDLE;
 
 stock void API_ForwardsInit()
 {
+	g_hForward_StatusOK = CreateGlobalForward("NE_OnPluginOK", ET_Ignore);
+	g_hForward_StatusNotOK = CreateGlobalForward("NE_OnPluginNotOK", ET_Ignore);
+
 	g_hOnPublicMapInsert = CreateGlobalForward("NE_OnPublicMapInsert", ET_Ignore, Param_Cell, Param_String, Param_Cell, Param_Cell, Param_Cell);
 	g_hOnPublicMapReplaced = CreateGlobalForward("NE_OnPublicMapReplaced", ET_Ignore, Param_Cell, Param_String, Param_Cell, Param_Cell, Param_Cell);
 	g_hOnAdminMapInsert = CreateGlobalForward("NE_OnAdminMapInsert", ET_Ignore, Param_Cell, Param_String);
 	g_hOnMapNominationRemove = CreateGlobalForward("NE_OnMapNominationRemove", ET_Ignore, Param_Cell, Param_String);
+}
+
+stock void SendForward_Available()
+{
+	Call_StartForward(g_hForward_StatusOK);
+	Call_Finish();
+}
+
+stock void SendForward_NotAvailable()
+{
+	Call_StartForward(g_hForward_StatusNotOK);
+	Call_Finish();
 }
 
 stock void Forward_OnPublicMapInsert(int client, char[] mapname, bool IsVIP, bool IsLeader, bool IsAdmin)

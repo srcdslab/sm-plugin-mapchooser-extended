@@ -3,6 +3,27 @@
 #endif
 #define _nominations_extended_included_
 
+#define NE_V_MAJOR 1
+#define NE_V_MINOR 13
+#define NE_V_PATCH 0
+
+#define NE_VERSION "1.13.0"
+
+/**
+ * Called when the plugin becomes available.
+ * 
+ * @noreturn
+ */
+forward void NE_OnPluginOK();
+
+/**
+ * Called when the plugin becomes unavailable.
+ * This can happen when the plugin is reloaded or unloaded.
+ * 
+ * @noreturn
+ */
+forward void NE_OnPluginNotOK();
+
 /**
  * Get the current nomination pool
  * 
@@ -58,9 +79,10 @@ native void ToggleNominations(bool lock);
  * @param mapname     	Name of the nap nominated
  * @param IsVIP     	Is VIP Nomination
  * @param IsLeader     	Is Leader Nomination
+ * @param IsAdmin     	Is Admin Nomination
  * @noreturn
  */
-forward void NE_OnPublicMapInsert(int client, char[] mapname, bool IsVIP, bool IsLeader);
+forward void NE_OnPublicMapInsert(int client, char[] mapname, bool IsVIP, bool IsLeader, bool IsAdmin);
 
 /**
  * Called when a map get replaced by the owner
@@ -69,9 +91,10 @@ forward void NE_OnPublicMapInsert(int client, char[] mapname, bool IsVIP, bool I
  * @param mapname     	Name of the nap nominated
  * @param IsVIP     	Is VIP Nomination
  * @param IsLeader     	Is Leader Nomination
+ * @param IsAdmin     	Is Admin Nomination
  * @noreturn
  */
-forward void NE_OnPublicMapReplaced(int client, char[] mapname, bool IsVIP, bool IsLeader);
+forward void NE_OnPublicMapReplaced(int client, char[] mapname, bool IsVIP, bool IsLeader, bool IsAdmin);
 
 /**
  * Called when a map get inserted by an admin

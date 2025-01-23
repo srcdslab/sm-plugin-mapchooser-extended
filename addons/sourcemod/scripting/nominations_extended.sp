@@ -36,6 +36,7 @@
 #include <sourcemod>
 #include <mapchooser>
 #include <mapchooser_extended>
+#include <nominations_extended>
 #include <multicolors>
 #include <clientprefs>
 
@@ -45,8 +46,6 @@
 #undef REQUIRE_PLUGIN
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
-
-#define NE_VERSION "1.12.2"
 
 #include "ne/cvars.inc"
 #include "ne/forwards.inc"
@@ -97,6 +96,21 @@ public APLRes AskPluginLoad2(Handle hThis, bool bLate, char[] err, int iErrLen)
 public void OnAllPluginsLoaded()
 {
 	FindMCECvars();
+
+	SendForward_Available();
+}
+
+public void OnPluginPauseChange(bool pause)
+{
+	if (pause)
+		SendForward_NotAvailable();
+	else
+		SendForward_Available();
+}
+
+public void OnPluginEnd()
+{
+	SendForward_NotAvailable();
 }
 
 public void OnMapEnd()
