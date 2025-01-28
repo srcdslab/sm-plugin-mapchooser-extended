@@ -96,21 +96,6 @@ public APLRes AskPluginLoad2(Handle hThis, bool bLate, char[] err, int iErrLen)
 public void OnAllPluginsLoaded()
 {
 	FindMCECvars();
-
-	SendForward_Available();
-}
-
-public void OnPluginPauseChange(bool pause)
-{
-	if (pause)
-		SendForward_NotAvailable();
-	else
-		SendForward_Available();
-}
-
-public void OnPluginEnd()
-{
-	SendForward_NotAvailable();
 }
 
 public void OnMapEnd()

@@ -3,26 +3,11 @@
 #endif
 #define _nominations_extended_included_
 
-#define NE_V_MAJOR 1
-#define NE_V_MINOR 13
-#define NE_V_PATCH 0
+#define NE_V_MAJOR "1"
+#define NE_V_MINOR "12"
+#define NE_V_PATCH "9"
 
-#define NE_VERSION "1.13.0"
-
-/**
- * Called when the plugin becomes available.
- * 
- * @noreturn
- */
-forward void NE_OnPluginOK();
-
-/**
- * Called when the plugin becomes unavailable.
- * This can happen when the plugin is reloaded or unloaded.
- * 
- * @noreturn
- */
-forward void NE_OnPluginNotOK();
+#define NE_VERSION NE_V_MAJOR..."."...NE_V_MINOR..."."...NE_V_PATCH
 
 /**
  * Get the current nomination pool

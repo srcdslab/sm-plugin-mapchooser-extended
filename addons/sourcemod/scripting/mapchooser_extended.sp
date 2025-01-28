@@ -117,23 +117,8 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 public void OnAllPluginsLoaded()
 {
-	SendForward_Available();
-
 	g_ZLeader = LibraryExists(ZLEADER);
 	g_DynamicChannels = LibraryExists(DYNCHANNELS);
-}
-
-public void OnPluginPauseChange(bool pause)
-{
-	if (pause)
-		SendForward_NotAvailable();
-	else
-		SendForward_Available();
-}
-
-public void OnPluginEnd()
-{
-	SendForward_NotAvailable();
 }
 
 public void OnLibraryAdded(const char[] name)
