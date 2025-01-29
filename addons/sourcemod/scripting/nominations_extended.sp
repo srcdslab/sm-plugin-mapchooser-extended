@@ -36,6 +36,7 @@
 #include <sourcemod>
 #include <mapchooser>
 #include <mapchooser_extended>
+#include <nominations_extended>
 #include <multicolors>
 #include <clientprefs>
 
@@ -45,8 +46,6 @@
 #undef REQUIRE_PLUGIN
 #tryinclude <zleader>
 #define REQUIRE_PLUGIN
-
-#define NE_VERSION "1.12.2"
 
 #include "ne/cvars.inc"
 #include "ne/forwards.inc"

@@ -39,7 +39,11 @@
 #define _mapchooser_extended_included_
 #include <mapchooser>
 
-// MCE 1.12 series
+#define MCE_V_MAJOR "1"
+#define MCE_V_MINOR "12"
+#define MCE_V_PATCH "3"
+
+#define MCE_VERSION MCE_V_MAJOR..."."...MCE_V_MINOR..."."...MCE_V_PATCH
 
 enum CanNominateResult
 {
@@ -48,7 +52,6 @@ enum CanNominateResult
 	CanNominate_No_VoteComplete,	/** No, map vote is completed */
 	CanNominate_Yes,				/** Yes, you can nominate */
 };
-
 
 /**
  * Called whenever warning timer starts
