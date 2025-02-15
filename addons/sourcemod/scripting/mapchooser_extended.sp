@@ -125,7 +125,7 @@ public void OnLibraryAdded(const char[] name)
 {
 	if (strcmp(name, ZLEADER) == 0)
 		g_ZLeader = true;
-	if (strcmp(name, DYNCHANNELS) == 0)
+	else if (strcmp(name, DYNCHANNELS) == 0)
 		g_DynamicChannels = true;
 }
 
@@ -133,7 +133,7 @@ public void OnLibraryRemoved(const char[] name)
 {
 	if (strcmp(name, ZLEADER) == 0)
 		g_ZLeader = false;
-	if (strcmp(name, DYNCHANNELS) == 0)
+	else if (strcmp(name, DYNCHANNELS) == 0)
 		g_DynamicChannels = false;
 }
 
