@@ -46,7 +46,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.11.1"
+#define RTVE_VERSION "1.11.2"
 
 public Plugin myinfo =
 {
@@ -117,14 +117,14 @@ public void OnLibraryRemoved(const char[] name)
 {
 	if (StrEqual(name, "AFKManager"))
 		g_bPlugin_AFK = false;
-	if (StrEqual(name, "PlayerManager"))
+	else if (StrEqual(name, "PlayerManager"))
 		g_bPlugin_PM = false;
 }
 public void OnLibraryAdded(const char[] name)
 {
 	if (StrEqual(name, "AFKManager"))
 		g_bPlugin_AFK = true;
-	if (StrEqual(name, "PlayerManager"))
+	else if (StrEqual(name, "PlayerManager"))
 		g_bPlugin_PM = true;
 }
 
