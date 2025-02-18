@@ -683,6 +683,18 @@ stock void InitializeOfficialMapList()
 	}
 }
 
+stock void InitializeMapTimeLimit()
+{
+	if (g_Cvar_TimeLimit != INVALID_HANDLE)
+	{
+		char sCurrentMap[PLATFORM_MAX_PATH];
+		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+		int iMapTimeLimit = InternalGetMapTimeLimit(sCurrentMap);
+		SetConVarInt(g_Cvar_TimeLimit, iMapTimeLimit);
+		LogMessage("Setting timelimit to %d for map %s", iMapTimeLimit, sCurrentMap);
+	}
+}
+
 stock bool IsMapEndVoteAllowed()
 {
 	if (!g_bEndOfMapVote || g_MapVoteCompleted || g_HasVoteStarted)

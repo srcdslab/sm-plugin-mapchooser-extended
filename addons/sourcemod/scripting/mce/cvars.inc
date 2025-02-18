@@ -13,6 +13,7 @@
 ConVar g_Cvar_Winlimit;
 ConVar g_Cvar_Maxrounds;
 ConVar g_Cvar_Fraglimit;
+ConVar g_Cvar_TimeLimit;
 ConVar g_Cvar_Bonusroundtime;
 ConVar g_Cvar_MatchClinch;
 ConVar g_Cvar_VoteNextLevel;
@@ -151,6 +152,7 @@ stock void CvarsInit()
 	g_Cvar_Winlimit = FindConVar("mp_winlimit");
 	g_Cvar_Maxrounds = FindConVar("mp_maxrounds");
 	g_Cvar_Fraglimit = FindConVar("mp_fraglimit");
+	g_Cvar_TimeLimit = FindConVar("mp_timelimit");
 
 	g_Cvar_EndOfMapVote = CreateConVar("mce_endvote", "1", "Specifies if MapChooser should run an end of map vote", _, true, 0.0, true, 1.0);
 	g_Cvar_EndOfMapInfo = CreateConVar("mce_endmap_info", "1", "Specifies if MapChooser should print a message with nextmap when the map end.", _, true, 0.0, true, 1.0);

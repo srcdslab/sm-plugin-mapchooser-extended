@@ -45,6 +45,7 @@ Advanced Automated Map Voting with Extensions
         "ExtendTime"    "15" // Duration of an Extend in minutes
         "ExtendRound"   "3" // Numbers of rounds to extend
         "ExtendFrag"    "100" // Numbers of frags to extend
+        "TimeLimit"     "20" // Time in minutes to enforce map time (mp_timelimit)
     }
 }
 ```
