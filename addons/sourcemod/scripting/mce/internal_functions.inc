@@ -201,6 +201,19 @@ public int InternalGetMapExtendFrag(const char[] map)
 	return g_Config.GetNum("ExtendFrag", frag);
 }
 
+public int InternalGetMapTimeLimit(const char[] map)
+{
+	int time = g_Cvar_TimeLimit.IntValue;
+	if (!g_Config)
+		return time;
+
+	g_Config.Rewind();
+	if (!g_Config.JumpToKey(map))
+		return time;
+
+	return g_Config.GetNum("TimeLimit", time);
+}
+
 stock int InternalGetMapCooldownTime(const char[] map)
 {
 	int Cooldown = 0;

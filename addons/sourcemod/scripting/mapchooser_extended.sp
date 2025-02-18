@@ -147,6 +147,7 @@ public void OnConfigsExecuted()
 {
 	InitializeMapVoteSettings();
 	InitializeOfficialMapList();
+	InitializeMapTimeLimit();
 }
 
 public void OnMapEnd()

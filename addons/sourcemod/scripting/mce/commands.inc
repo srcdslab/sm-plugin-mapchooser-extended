@@ -86,6 +86,7 @@ public Action Command_ShowConfig(int client, int args)
 	int extendtime = InternalGetMapExtendTime(map);
 	int extendround = InternalGetMapExtendRound(map);
 	int extendfrag = InternalGetMapExtendFrag(map);
+	int timelimit = InternalGetMapTimeLimit(map);
 	int cooldown = InternalGetMapCooldown(map);
 	int minplayer = InternalGetMapMinPlayers(map);
 	int maxplayer = InternalGetMapMaxPlayers(map);
@@ -109,6 +110,7 @@ public Action Command_ShowConfig(int client, int args)
 	PrintToConsole(client, "%-15s %5d", "Extend Time: ", extendtime);
 	PrintToConsole(client, "%-15s %5d", "Extend Round: ", extendround);
 	PrintToConsole(client, "%-15s %5d", "Extend Frag: ", extendfrag);
+	PrintToConsole(client, "%-15s %5d", "Time Limit: ", timelimit);
 	PrintToConsole(client, "%-15s %5d", "Cooldown: ", cooldown);
 	PrintToConsole(client, "%-15s %5d", "Min Players: ", minplayer);
 	PrintToConsole(client, "%-15s %5d", "Max Players: ", maxplayer);
