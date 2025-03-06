@@ -33,6 +33,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 
 		strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
 		SetArrayString(g_NominateList, index, map);
+		AlphabeticSortMapLists(g_NominateList, g_NominateOwners);
 		return Nominate_Replaced;
 	}
 
@@ -68,6 +69,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	}
 
 	strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
+	AlphabeticSortMapLists(g_NominateList, g_NominateOwners);
 
 	return Nominate_Added;
 }
