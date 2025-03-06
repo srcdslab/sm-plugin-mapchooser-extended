@@ -850,3 +850,27 @@ stock ClearStoredNomination(int client)
 {
 	g_sNominations[client][0] = '\0';
 }
+
+stock void AlphabeticSortMapLists(Handle mapList, Handle ownerList)
+{
+	int size = GetArraySize(mapList);
+	
+	if (size <= 1)
+		return;
+	
+	for (int i = 0; i < size - 1; i++)
+	{
+		for (int j = 0; j < size - i - 1; j++)
+		{
+			char map1[PLATFORM_MAX_PATH], map2[PLATFORM_MAX_PATH];
+			GetArrayString(mapList, j, map1, sizeof(map1));
+			GetArrayString(mapList, j+1, map2, sizeof(map2));
+			
+			if (strcmp(map1, map2, false) > 0)
+			{
+				SwapArrayItems(mapList, j, j+1);
+				SwapArrayItems(ownerList, j, j+1);
+			}
+		}
+	}
+}

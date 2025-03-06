@@ -299,3 +299,12 @@ stock bool IsMapRestricted(int client, char[] map)
 	return AreRestrictionsActive() && (GetMapCooldownTime(map) > GetTime() || GetMapTimeRestriction(map) || GetMapPlayerRestriction(map) ||
 	GetMapGroupRestriction(map, client) >= 0 || IsClientMapAdminRestricted(map, client) || IsClientMapVIPRestricted(map, client) || IsClientMapLeaderRestricted(map, client));
 }
+
+public int AlphabeticSortCallback(int index1, int index2, Handle array, Handle hndl)
+{
+	char map1[PLATFORM_MAX_PATH], map2[PLATFORM_MAX_PATH];
+	GetArrayString(view_as<ArrayList>(array), index1, map1, sizeof(map1));
+	GetArrayString(view_as<ArrayList>(array), index2, map2, sizeof(map2));
+	
+	return strcmp(map1, map2, false);
+}

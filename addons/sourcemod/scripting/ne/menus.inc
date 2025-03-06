@@ -202,6 +202,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 		}
 	}
 
+	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
 	for (int i = 0; i < GetArraySize(g_MapList); i++)
 	{
 		GetArrayString(g_MapList, i, map, sizeof(map));
@@ -211,10 +212,10 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 			// If client does not have cookies cached or choose see unavailable maps: Show all maps
 			if (!bCached || bCached && g_bShowUnavailableMaps[client])
 			{
-				AddMenuItem(menu, map, map);
+				tempMapList.PushString(map);
 			}
 			// Cookies are cached and client choose to Hide unavailable maps
-			if (bCached && !g_bShowUnavailableMaps[client] && 
+			else if (bCached && !g_bShowUnavailableMaps[client] && 
 				AreRestrictionsActive() &&
 				GetMapCooldown(map) == 0 &&
 				GetMapCooldownTime(map) < GetTime() &&
@@ -222,11 +223,20 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 				GetMapPlayerRestriction(map) == 0 &&
 				GetMapGroupRestriction(map, client) < 0)
 			{
-				AddMenuItem(menu, map, map);
+				tempMapList.PushString(map);
 			}
 		}
 	}
 
+	tempMapList.SortCustom(AlphabeticSortCallback);
+
+	for (int i = 0; i < tempMapList.Length; i++)
+	{
+		tempMapList.GetString(i, map, sizeof(map));
+		AddMenuItem(menu, map, map);
+	}
+	
+	delete tempMapList;
 	SetMenuExitButton(menu, true);
 
 	return menu;
@@ -235,15 +245,16 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 Menu BuildAdminMapMenu(const char[] filter)
 {
 	Menu menu = CreateMenu(Handler_AdminMapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
+	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
 
 	static char map[PLATFORM_MAX_PATH];
-
+	// Add the maps from the admin map list
 	for (int i = 0; i < GetArraySize(g_AdminMapList); i++)
 	{
 		GetArrayString(g_AdminMapList, i, map, sizeof(map));
 
 		if (!filter[0] || StrContains(map, filter, false) != -1)
-			AddMenuItem(menu, map, map);
+			tempMapList.PushString(map);
 	}
 
 	if (filter[0])
@@ -254,12 +265,21 @@ Menu BuildAdminMapMenu(const char[] filter)
 			GetArrayString(g_MapList, i, map, sizeof(map));
 
 			if (!filter[0] || StrContains(map, filter, false) != -1)
-				AddMenuItem(menu, map, map);
+				tempMapList.PushString(map);
 		}
 	}
 
-	SetMenuExitButton(menu, true);
+	// Sort the maps in alphabetical order
+	tempMapList.SortCustom(AlphabeticSortCallback);
+	
+	// Add the maps to the menu
+	for (int i = 0; i < tempMapList.Length; i++)
+	{
+		tempMapList.GetString(i, map, sizeof(map));
+		AddMenuItem(menu, map, map);
+	}
 
+	delete tempMapList;
 	return menu;
 }
 
