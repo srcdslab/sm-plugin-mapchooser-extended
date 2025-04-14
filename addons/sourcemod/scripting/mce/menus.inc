@@ -246,7 +246,7 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 		{
 			GetArrayString(inputlist, i, map, PLATFORM_MAX_PATH);
 
-			if (IsMapValid(map))
+			if (IsMapValidEx(map))
 			{
 				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);

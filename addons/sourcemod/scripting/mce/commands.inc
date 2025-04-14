@@ -44,7 +44,7 @@ public Action Command_SetNextmap(int client, int args)
 	static char map[PLATFORM_MAX_PATH];
 	GetCmdArg(1, map, PLATFORM_MAX_PATH);
 
-	if (!IsMapValid(map))
+	if (!IsMapValidEx(map))
 	{
 		CReplyToCommand(client, "{green}[MCE]{default} %t", "Map was not found", map);
 		return Plugin_Handled;
