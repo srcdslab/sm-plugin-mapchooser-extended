@@ -11,7 +11,7 @@
 
 NominateResult InternalNominateMap(char[] map, bool force, int owner)
 {
-	if (!IsMapValid(map))
+	if (!IsMapValidEx(map))
 	{
 		return Nominate_InvalidMap;
 	}
@@ -732,4 +732,11 @@ stock void InternalShowMapGroups(int client, const char[] map)
 
 	PrintToConsole(client, "%s is in %d groups", map, count);
 	PrintToConsole(client, "-----------------------------------------");
+}
+
+stock bool IsMapValidEx(const char[] map)
+{
+	char displayName[PLATFORM_MAX_PATH];
+	FindMapResult result = FindMap(map, displayName, sizeof(displayName));
+	return (result == FindMap_Found);
 }
