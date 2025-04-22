@@ -63,7 +63,12 @@
 	"Revote Is Needed"
 	{
 		"#format"	"{1:i}"
-		"en"		"No map has received more than {1}%% of the vote.\n{green}[MCE] {default}So, which map will win? A revote is needed!"
+		"en"		"No map has received more than {1}%% of the vote."
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"en"		"So, which map will win? A revote is needed!"
 	}
 
 	"Revote Warning"
