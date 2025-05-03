@@ -58,7 +58,12 @@
 
 	"Revote Is Needed"
 	{
-		"es"		"No hay ningun mapa que haya recibido el {1}%% de votaciones.\n{green}[MCE] {default}Entonces, que mapa ganara? Es necesario otra votacion!"
+		"es"		"No hay ningun mapa que haya recibido el {1}%% de votaciones."
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"es"		"Entonces, que mapa ganara? Es necesario otra votacion!"
 	}
 
 	"Revote Warning"

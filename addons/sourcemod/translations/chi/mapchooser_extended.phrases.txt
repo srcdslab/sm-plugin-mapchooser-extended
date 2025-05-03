@@ -57,7 +57,12 @@
 
 	"Revote Is Needed"
 	{
-		"chi"		"没有一张地图获得超过 {1}%% 的选票. \n{green}[MCE] {default}那么，哪张地图会获胜？需要重新投票！"
+		"chi"		"没有一张地图获得超过 {1}%% 的选票."
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"chi"		"所以，哪张地图会获胜？需要重新投票！"
 	}
 
 	"Revote Warning"

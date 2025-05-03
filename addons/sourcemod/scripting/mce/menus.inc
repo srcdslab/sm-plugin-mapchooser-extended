@@ -497,7 +497,10 @@ public void Handler_MapVoteFinished(Handle menu,
 			}
 
 			LogAction(-1, -1, "[MCE] No map has received more than \"%d\"\%% of the vote.\nA revote is needed!", required_percent);
+
 			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed", required_percent);
+			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed New Vote");
+
 			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
 			return;
 		}

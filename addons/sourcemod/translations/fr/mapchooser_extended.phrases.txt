@@ -58,7 +58,12 @@
 
 	"Revote Is Needed"
 	{
-		"fr"		"Aucune map n'a reçu plus de {1}%% du vote.\nAlors, quelle map va gagner? Un nouveau vote va être lancé!"
+		"fr"		"Aucune map n'a reçu plus de {1}%% du vote."
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"fr"		"Alors, quelle map va gagner? Un nouveau vote va être lancé!"
 	}
 
 	"Revote Warning"
