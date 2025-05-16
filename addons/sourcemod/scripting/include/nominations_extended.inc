@@ -5,7 +5,7 @@
 
 #define NE_V_MAJOR "1"
 #define NE_V_MINOR "12"
-#define NE_V_PATCH "10"
+#define NE_V_PATCH "11"
 
 #define NE_VERSION NE_V_MAJOR..."."...NE_V_MINOR..."."...NE_V_PATCH
 

@@ -177,7 +177,23 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 
 Menu BuildMapMenu(const char[] filter, int client = -1)
 {
-	Menu menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
+	// If we have a filter, create a new temporary menu
+	// Otherwise use the global menu
+	Menu menu;
+	if (filter[0])
+	{
+		menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
+	}
+	else
+	{
+		// If global menu exists, delete it first
+		if (g_MapMenu != null)
+		{
+			delete g_MapMenu;
+		}
+		menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
+		g_MapMenu = menu;
+	}
 
 	static char map[PLATFORM_MAX_PATH];
 	bool bValid = client > 0 && client <= MaxClients && IsClientInGame(client);
