@@ -35,6 +35,7 @@
 #include <sourcemod>
 #include <mapchooser>
 #include <nextmap>
+#include <utilshelper>
 #include <multicolors>
 #include <sdktools_functions>
 
@@ -46,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.11.2"
+#define RTVE_VERSION "1.11.3"
 
 public Plugin myinfo =
 {
@@ -336,7 +337,7 @@ void StartRTV()
 		char map[PLATFORM_MAX_PATH];
 		if (GetNextMap(map, sizeof(map)))
 		{
-			GetMapDisplayName(map, map, sizeof(map));
+			GetMapDisplayNameOptimized(map, map, sizeof(map));
 
 			CPrintToChatAll("{green}[RTVE]{default} %t", "Changing Maps", map);
 			CreateTimer(5.0, Timer_ChangeMap, _, TIMER_FLAG_NO_MAPCHANGE);
@@ -402,7 +403,7 @@ public Action Command_ForceRTV(int client, int args)
 		char map[PLATFORM_MAX_PATH];
 		if (GetNextMap(map, sizeof(map)))
 		{
-			GetMapDisplayName(map, map, sizeof(map));
+			GetMapDisplayNameOptimized(map, map, sizeof(map));
 			LogAction(client, -1, "\"%L\" Forced RockTheVote.. Changing map!\nNextmap: %s", client, map);
 		}
 
