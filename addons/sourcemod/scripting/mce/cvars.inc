@@ -156,7 +156,7 @@ stock void CvarsInit()
 
 	g_Cvar_EndOfMapVote = CreateConVar("mce_endvote", "1", "Specifies if MapChooser should run an end of map vote", _, true, 0.0, true, 1.0);
 	g_Cvar_EndOfMapInfo = CreateConVar("mce_endmap_info", "1", "Specifies if MapChooser should print a message with nextmap when the map end.", _, true, 0.0, true, 1.0);
-	g_cvHUDChannel = CreateConVar("mce_hud_channel", "1", "Channel for the HUD messages", _, true, 0.0, true, 6.0);
+	g_cvHUDChannel = CreateConVar("mce_hud_channel", "1", "Channel for the HUD messages", _, true, 0.0, true, 5.0);
 
 	g_Cvar_StartTime = CreateConVar("mce_starttime", "10", "Specifies when to start the vote based on time remaining.", _, true, 1.0);
 	g_Cvar_RandomStartTime = CreateConVar("mce_random_starttime", "30.0", "The max interval time to add up to the original interval time for map vote in seconds", _, true, 1.0, true, 180.0);
