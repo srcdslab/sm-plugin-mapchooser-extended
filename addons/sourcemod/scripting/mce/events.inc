@@ -154,7 +154,7 @@ public void Event_WinPanel(Handle event, const char[] name, bool dontBroadcast)
 	int iHUDChannel = -1;
 
 	iChannel = g_iHUDChannel;
-	if (iChannel < 0 || iChannel > 6)
+	if (iChannel < 0 || iChannel > 5)
 		iChannel = 1;
 
 	bDynamicAvailable = g_DynamicChannels && CanTestFeatures() && GetFeatureStatus(FeatureType_Native, "GetDynamicChannel") == FeatureStatus_Available;
