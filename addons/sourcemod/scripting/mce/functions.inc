@@ -83,45 +83,23 @@ stock void InitializeGroupSettings()
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 	int groups[32];
-	int iDefaultGrpCooldown = -1;
 	int iTotalGrpFound = InternalGetMapGroups(sCurrentMap, groups, sizeof(groups));
-
-	bool bValidCooldownFound = false;
-	bool bCooldownMatching = true;
 
 	for (int i = 0; i < iTotalGrpFound; ++i)
 	{
 		int groupID = groups[i];
 		int iGrpCooldown = InternalGetGroupCooldown(groupID);
+		int iGrpCooldownTime = InternalGetGroupCooldownTime(groupID);
 
-		if (iGrpCooldown >= 0)
+		if (iGrpCooldownTime > 0)
 		{
-			if (!bValidCooldownFound) // First valid cooldown found
-			{
-				iDefaultGrpCooldown = iGrpCooldown;
-				bValidCooldownFound = true;
-			}
-			else if (iDefaultGrpCooldown != iGrpCooldown) // Found a different cooldown value in another group
-			{
-				bCooldownMatching = false;
-				LogMessage("Map %s is in multiple groups with different cooldowns. No shared cooldown will be applied.", sCurrentMap);
-				return;
-			}
+			LogMessage("Map %s is in group %d with time-based cooldown of %d seconds", sCurrentMap, groupID, iGrpCooldownTime);
+			InternalSetGroupCooldownToMaps(groupID, iGrpCooldown);
 		}
-	}
-
-	if (bValidCooldownFound && bCooldownMatching)
-	{
-		LogMessage("Map %s is in multiple groups with matching cooldowns. Applying shared cooldown to all maps in these groups.", sCurrentMap);
-		// Apply the cooldown to all maps in groups with a matching cooldown
-		for (int i = 0; i < iTotalGrpFound; ++i)
+		else if (iGrpCooldown >= 0)
 		{
-			int groupID = groups[i];
-			if (InternalGetGroupCooldown(groupID) == -1) // No cooldown configured for this group
-				continue;
-
-			InternalSetGroupCooldownToMaps(groupID, iDefaultGrpCooldown);
-			LogMessage("Applied shared cooldown to maps in group \"%d\".", groupID);
+			LogMessage("Map %s is in group %d with counter-based cooldown of %d", sCurrentMap, groupID, iGrpCooldown);
+			InternalSetGroupCooldownToMaps(groupID, iGrpCooldown);
 		}
 	}
 }

@@ -14,6 +14,7 @@ Advanced Automated Map Voting with Extensions
             "_name" "Final Fantasy" // Group name (Optional) 
             "_max" "1" // Maximum 1 consecutive map from this group
             "_cooldown" "10" // Shared cooldown mode to all these maps (cvar: mce_sharedcd_mode)
+            "_cooldown_time" "60" // Same as `"CooldownTime"` but this is for groups. Supported formats: "30m", "2h", "1h30m", "2h15m30s", "60" (defaults to minutes)
             "ze_ffvii_mako_reactor_v2_2" {}
             "ze_ffvii_mako_reactor_v3_1" {}
             "ze_ffvii_mako_reactor_v5_3" {}
@@ -21,9 +22,10 @@ Advanced Automated Map Voting with Extensions
         }
         "2" // wanderers
         {
-            "_name" "Wanderers marathon" // Group name (Optional) 
-            "_max" "2" // Maximum 2 consecutive maps from this group
-            "_cooldown" "44" // Shared cooldown mode to all these maps (cvar: mce_sharedcd_mode)
+            "_name" "Wanderers marathon"
+            "_max" "2"
+            "_cooldown" "44"
+            "_cooldown_time" "12h"
             "ze_ffxiv_wanderers_palace_css" {}
             "ze_ffxiv_wanderers_palace_v4_5s" {}
             "ze_ffxiv_wanderers_palace_v5_2f" {}
