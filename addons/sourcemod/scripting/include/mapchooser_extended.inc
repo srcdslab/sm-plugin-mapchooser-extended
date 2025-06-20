@@ -41,7 +41,7 @@
 
 #define MCE_V_MAJOR "1"
 #define MCE_V_MINOR "13"
-#define MCE_V_PATCH "4"
+#define MCE_V_PATCH "5"
 
 #define MCE_VERSION MCE_V_MAJOR..."."...MCE_V_MINOR..."."...MCE_V_PATCH
 

@@ -394,6 +394,27 @@ stock int InternalGetGroupCooldown(int group)
 	return -1;
 }
 
+stock int InternalGetGroupCooldownTime(int group)
+{
+	char groupstr[8];
+	IntToString(group, groupstr, sizeof(groupstr));
+	if (g_Config && g_Config.JumpToKey("_groups"))
+	{
+		if (g_Config.JumpToKey(groupstr, false))
+		{
+			char time[16];
+			g_Config.GetString("_cooldown_time", time, sizeof(time), "");
+			if (time[0])
+			{
+				g_Config.Rewind();
+				return TimeStrToSeconds(time);
+			}
+			g_Config.Rewind();
+		}
+	}
+	return 0;
+}
+
 stock void InternalSetGroupCooldownToMaps(int group, int cooldown)
 {
 	if (g_Config && g_Config.JumpToKey("_groups"))
@@ -413,9 +434,18 @@ stock void InternalSetGroupCooldownToMaps(int group, int cooldown)
 				char map[PLATFORM_MAX_PATH];
 				g_Config.GetSectionName(map, sizeof(map));
 				if (strncmp(map, "_", 1) == 0) // Skip: All groups settings, always starting with "_"
-                    continue;
+					continue;
 
-				ExcludeMap(map, cooldown, g_iSharedCDMode);
+				// Use time-based cooldown instead of counter-based
+				int cooldownTime = InternalGetGroupCooldownTime(group);
+				if (cooldownTime > 0)
+				{
+					ExcludeMapTime(map, cooldownTime, g_iSharedCDMode);
+				}
+				else
+				{
+					ExcludeMap(map, cooldown, g_iSharedCDMode);
+				}
 			}
 			while (g_Config.GotoNextKey());
 
@@ -717,6 +747,8 @@ stock void InternalShowMapGroups(int client, const char[] map)
 
 		int max = g_Config.GetNum("_max", -1);
 		int cd = g_Config.GetNum("_cooldown", -1);
+		char time[16];
+		g_Config.GetString("_cooldown_time", time, sizeof(time), "");
 
 		if (max > 0)
 		{
@@ -725,6 +757,10 @@ stock void InternalShowMapGroups(int client, const char[] map)
 		if (cd > 0)
 		{
 			PrintToConsole(client, "[%03d] Group Cooldown: %d", count, cd);
+		}
+		if (time[0])
+		{
+			PrintToConsole(client, "[%03d] Group Time Cooldown: %s", count, time);
 		}
 		PrintToConsole(client, "-----------------------------------");
 	}
