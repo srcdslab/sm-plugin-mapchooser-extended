@@ -603,16 +603,22 @@ public Action Command_Nominate(int client, int args)
 	static char name[MAX_NAME_LENGTH];
 	GetClientName(client, name, sizeof(name));
 
+	char mapDisplay[PLATFORM_MAX_PATH];
+	if (GetMapTierName(mapname, mapDisplay, sizeof(mapDisplay)))
+		Format(mapDisplay, sizeof(mapDisplay), "%s %t", mapname, "MapTierDisplay", mapDisplay);
+	else
+		strcopy(mapDisplay, sizeof(mapDisplay), mapname);
+					
 	if (result == Nominate_Added)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapname);
-		LogMessage("%L has nominated %s", client, mapname);
+		CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapDisplay);
+		LogMessage("%L has nominated %s", client, mapDisplay);
 		Forward_OnPublicMapInsert(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
 	else if (result == Nominate_Replaced)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "Map Nomination Changed", name, mapname);
-		LogMessage("%L has changed their nomination to %s", client, mapname);
+		CPrintToChatAll("{green}[NE]{default} %t", "Map Nomination Changed", name, mapDisplay);
+		LogMessage("%L has changed their nomination to %s", client, mapDisplay);
 		Forward_OnPublicMapReplaced(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
 
@@ -631,8 +637,14 @@ public Action Command_UnNominate(int client, int args)
 		return Plugin_Handled;
 	}
 
-	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", client, map);
-	LogAction(client, -1, "\"%L\" has removed his nomination \"%s\".", client, map);
+	char mapDisplay[PLATFORM_MAX_PATH];
+	if (GetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
+		Format(mapDisplay, sizeof(mapDisplay), "%s %T", map, "MapTierDisplay", client);
+	else
+		strcopy(mapDisplay, sizeof(mapDisplay), map);
+		
+	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", client, mapDisplay);
+	LogAction(client, -1, "\"%L\" has removed his nomination \"%s\".", client, mapDisplay);
 
 	return Plugin_Handled;
 }

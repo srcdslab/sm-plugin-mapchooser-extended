@@ -19,7 +19,7 @@ stock void InitializeMapLists()
 	g_TimeMapList = new StringMap();
 	g_NextMapList = CreateArray(arraySize);
 	g_OfficialList = CreateArray(arraySize);
-
+	
 	GetGameFolderName(g_sGameModName, sizeof(g_sGameModName));
 
 	static char mapListPath[PLATFORM_MAX_PATH];
@@ -682,7 +682,11 @@ stock bool IsMapEndVoteAllowed()
 
 stock void AddMapItem(const char[] map)
 {
-	AddMenuItem(g_VoteMenu, map, map);
+	char mapDisplay[PLATFORM_MAX_PATH]
+	if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
+		Format(mapDisplay, sizeof(mapDisplay), "%s [%s]", map, mapDisplay);
+		
+	AddMenuItem(g_VoteMenu, map, mapDisplay);
 }
 
 stock void GetMapItem(Handle menu, int position, char[] map, int mapLen)
