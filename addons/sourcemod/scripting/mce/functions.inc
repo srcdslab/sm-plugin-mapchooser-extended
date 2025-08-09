@@ -19,7 +19,6 @@ stock void InitializeMapLists()
 	g_TimeMapList = new StringMap();
 	g_NextMapList = CreateArray(arraySize);
 	g_OfficialList = CreateArray(arraySize);
-	g_MapTiers = CreateArray(arraySize);
 	
 	GetGameFolderName(g_sGameModName, sizeof(g_sGameModName));
 
@@ -140,70 +139,6 @@ stock void InitializeMapVoteSettings()
 		if (!g_iStartTime && GetConVarFloat(g_Cvar_Bonusroundtime) <= view_as<float>(g_iVoteDuration))
 			LogError("Warning - Bonus Round Time shorter than Vote Time. Votes during bonus round may not have time to complete");
 	}
-}
-
-stock void InitializeMapTiers()
-{
-	if (!g_bUseTiers)
-		return;
-		
-	ClearArray(g_MapTiers);
-	
-	char sTiersFile[PLATFORM_MAX_PATH];
-	BuildPath(Path_SM, sTiersFile, sizeof(sTiersFile), "configs/mapchooser_extended/tiers.cfg");
-	if (!FileExists(sTiersFile))
-	{
-		LogMessage("Could not find config: \"%s\"", sTiersFile);
-		return;
-	}
-	LogMessage("Found config: \"%s\"", sTiersFile);
-
-	KeyValues kv = new KeyValues("Tiers");
-	if (!kv.ImportFromFile(sTiersFile))
-	{
-		delete kv;
-		LogMessage("ImportFromFile() Tiers failed!");
-		return;
-	}
-	
-	if (!kv.GotoFirstSubKey())
-	{
-		delete kv;
-		LogMessage("GotoFirstSubKey() Tiers failed!");
-		return;
-	}
-	
-	int lastNum;
-	do 
-	{
-		// section identifier needs to be ordered from 1 to infinite
-		char section[4];
-		kv.GetSectionName(section, sizeof(section));
-		int num = StringToInt(section);
-		
-		if(num <= 0)
-		{
-			delete kv;
-			LogMessage("[Map-Tiers] Cannot parse cfg file, found a section with \"0\" or negative identifier");
-			return;
-		}
-		
-		if(num == lastNum)
-		{
-			delete kv;
-			LogMessage("[Map-Tiers] Cannot parse cfg file, found an unordered identifiers");
-			return;
-		}
-		
-		lastNum = num;
-		
-		char mapTier[32];
-		kv.GetString("name", mapTier, sizeof(mapTier));
-		PushArrayString(g_MapTiers, mapTier);
-		LogMessage("[Map-Tiers] Found Tier: %s", mapTier);
-	} while (kv.GotoNextKey());
-	
-	delete kv;
 }
 
 stock void ConfigureBonusRoundTime()
@@ -748,7 +683,7 @@ stock bool IsMapEndVoteAllowed()
 stock void AddMapItem(const char[] map)
 {
 	char mapDisplay[PLATFORM_MAX_PATH]
-	if (GetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
+	if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
 		Format(mapDisplay, sizeof(mapDisplay), "%s [%s]", map, mapDisplay);
 		
 	AddMenuItem(g_VoteMenu, map, mapDisplay);

@@ -69,6 +69,7 @@ ConVar g_Cvar_SharedCDMode;
 ConVar g_Cvar_UseTiers;
 ConVar g_Cvar_ShowMapTier;
 ConVar g_Cvar_DefaultTier;
+ConVar g_Cvar_MaxTiers;
 
 /* Cache convars values */
 bool g_bEndOfMapVote;
@@ -114,6 +115,7 @@ int g_iTimeFrameMin;
 int g_iTimeFrameMax;
 int g_iSharedCDMode;
 int g_iDefaultTier;
+int g_iMaxTiers;
 
 float g_fRandomStartTime;
 float g_fTimerUnlockNoms;
@@ -211,6 +213,7 @@ stock void CvarsInit()
 	g_Cvar_UseTiers = CreateConVar("mce_use_tiers", "1", "Use tiers for maps (map difficulty)", _, true, 0.0, true, 1.0);
 	g_Cvar_ShowMapTier = CreateConVar("mce_show_map_tier", "1", "See the tier of the map which won the vote [Dependecy: mce_use_tiers]", _, true, 0.0, true, 1.0);
 	g_Cvar_DefaultTier = CreateConVar("mce_default_tier", "1", "Default map tiers to set if tier param was not found", _, true, 1.0);
+	g_Cvar_MaxTiers = CreateConVar("sm_mce_max_tiers", "3", "How many tiers will be found in translation file.", _, true, 1.0, true, 10.0);
 	
 	AutoExecConfig(true, "mapchooser_extended");
 
@@ -260,6 +263,7 @@ stock void CvarsInit()
 	g_Cvar_UseTiers.AddChangeHook(OnConVarChanged);
 	g_Cvar_ShowMapTier.AddChangeHook(OnConVarChanged);
 	g_Cvar_DefaultTier.AddChangeHook(OnConVarChanged);
+	g_Cvar_MaxTiers.AddChangeHook(OnConVarChanged);
 	
 	// Cache cvars values
 	g_bEndOfMapVote = GetConVarBool(g_Cvar_EndOfMapVote);
@@ -307,6 +311,7 @@ stock void CvarsInit()
 	g_iTimeFrameMax = GetConVarInt(g_Cvar_NoRestrictionTimeframeMaxTime);
 	g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
 	g_iDefaultTier = GetConVarInt(g_Cvar_DefaultTier);
+	g_iMaxTiers = GetConVarInt(g_Cvar_MaxTiers);
 	
 	g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
 	g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
@@ -399,13 +404,11 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 	else if (convar == g_Cvar_SharedCDMode)
 		g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
 	else if (convar == g_Cvar_UseTiers)
-	{
 		g_bUseTiers = GetConVarBool(g_Cvar_UseTiers);
-		if (g_bUseTiers)
-			InitializeMapTiers();
-	}
 	else if (convar == g_Cvar_ShowMapTier)
 		g_bShowMapTier = GetConVarBool(g_Cvar_ShowMapTier);
 	else if (convar == g_Cvar_DefaultTier)
 		g_iDefaultTier = GetConVarInt(g_Cvar_DefaultTier);
+	else if (convar == g_Cvar_MaxTiers)
+		g_iMaxTiers = GetConVarInt(g_Cvar_MaxTiers);
 }

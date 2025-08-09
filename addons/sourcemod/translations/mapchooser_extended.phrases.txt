@@ -442,4 +442,19 @@
 	{
 		"en"		"Show Maps Tiers"
 	}
+
+	"Tier1"
+	{
+		"en"		"T1"
+	}
+
+	"Tier2"
+	{
+		"en"		"T2"
+	}
+
+	"Tier3"
+	{
+		"en"		"T3"
+	}
 }

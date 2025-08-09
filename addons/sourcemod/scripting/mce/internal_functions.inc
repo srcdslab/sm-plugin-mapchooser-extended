@@ -322,15 +322,14 @@ stock bool InternalGetTierNameFromInt(int tier, char[] tierName, int maxlen, boo
 	
 	if (voteEnd && !g_bShowMapTier)
 		return false;
-		
-	int arrayLength = GetArraySize(g_MapTiers);
-	if (!g_MapTiers || !(arrayLength = GetArraySize(g_MapTiers)))
+	
+	if (tier <= 0 || tier > g_iMaxTiers)
 		return false;
-		
-	if (tier <= 0 || tier > arrayLength)
-		return false;
-		
-	GetArrayString(g_MapTiers, tier - 1, tierName, maxlen);
+	
+	char translation[16];
+	Format(translation, sizeof(translation), "Tier%d", tier);
+	
+	Format(tierName, maxlen, "%t", translation);
 	return true;
 }
 
@@ -338,12 +337,8 @@ stock int InternalGetTiersCount()
 {
 	if (!g_bUseTiers)
 		return 0;
-	
-	int arrayLength;
-	if (!g_MapTiers || !(arrayLength = GetArraySize(g_MapTiers)))
-		return 0;
 		
-	return arrayLength;
+	return g_iMaxTiers;
 }
 
 stock int InternalGetMapGroupID(const char[] map)

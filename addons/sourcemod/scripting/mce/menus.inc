@@ -420,7 +420,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		if(g_bUseTiers && g_bShowMapTier)
 		{
 			char tierName[32];
-			if(InternalGetMapTierName(map, tierName, sizeof(tierName), true))
+			if (InternalGetMapTierName(map, tierName, sizeof(tierName), true))
 				FormatEx(map, sizeof(map), "%s %t", map, "MapTierDisplay", tierName);
 		}
 		
