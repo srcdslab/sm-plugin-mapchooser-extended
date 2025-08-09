@@ -292,6 +292,60 @@ stock int InternalGetMapMaxPlayers(const char[] map)
 	return MaxPlayers;
 }
 
+stock int InternalGetMapTier(const char[] map)
+{
+	if (!g_bUseTiers)
+		return 0;
+	
+	int tier = g_iDefaultTier;
+	if (!g_Config)
+		return tier;
+
+	g_Config.Rewind();
+	if (!g_Config.JumpToKey(map))
+		return tier;
+
+	tier = g_Config.GetNum("tier", tier);
+	return tier;
+}
+
+stock bool InternalGetMapTierName(const char[] map, char[] tierName, int maxlen, bool voteEnd = false)
+{		
+	int tier = InternalGetMapTier(map);
+	return InternalGetTierNameFromInt(tier, tierName, maxlen, voteEnd);
+}
+
+stock bool InternalGetTierNameFromInt(int tier, char[] tierName, int maxlen, bool voteEnd = false)
+{
+	if (!g_bUseTiers)
+		return false;
+	
+	if (voteEnd && !g_bShowMapTier)
+		return false;
+		
+	int arrayLength = GetArraySize(g_MapTiers);
+	if (!g_MapTiers || !(arrayLength = GetArraySize(g_MapTiers)))
+		return false;
+		
+	if (tier <= 0 || tier > arrayLength)
+		return false;
+		
+	GetArrayString(g_MapTiers, tier - 1, tierName, maxlen);
+	return true;
+}
+
+stock int InternalGetTiersCount()
+{
+	if (!g_bUseTiers)
+		return 0;
+	
+	int arrayLength;
+	if (!g_MapTiers || !(arrayLength = GetArraySize(g_MapTiers)))
+		return 0;
+		
+	return arrayLength;
+}
+
 stock int InternalGetMapGroupID(const char[] map)
 {
 	int group = 0;

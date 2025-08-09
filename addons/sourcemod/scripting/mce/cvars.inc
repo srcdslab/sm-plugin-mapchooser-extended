@@ -66,6 +66,9 @@ ConVar g_Cvar_TimerUnlockNoms;
 ConVar g_Cvar_LockNominationsAtWarning;
 ConVar g_Cvar_ShowNominator;
 ConVar g_Cvar_SharedCDMode;
+ConVar g_Cvar_UseTiers;
+ConVar g_Cvar_ShowMapTier;
+ConVar g_Cvar_DefaultTier;
 
 /* Cache convars values */
 bool g_bEndOfMapVote;
@@ -78,6 +81,8 @@ bool g_bShufflePerClient;
 bool g_bNoRestrictionTimeframeEnable;
 bool g_bLockNominationsAtWarning;
 bool g_bShowNominator;
+bool g_bUseTiers;
+bool g_bShowMapTier;
 bool g_bCountBots;
 bool g_bRunOff;
 bool g_bBlockSlots;
@@ -108,6 +113,7 @@ int g_iMarkCustomMaps;
 int g_iTimeFrameMin;
 int g_iTimeFrameMax;
 int g_iSharedCDMode;
+int g_iDefaultTier;
 
 float g_fRandomStartTime;
 float g_fTimerUnlockNoms;
@@ -202,7 +208,10 @@ stock void CvarsInit()
 	g_Cvar_TimerUnlockNoms = CreateConVar("mce_locknominations_timer", "15.0", "Unlock nominations after a vote. Time in seconds.", _, true, 0.0, true, 60.0);
 	g_Cvar_ShowNominator = CreateConVar("mce_shownominator", "1", "See who nominated the map which won the vote", _, true, 0.0, true, 1.0);
 	g_Cvar_SharedCDMode = CreateConVar("mce_sharedcd_mode", "1", "Group maps with shared cooldowns mode (See ExcludeMap native docs for mode)", _, true, 0.0, true, 2.0);
-
+	g_Cvar_UseTiers = CreateConVar("mce_use_tiers", "1", "Use tiers for maps (map difficulty)", _, true, 0.0, true, 1.0);
+	g_Cvar_ShowMapTier = CreateConVar("mce_show_map_tier", "1", "See the tier of the map which won the vote [Dependecy: mce_use_tiers]", _, true, 0.0, true, 1.0);
+	g_Cvar_DefaultTier = CreateConVar("mce_default_tier", "1", "Default map tiers to set if tier param was not found", _, true, 1.0);
+	
 	AutoExecConfig(true, "mapchooser_extended");
 
 	// Hooks cvars changes 
@@ -248,7 +257,10 @@ stock void CvarsInit()
 	g_Cvar_LockNominationsAtWarning.AddChangeHook(OnConVarChanged);
 	g_Cvar_ShowNominator.AddChangeHook(OnConVarChanged);
 	g_Cvar_SharedCDMode.AddChangeHook(OnConVarChanged);
-
+	g_Cvar_UseTiers.AddChangeHook(OnConVarChanged);
+	g_Cvar_ShowMapTier.AddChangeHook(OnConVarChanged);
+	g_Cvar_DefaultTier.AddChangeHook(OnConVarChanged);
+	
 	// Cache cvars values
 	g_bEndOfMapVote = GetConVarBool(g_Cvar_EndOfMapVote);
 	g_bEndOfMapInfo = GetConVarBool(g_Cvar_EndOfMapInfo);
@@ -260,6 +272,8 @@ stock void CvarsInit()
 	g_bNoRestrictionTimeframeEnable = GetConVarBool(g_Cvar_NoRestrictionTimeframeEnable);
 	g_bLockNominationsAtWarning = GetConVarBool(g_Cvar_LockNominationsAtWarning);
 	g_bShowNominator = GetConVarBool(g_Cvar_ShowNominator);
+	g_bUseTiers = GetConVarBool(g_Cvar_UseTiers);
+	g_bShowMapTier = GetConVarBool(g_Cvar_ShowMapTier);
 	g_bCountBots = GetConVarBool(g_Cvar_CountBots);
 	g_bRunOff = GetConVarBool(g_Cvar_RunOff);
 	g_bBlockSlots = GetConVarBool(g_Cvar_BlockSlots);
@@ -292,7 +306,8 @@ stock void CvarsInit()
 	g_iTimeFrameMin = GetConVarInt(g_Cvar_NoRestrictionTimeframeMinTime);
 	g_iTimeFrameMax = GetConVarInt(g_Cvar_NoRestrictionTimeframeMaxTime);
 	g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
-
+	g_iDefaultTier = GetConVarInt(g_Cvar_DefaultTier);
+	
 	g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
 	g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
 }
@@ -383,4 +398,14 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 		g_bShowNominator = GetConVarBool(g_Cvar_ShowNominator);
 	else if (convar == g_Cvar_SharedCDMode)
 		g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
+	else if (convar == g_Cvar_UseTiers)
+	{
+		g_bUseTiers = GetConVarBool(g_Cvar_UseTiers);
+		if (g_bUseTiers)
+			InitializeMapTiers();
+	}
+	else if (convar == g_Cvar_ShowMapTier)
+		g_bShowMapTier = GetConVarBool(g_Cvar_ShowMapTier);
+	else if (convar == g_Cvar_DefaultTier)
+		g_iDefaultTier = GetConVarInt(g_Cvar_DefaultTier);
 }

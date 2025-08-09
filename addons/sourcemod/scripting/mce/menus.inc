@@ -417,6 +417,13 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		if (sPlayer[0] && g_bShowNominator)
 			FormatEx(sBuffer, sizeof(sBuffer), "- %t %s", "Nominated by", sPlayer);
 
+		if(g_bUseTiers && g_bShowMapTier)
+		{
+			char tierName[32];
+			if(InternalGetMapTierName(map, tierName, sizeof(tierName), true))
+				FormatEx(map, sizeof(map), "%s %t", map, "MapTierDisplay", tierName);
+		}
+		
 		CPrintToChatAll("{green}[MCE]{default} %t %s", "Nextmap Voting Finished", map, percent, num_votes, sBuffer);
 		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) %s", map, percent, num_votes, sBuffer);
 

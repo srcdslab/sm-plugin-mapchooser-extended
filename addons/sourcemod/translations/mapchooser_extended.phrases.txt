@@ -431,5 +431,15 @@
 		"#format"	"{1:s}"
 		"en"		"{lightgreen}Next Map: {green}{1}"
 	}
+	
+	"MapTierDisplay"
+	{
+		"#format"	"{1:s}"
+		"en"		"[{lightgreen}{1}{default}]"
+	}
 
+	"ShowMapsTiers"
+	{
+		"en"		"Show Maps Tiers"
+	}
 }
