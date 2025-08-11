@@ -242,7 +242,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 	if (tier == 0)
 	{
 		char mapsTiers[PLATFORM_MAX_PATH];
-		Format(mapsTiers, sizeof(mapsTiers), "%T\n ", "ShowMapsTiers", client);
+		Format(mapsTiers, sizeof(mapsTiers), "%t\n ", "ShowMapsTiers");
 		menu.AddItem("show_tiers", mapsTiers);
 	}
 	else if(tier == -1)
