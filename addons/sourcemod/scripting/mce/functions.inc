@@ -682,7 +682,7 @@ stock bool IsMapEndVoteAllowed()
 
 stock void AddMapItem(const char[] map)
 {
-	char mapDisplay[PLATFORM_MAX_PATH]
+	char mapDisplay[PLATFORM_MAX_PATH];
 	if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
 		Format(mapDisplay, sizeof(mapDisplay), "%s [%s]", map, mapDisplay);
 		
