@@ -689,6 +689,8 @@ stock void AddMapItem(const char[] map)
 		strcopy(mapTierName, sizeof(mapTierName), mapDisplay);
 		Format(mapDisplay, sizeof(mapDisplay), "%s [%s]", map, mapTierName);
 	}
+	else
+		strcopy(mapDisplay, sizeof(mapDisplay), map);
 		
 	AddMenuItem(g_VoteMenu, map, mapDisplay);
 }
