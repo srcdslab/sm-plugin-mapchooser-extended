@@ -684,8 +684,6 @@ stock void AddMapItem(const char[] map)
 {
 	char mapDisplay[PLATFORM_MAX_PATH];
 	if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
-	char mapDisplay[PLATFORM_MAX_PATH];
-	if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
 	{
 		char mapTierName[PLATFORM_MAX_PATH];
 		strcopy(mapTierName, sizeof(mapTierName), mapDisplay);
