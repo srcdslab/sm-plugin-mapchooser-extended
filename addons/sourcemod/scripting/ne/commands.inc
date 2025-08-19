@@ -639,7 +639,7 @@ public Action Command_UnNominate(int client, int args)
 
 	char mapDisplay[PLATFORM_MAX_PATH];
 	if (GetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
-		Format(mapDisplay, sizeof(mapDisplay), "%s %T", map, "MapTierDisplay", client);
+		Format(mapDisplay, sizeof(mapDisplay), "%s %t", map, "MapTierDisplay", mapDisplay);
 	else
 		strcopy(mapDisplay, sizeof(mapDisplay), map);
 		
