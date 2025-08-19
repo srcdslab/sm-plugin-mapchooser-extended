@@ -684,7 +684,13 @@ stock void AddMapItem(const char[] map)
 {
 	char mapDisplay[PLATFORM_MAX_PATH];
 	if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
-		Format(mapDisplay, sizeof(mapDisplay), "%s [%s]", map, mapDisplay);
+	char mapDisplay[PLATFORM_MAX_PATH];
+	if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
+	{
+		char mapTierName[PLATFORM_MAX_PATH];
+		strcopy(mapTierName, sizeof(mapTierName), mapDisplay);
+		Format(mapDisplay, sizeof(mapDisplay), "%s [%s]", map, mapTierName);
+	}
 		
 	AddMenuItem(g_VoteMenu, map, mapDisplay);
 }
