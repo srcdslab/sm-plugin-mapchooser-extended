@@ -27,6 +27,15 @@ stock void InitializeMapLists()
 	SetMapListCompatBind("official", mapListPath);
 }
 
+stock void ClearPendingRevote()
+{
+	if (g_PendingRevoteActive && g_PendingRevoteList != INVALID_HANDLE)
+	{
+		delete g_PendingRevoteList;
+		g_PendingRevoteActive = false;
+	}
+}
+
 stock void InitializeGameModeSettings()
 {
 	static char folder[64];
@@ -162,6 +171,9 @@ stock void CleanOnMapEnd()
 	g_WarningTimer = INVALID_HANDLE;
 	g_RunoffCount = 0;
 
+	// Clear any pending revote on map end
+	ClearPendingRevote();
+
 	static char map[PLATFORM_MAX_PATH];
 	int iCurrentTime = GetTime();
 	int Cooldown;
@@ -169,11 +181,49 @@ stock void CleanOnMapEnd()
 	if (g_SaveCDOnMapEnd)
 	{
 		GetCurrentMap(map, PLATFORM_MAX_PATH);
-		Cooldown = InternalGetMapCooldown(map);
-		g_OldMapList.SetValue(map, Cooldown, true);
+		if (g_bForceLowerCase)
+			StringToLowerCase(map);
 
-		Cooldown = iCurrentTime + InternalGetMapCooldownTime(map) - RoundToFloor(GetGameTime());
-		g_TimeMapList.SetValue(map, Cooldown, true);
+		// Apply cooldown mode based on cvar
+		switch (g_CooldownMode)
+		{
+			case CooldownMode_Both:
+			{
+				// Default behavior: save both cooldown types
+				Cooldown = InternalGetMapCooldown(map);
+				g_OldMapList.SetValue(map, Cooldown, true);
+
+				Cooldown = iCurrentTime + InternalGetMapCooldownTime(map) - RoundToFloor(GetGameTime());
+				g_TimeMapList.SetValue(map, Cooldown, true);
+			}
+			case CooldownMode_CounterOnly:
+			{
+				// Save only counter-based cooldown
+				Cooldown = InternalGetMapCooldown(map);
+				g_OldMapList.SetValue(map, Cooldown, true);
+			}
+			case CooldownMode_TimeOnly:
+			{
+				// Save only time-based cooldown
+				Cooldown = iCurrentTime + InternalGetMapCooldownTime(map) - RoundToFloor(GetGameTime());
+				g_TimeMapList.SetValue(map, Cooldown, true);
+			}
+			case CooldownMode_Priority:
+			{
+				// Priority to time-based cooldown, fallback to counter
+				int timeCooldown = InternalGetMapCooldownTime(map);
+				if (timeCooldown > 0)
+				{
+					Cooldown = iCurrentTime + timeCooldown - RoundToFloor(GetGameTime());
+					g_TimeMapList.SetValue(map, Cooldown, true);
+				}
+				else
+				{
+					Cooldown = InternalGetMapCooldown(map);
+					g_OldMapList.SetValue(map, Cooldown, true);
+				}
+			}
+		}
 	}
 
 	StringMapSnapshot OldMapListSnapshot = g_OldMapList.Snapshot();
@@ -272,6 +322,7 @@ public Action Timer_StartWarningTimer(Handle timer)
 
 public Action Timer_StartMapVote(Handle timer, Handle data)
 {
+	static bool bRevoteWarning = false;
 	static int timePassed;
 
 	// This is still necessary because InitiateVote still calls this directly via the retry timer
@@ -287,6 +338,19 @@ public Action Timer_StartMapVote(Handle timer, Handle data)
 
 	char warningPhrase[32];
 	ReadPackString(data, warningPhrase, sizeof(warningPhrase));
+
+	if (warningTimeRemaining == 0 && strcmp(warningPhrase, "Revote Warning") == 0)
+		bRevoteWarning = true;
+
+	if (warningTimeRemaining <= 0)
+	{
+		if (bRevoteWarning)
+			LogAction(-1, -1, "[MCE] Revote for next map has started.");
+		else
+			LogAction(-1, -1, "[MCE] Voting for next map has started.");
+
+		bRevoteWarning = false;
+	}
 
 	// Tick timer for external plugins
 	Call_StartForward(g_MapVoteWarningTickForward);
@@ -466,9 +530,12 @@ void CreateNextVote()
 	Handle tempMaps = CloneArray(g_MapList);
 
 	GetCurrentMap(map, PLATFORM_MAX_PATH);
+	if (g_bForceLowerCase)
+		StringToLowerCase(map);
+
 	RemoveStringFromArray(tempMaps, map);
 
-	if (GetArraySize(tempMaps) > g_iExcludeMaps && InternalAreRestrictionsActive())
+	if (ShouldApplyCounterCooldown() && GetArraySize(tempMaps) > g_iExcludeMaps && InternalAreRestrictionsActive())
 	{
 		StringMapSnapshot OldMapListSnapshot = g_OldMapList.Snapshot();
 		for (int i = 0; i < OldMapListSnapshot.Length; i++)
@@ -479,7 +546,7 @@ void CreateNextVote()
 		delete OldMapListSnapshot;
 	}
 
-	if (InternalAreRestrictionsActive())
+	if (ShouldApplyTimeCooldown() && InternalAreRestrictionsActive())
 	{
 		int iCurrentTime = GetTime();
 		StringMapSnapshot TimeMapListSnapshot = g_TimeMapList.Snapshot();
@@ -617,14 +684,12 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 		{
 			cvarTime = g_iWarningTime;
 			strcopy(translationKey, sizeof(translationKey), "Vote Warning");
-			LogAction(-1, -1, "[MCE] Voting for next map has started.");
 		}
 
 		case WarningType_Revote:
 		{
 			cvarTime = g_iRunOffWarningTime;
 			strcopy(translationKey, sizeof(translationKey), "Revote Warning");
-			LogAction(-1, -1, "[MCE] Revote for next map has started.");
 		}
 	}
 
@@ -829,6 +894,14 @@ stock ClearStoredNomination(int client)
 	g_sNominations[client][0] = '\0';
 }
 
+stock void StringToLowerCase(char[] input)
+{
+	for (int i = 0; i < strlen(input); i++)
+	{
+		input[i] = CharToLower(input[i]);
+	}
+}
+
 stock void AlphabeticSortMapLists(Handle mapList, Handle ownerList)
 {
 	int size = GetArraySize(mapList);
@@ -851,4 +924,15 @@ stock void AlphabeticSortMapLists(Handle mapList, Handle ownerList)
 			}
 		}
 	}
+}
+
+// Helper functions for cooldown modes
+stock bool ShouldApplyCounterCooldown()
+{
+	return (g_CooldownMode == CooldownMode_Both || g_CooldownMode == CooldownMode_CounterOnly || g_CooldownMode == CooldownMode_Priority);
+}
+
+stock bool ShouldApplyTimeCooldown()
+{
+	return (g_CooldownMode == CooldownMode_Both || g_CooldownMode == CooldownMode_TimeOnly || g_CooldownMode == CooldownMode_Priority);
 }

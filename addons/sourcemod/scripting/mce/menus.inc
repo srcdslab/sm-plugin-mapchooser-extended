@@ -111,12 +111,12 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 
 	static char map[PLATFORM_MAX_PATH];
 
-	/* No input given - User our internal nominations and maplist */
-	if (inputlist == INVALID_HANDLE)
+	/* No input given - Use our internal nominations and maplist, unless a pending revote exists */
+	if (inputlist == INVALID_HANDLE && !(g_PendingRevoteActive && g_PendingRevoteList != INVALID_HANDLE))
 	{
 		int allMapsSize = (PLATFORM_MAX_PATH * 3);
 		char[] allMapsBuffer = new char[allMapsSize];
-		
+
 		Handle randomizeList = INVALID_HANDLE;
 		if (g_bRandomizeNominations)
 			randomizeList = CloneArray(g_NominateList);
@@ -231,17 +231,22 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			AddExtendToMenu(g_VoteMenu, when);
 			MenuRandomShuffleStop++;
 		}
-		
+
 		if (allMapsBuffer[0])
 			LogAction(-1, -1, "[MCE] Maps List: %s", allMapsBuffer);
 	}
-	else //We were given a list of maps to start the vote with
+	else // We were given a list of maps to start the vote with (or a pending revote exists)
 	{
+		if (inputlist == INVALID_HANDLE && g_PendingRevoteActive && g_PendingRevoteList != INVALID_HANDLE)
+		{
+			inputlist = CloneArray(g_PendingRevoteList);
+		}
+
 		int size = GetArraySize(inputlist);
 
 		int allMapsSize = (PLATFORM_MAX_PATH * 3);
 		char[] allMapsBuffer = new char[allMapsSize];
-		
+
 		for (int i = 0; i < size; i++)
 		{
 			GetArrayString(inputlist, i, map, PLATFORM_MAX_PATH);
@@ -265,6 +270,9 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			}
 		}
 		delete inputlist;
+
+		// Starting a vote from an input list (revote path) disables pending revote
+		ClearPendingRevote();
 
 		if (allMapsBuffer[0])
 			LogAction(-1, -1, "[MCE] Maps List: %s", allMapsBuffer);
@@ -350,7 +358,6 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 
 		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nThe current map has been extended. (Received \"%d\"\%% of %d votes) \nAvailable Extends: %d", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes, iExentedLeft);
 
-
 		if (g_bLockNominationsAtWarning)
 		{
 			CreateTimer(g_fTimerUnlockNoms, UnlockNominations, _, TIMER_FLAG_NO_MAPCHANGE);
@@ -359,8 +366,11 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		// We extended, so we'll have to vote again.
 		g_RunoffCount = 0;
 		g_HasVoteStarted = false;
+		g_WaitingForVote = false;
 		SetupTimeleftTimer();
 
+		// Clear pending revote on extend outcome as well
+		ClearPendingRevote();
 	}
 	else if (strcmp(map, VOTE_DONTCHANGE, false) == 0)
 	{
@@ -374,7 +384,12 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 
 		g_RunoffCount = 0;
 		g_HasVoteStarted = false;
-		SetupTimeleftTimer();
+		g_WaitingForVote = false;
+		// Do not call SetupTimeleftTimer() immediately to avoid race condition
+		CreateTimer(5.0, Timer_DelayedTimeleftCheck, _, TIMER_FLAG_NO_MAPCHANGE);
+
+		// Clear pending revote on dont-change outcome as well
+		ClearPendingRevote();
 	}
 	else
 	{
@@ -398,7 +413,10 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		}
 
 		g_HasVoteStarted = false;
+		g_WaitingForVote = false;
 		g_MapVoteCompleted = true;
+
+		ClearPendingRevote();
 
 		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
 
@@ -438,7 +456,7 @@ public void Handler_MapVoteFinished(Handle menu,
 									int num_items,
 									const int[][] item_info)
 {
-	// Implement revote logic - Only run this` block if revotes are enabled and this isn't the last revote
+	// Implement revote logic - Only run this block if revotes are enabled and this isn't the last revote
 	if (g_bRunOff && num_items > 1 && g_RunoffCount < g_iMaxRunOffs)
 	{
 		g_RunoffCount++;
@@ -468,6 +486,14 @@ public void Handler_MapVoteFinished(Handle menu,
 
 			LogAction(-1, -1, "[MCE] The top maps had the same number of votes. A revote is needed!");
 			CPrintToChatAll("{green}[MCE]{default} %t", "Tie Vote", GetArraySize(mapList));
+
+			// Persist revote finalists so any subsequent trigger still uses them
+			if (g_PendingRevoteList != INVALID_HANDLE)
+				delete g_PendingRevoteList;
+
+			g_PendingRevoteList = CloneArray(mapList);
+			g_PendingRevoteActive = true;
+
 			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
 			return;
 		}
@@ -500,6 +526,13 @@ public void Handler_MapVoteFinished(Handle menu,
 
 			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed", required_percent);
 			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed New Vote");
+
+			// Persist revote finalists so any subsequent trigger still uses them
+			if (g_PendingRevoteList != INVALID_HANDLE)
+				delete g_PendingRevoteList;
+
+			g_PendingRevoteList = CloneArray(mapList);
+			g_PendingRevoteActive = true;
 
 			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
 			return;

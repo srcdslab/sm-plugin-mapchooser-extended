@@ -45,6 +45,9 @@ StringMap g_TimeMapList;
 Handle g_NextMapList = INVALID_HANDLE;
 Handle g_VoteMenu = INVALID_HANDLE;
 KeyValues g_Config;
+// Pending revote list: preserve finalists across warning changes
+Handle g_PendingRevoteList = INVALID_HANDLE;
+bool g_PendingRevoteActive = false;
 
 int g_Extends;
 int g_TotalRounds;
@@ -96,6 +99,17 @@ enum WarningType
 	WarningType_Vote,
 	WarningType_Revote,
 }
+
+enum CooldownMode
+{
+	CooldownMode_Both = 0,        // Use Cooldown and CooldownTime (default)
+	CooldownMode_CounterOnly = 1, // Use only Cooldown (based on map count)
+	CooldownMode_TimeOnly = 2,    // Use only CooldownTime (based on time)
+	CooldownMode_Priority = 3,    // Use CooldownTime first, then Cooldown
+}
+
+/* Cooldown Mode Control */
+CooldownMode g_CooldownMode = CooldownMode_Both;
 
 #define VOTE_EXTEND "##extend##"
 #define VOTE_DONTCHANGE "##dontchange##"
