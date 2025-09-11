@@ -211,10 +211,10 @@ stock void CvarsInit()
 	g_Cvar_ShowNominator = CreateConVar("mce_shownominator", "1", "See who nominated the map which won the vote", _, true, 0.0, true, 1.0);
 	g_Cvar_SharedCDMode = CreateConVar("mce_sharedcd_mode", "1", "Group maps with shared cooldowns mode (See ExcludeMap native docs for mode)", _, true, 0.0, true, 2.0);
 	g_Cvar_UseTiers = CreateConVar("mce_use_tiers", "1", "Use tiers for maps (map difficulty)", _, true, 0.0, true, 1.0);
-	g_Cvar_ShowMapTier = CreateConVar("mce_show_map_tier", "1", "See the tier of the map which won the vote [Dependecy: mce_use_tiers]", _, true, 0.0, true, 1.0);
-	g_Cvar_DefaultTier = CreateConVar("mce_default_tier", "1", "Default map tiers to set if tier param was not found", _, true, 1.0);
-	g_Cvar_MaxTiers = CreateConVar("sm_mce_max_tiers", "3", "How many tiers will be found in translation file.", _, true, 1.0, true, 10.0);
-	
+	g_Cvar_ShowMapTier = CreateConVar("mce_show_map_tier", "0", "See the tier of the map which won the vote [Dependecy: mce_use_tiers]", _, true, 0.0, true, 1.0);
+	g_Cvar_DefaultTier = CreateConVar("mce_default_tier", "0", "Default map tiers to set if tier param was not found", _, true, 1.0);
+	g_Cvar_MaxTiers = CreateConVar("sm_mce_max_tiers", "3", "How many tiers will be found in translation file.", _, true, 1.0);
+
 	AutoExecConfig(true, "mapchooser_extended");
 
 	// Hooks cvars changes 
