@@ -896,9 +896,13 @@ stock ClearStoredNomination(int client)
 
 stock void StringToLowerCase(char[] input)
 {
-	for (int i = 0; i < strlen(input); i++)
+	int i = 0;
+	int x;
+	while ((x = input[i]) != '\0')
 	{
-		input[i] = CharToLower(input[i]);
+		if ('A' <= x <= 'Z')
+			input[i] += ('a' - 'A');
+		i++;
 	}
 }
 
