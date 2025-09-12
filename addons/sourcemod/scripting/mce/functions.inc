@@ -27,15 +27,6 @@ stock void InitializeMapLists()
 	SetMapListCompatBind("official", mapListPath);
 }
 
-stock void ClearPendingRevote()
-{
-	if (g_PendingRevoteActive && g_PendingRevoteList != INVALID_HANDLE)
-	{
-		delete g_PendingRevoteList;
-		g_PendingRevoteActive = false;
-	}
-}
-
 stock void InitializeGameModeSettings()
 {
 	static char folder[64];
@@ -162,6 +153,7 @@ stock void CleanOnMapEnd()
 {
 	g_HasVoteStarted = false;
 	g_WaitingForVote = false;
+	g_PendingRevoteActive = false;
 	g_ChangeMapAtRoundEnd = false;
 	g_ChangeMapInProgress = false;
 	g_HasIntermissionStarted = false;
@@ -170,9 +162,6 @@ stock void CleanOnMapEnd()
 	g_RetryTimer = INVALID_HANDLE;
 	g_WarningTimer = INVALID_HANDLE;
 	g_RunoffCount = 0;
-
-	// Clear any pending revote on map end
-	ClearPendingRevote();
 
 	static char map[PLATFORM_MAX_PATH];
 	int iCurrentTime = GetTime();
@@ -322,7 +311,6 @@ public Action Timer_StartWarningTimer(Handle timer)
 
 public Action Timer_StartMapVote(Handle timer, Handle data)
 {
-	static bool bRevoteWarning = false;
 	static int timePassed;
 
 	// This is still necessary because InitiateVote still calls this directly via the retry timer
@@ -339,17 +327,16 @@ public Action Timer_StartMapVote(Handle timer, Handle data)
 	char warningPhrase[32];
 	ReadPackString(data, warningPhrase, sizeof(warningPhrase));
 
-	if (warningTimeRemaining == 0 && strcmp(warningPhrase, "Revote Warning") == 0)
-		bRevoteWarning = true;
+	g_bRevoteWarning = warningTimeRemaining == 0 && strcmp(warningPhrase, "Revote Warning") == 0;
 
 	if (warningTimeRemaining <= 0)
 	{
-		if (bRevoteWarning)
+		if (g_bRevoteWarning)
 			LogAction(-1, -1, "[MCE] Revote for next map has started.");
 		else
 			LogAction(-1, -1, "[MCE] Voting for next map has started.");
 
-		bRevoteWarning = false;
+		g_bRevoteWarning = false;
 	}
 
 	// Tick timer for external plugins
@@ -395,6 +382,7 @@ public Action Timer_StartMapVote(Handle timer, Handle data)
 		Handle hndl = view_as<Handle>(ReadPackCell(data));
 
 		InitiateVote(mapChange, hndl);
+		delete hndl;
 
 		return Plugin_Stop;
 	}
@@ -651,7 +639,7 @@ void CreateNextVote()
 
 bool CanVoteStart()
 {
-	if (g_WaitingForVote || g_HasVoteStarted)
+	if (g_WaitingForVote || g_HasVoteStarted || g_PendingRevoteActive)
 		return false;
 
 	return true;
@@ -909,10 +897,10 @@ stock void StringToLowerCase(char[] input)
 stock void AlphabeticSortMapLists(Handle mapList, Handle ownerList)
 {
 	int size = GetArraySize(mapList);
-	
+
 	if (size <= 1)
 		return;
-	
+
 	for (int i = 0; i < size - 1; i++)
 	{
 		for (int j = 0; j < size - i - 1; j++)
@@ -920,7 +908,7 @@ stock void AlphabeticSortMapLists(Handle mapList, Handle ownerList)
 			char map1[PLATFORM_MAX_PATH], map2[PLATFORM_MAX_PATH];
 			GetArrayString(mapList, j, map1, sizeof(map1));
 			GetArrayString(mapList, j+1, map2, sizeof(map2));
-			
+
 			if (strcmp(map1, map2, false) > 0)
 			{
 				SwapArrayItems(mapList, j, j+1);

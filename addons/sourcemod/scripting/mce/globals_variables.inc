@@ -45,18 +45,17 @@ StringMap g_TimeMapList;
 Handle g_NextMapList = INVALID_HANDLE;
 Handle g_VoteMenu = INVALID_HANDLE;
 KeyValues g_Config;
-// Pending revote list: preserve finalists across warning changes
-Handle g_PendingRevoteList = INVALID_HANDLE;
-bool g_PendingRevoteActive = false;
 
 int g_Extends;
 int g_TotalRounds;
 bool g_HasVoteStarted;
 bool g_WaitingForVote;
 bool g_MapVoteCompleted;
+bool g_PendingRevoteActive;
 bool g_ChangeMapAtRoundEnd;
 bool g_ChangeMapInProgress;
 bool g_HasIntermissionStarted = false;
+bool g_bRevoteWarning = false;
 int g_mapFileSerial = -1;
 
 int g_NominateCount = 0;
