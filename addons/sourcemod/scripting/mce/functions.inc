@@ -382,7 +382,6 @@ public Action Timer_StartMapVote(Handle timer, Handle data)
 		Handle hndl = view_as<Handle>(ReadPackCell(data));
 
 		InitiateVote(mapChange, hndl);
-		delete hndl;
 
 		return Plugin_Stop;
 	}
