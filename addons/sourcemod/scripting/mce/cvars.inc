@@ -40,6 +40,7 @@ ConVar g_cvHUDChannel;
 ConVar g_Cvar_VoteDuration;
 ConVar g_Cvar_RandomStartTime;
 ConVar g_Cvar_CountBots;
+ConVar g_Cvar_ForceLowerCase;
 
 /* Mapchooser Extended Plugin ConVars */
 
@@ -66,6 +67,7 @@ ConVar g_Cvar_TimerUnlockNoms;
 ConVar g_Cvar_LockNominationsAtWarning;
 ConVar g_Cvar_ShowNominator;
 ConVar g_Cvar_SharedCDMode;
+ConVar g_Cvar_CooldownMode;
 
 /* Cache convars values */
 bool g_bEndOfMapVote;
@@ -84,6 +86,7 @@ bool g_bBlockSlots;
 bool g_bEnableStartPercent;
 bool g_bRandomizeNominations;
 bool g_bExtendPositionTop;
+bool g_bForceLowerCase;
 
 int g_iStartRounds;
 int g_iStartFrags;
@@ -154,6 +157,8 @@ stock void CvarsInit()
 	g_Cvar_Fraglimit = FindConVar("mp_fraglimit");
 	g_Cvar_TimeLimit = FindConVar("mp_timelimit");
 
+	g_Cvar_ForceLowerCase = CreateConVar("mce_force_lowercase", "1", "Force lowercase map names", _, true, 0.0, true, 1.0);
+
 	g_Cvar_EndOfMapVote = CreateConVar("mce_endvote", "1", "Specifies if MapChooser should run an end of map vote", _, true, 0.0, true, 1.0);
 	g_Cvar_EndOfMapInfo = CreateConVar("mce_endmap_info", "1", "Specifies if MapChooser should print a message with nextmap when the map end.", _, true, 0.0, true, 1.0);
 	g_cvHUDChannel = CreateConVar("mce_hud_channel", "1", "Channel for the HUD messages", _, true, 0.0, true, 5.0);
@@ -202,10 +207,12 @@ stock void CvarsInit()
 	g_Cvar_TimerUnlockNoms = CreateConVar("mce_locknominations_timer", "15.0", "Unlock nominations after a vote. Time in seconds.", _, true, 0.0, true, 60.0);
 	g_Cvar_ShowNominator = CreateConVar("mce_shownominator", "1", "See who nominated the map which won the vote", _, true, 0.0, true, 1.0);
 	g_Cvar_SharedCDMode = CreateConVar("mce_sharedcd_mode", "1", "Group maps with shared cooldowns mode (See ExcludeMap native docs for mode)", _, true, 0.0, true, 2.0);
+	g_Cvar_CooldownMode = CreateConVar("mce_cooldown_mode", "0", "Cooldown mode: 0 = Both (Cooldown + CooldownTime), 1 = Counter only (Cooldown), 2 = Time only (CooldownTime), 3 = Priority (CooldownTime first, then Cooldown)", _, true, 0.0, true, 3.0);
 
 	AutoExecConfig(true, "mapchooser_extended");
 
 	// Hooks cvars changes 
+	g_Cvar_ForceLowerCase.AddChangeHook(OnConVarChanged);
 	g_Cvar_EndOfMapVote.AddChangeHook(OnConVarChanged);
 	g_Cvar_EndOfMapInfo.AddChangeHook(OnConVarChanged);
 	g_cvHUDChannel.AddChangeHook(OnConVarChanged);
@@ -248,8 +255,10 @@ stock void CvarsInit()
 	g_Cvar_LockNominationsAtWarning.AddChangeHook(OnConVarChanged);
 	g_Cvar_ShowNominator.AddChangeHook(OnConVarChanged);
 	g_Cvar_SharedCDMode.AddChangeHook(OnConVarChanged);
+	g_Cvar_CooldownMode.AddChangeHook(OnConVarChanged);
 
 	// Cache cvars values
+	g_bForceLowerCase = GetConVarBool(g_Cvar_ForceLowerCase);
 	g_bEndOfMapVote = GetConVarBool(g_Cvar_EndOfMapVote);
 	g_bEndOfMapInfo = GetConVarBool(g_Cvar_EndOfMapInfo);
 	g_bNoVoteMode = GetConVarBool(g_Cvar_NoVoteMode);
@@ -292,6 +301,7 @@ stock void CvarsInit()
 	g_iTimeFrameMin = GetConVarInt(g_Cvar_NoRestrictionTimeframeMinTime);
 	g_iTimeFrameMax = GetConVarInt(g_Cvar_NoRestrictionTimeframeMaxTime);
 	g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
+	g_CooldownMode = view_as<CooldownMode>(GetConVarInt(g_Cvar_CooldownMode));
 
 	g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
 	g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
@@ -299,7 +309,9 @@ stock void CvarsInit()
 
 public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 {
-	if (convar == g_Cvar_EndOfMapVote)
+	if (convar == g_Cvar_ForceLowerCase)
+		g_bForceLowerCase = GetConVarBool(g_Cvar_ForceLowerCase);
+	else if (convar == g_Cvar_EndOfMapVote)
 		g_bEndOfMapVote = GetConVarBool(g_Cvar_EndOfMapVote);
 	else if (convar == g_Cvar_EndOfMapInfo)
 		g_bEndOfMapInfo = GetConVarBool(g_Cvar_EndOfMapInfo);
@@ -383,4 +395,6 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 		g_bShowNominator = GetConVarBool(g_Cvar_ShowNominator);
 	else if (convar == g_Cvar_SharedCDMode)
 		g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
+	else if (convar == g_Cvar_CooldownMode)
+		g_CooldownMode = view_as<CooldownMode>(GetConVarInt(g_Cvar_CooldownMode));
 }

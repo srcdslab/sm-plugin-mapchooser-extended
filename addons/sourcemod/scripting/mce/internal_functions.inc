@@ -629,6 +629,9 @@ stock void InternalRestoreMapCooldowns()
 			return;
 		}
 
+		if (g_bForceLowerCase)
+			StringToLowerCase(map);
+
 		if ((Cooldown = Cooldowns.GetNum("Cooldown", -1)) > 0)
 		{
 			LogMessage("Restored cooldown: %s -> %d", map, Cooldown);
@@ -665,6 +668,9 @@ stock void InternalStoreMapCooldowns()
 	for (int i = 0; i < OldMapListSnapshot.Length; i++)
 	{
 		OldMapListSnapshot.GetKey(i, map, sizeof(map));
+		if (g_bForceLowerCase)
+			StringToLowerCase(map);
+
 		g_OldMapList.GetValue(map, Cooldown);
 
 		if (!Cooldowns.JumpToKey(map, true))
@@ -684,6 +690,9 @@ stock void InternalStoreMapCooldowns()
 	for (int i = 0; i < TimeMapListSnapshot.Length; i++)
 	{
 		TimeMapListSnapshot.GetKey(i, map, sizeof(map));
+		if (g_bForceLowerCase)
+			StringToLowerCase(map);
+
 		g_TimeMapList.GetValue(map, Cooldown);
 
 		if (!Cooldowns.JumpToKey(map, true))
@@ -775,4 +784,10 @@ stock bool IsMapValidEx(const char[] map)
 	char displayName[PLATFORM_MAX_PATH];
 	FindMapResult result = FindMap(map, displayName, sizeof(displayName));
 	return (result == FindMap_Found);
+}
+
+public Action Timer_DelayedTimeleftCheck(Handle timer)
+{
+	SetupTimeleftTimer();
+	return Plugin_Stop;
 }
