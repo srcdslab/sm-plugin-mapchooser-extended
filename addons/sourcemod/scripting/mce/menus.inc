@@ -344,11 +344,12 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		char sCurrentMap[64];
 		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 		int iExentedLeft = InternalGetMapMaxExtends(sCurrentMap) - g_Extends;
+		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
 
-		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Extended", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
+		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Extended", percent, num_votes);
 		CPrintToChatAll("{green}[MCE]{default} %t", "Available Extends", iExentedLeft);
 
-		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nThe current map has been extended. (Received \"%d\"\%% of %d votes) \nAvailable Extends: %d", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes, iExentedLeft);
+		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nThe current map has been extended. (Received \"%d\"\%% of %d votes) \nAvailable Extends: %d", percent, num_votes, iExentedLeft);
 
 		if (g_bLockNominationsAtWarning)
 		{
@@ -363,8 +364,10 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 	}
 	else if (strcmp(map, VOTE_DONTCHANGE, false) == 0)
 	{
-		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Stays", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
-		LogAction(-1, -1, "[MCE] Current map continues! The Vote has spoken! (Received \"%d\"\%% of %d votes)", RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0), num_votes);
+		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
+
+		CPrintToChatAll("{green}[MCE]{default} %t", "Current Map Stays", percent, num_votes);
+		LogAction(-1, -1, "[MCE] Current map continues! The Vote has spoken! (Received \"%d\"\%% of %d votes)", percent, num_votes);
 
 		if (g_bLockNominationsAtWarning)
 		{
@@ -403,7 +406,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
 
 		// Check who nominated the map
-		char sPlayer[32], sBuffer[64];
+		char sPlayer[32];
 		for (int i = 1; i <= MaxClients; i++)
 		{
 			if (strcmp(g_sNominations[i], map, false) != 0)
@@ -415,10 +418,15 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		}
 
 		if (sPlayer[0] && g_bShowNominator)
-			FormatEx(sBuffer, sizeof(sBuffer), "- %t %s", "Nominated by", sPlayer);
-
-		CPrintToChatAll("{green}[MCE]{default} %t %s", "Nextmap Voting Finished", map, percent, num_votes, sBuffer);
-		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) %s", map, percent, num_votes, sBuffer);
+		{
+			CPrintToChatAll("{green}[MCE]{default} %t - %t %s", "Nextmap Voting Finished", map, percent, num_votes, "Nominated by", sPlayer);
+			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) Nominated by %s", map, percent, num_votes, sPlayer);
+		}
+		else
+		{
+			CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", map, percent, num_votes);
+			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes)", map, percent, num_votes);
+		}
 
 		// Vote has finished, clear nominations
 		for (int i = 1; i <= MaxClients; i++)
