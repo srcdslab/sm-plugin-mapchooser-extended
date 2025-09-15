@@ -112,7 +112,7 @@ public int Native_InitiateVote(Handle plugin, int numParams)
 	MapChange when = view_as<MapChange>(GetNativeCell(1));
 	Handle inputarray = view_as<Handle>(GetNativeCell(2));
 
-	LogAction(-1, -1, "[MCE] Starting map vote because players RTV.");
+	LogAction(-1, -1, "[MCE] Starting map vote countdown because players RTV.");
 
 	SetupWarningTimer(WarningType_Vote, when, inputarray);
 	//InitiateVote(when, inputarray);
@@ -234,6 +234,10 @@ public int Native_ExcludeMap(Handle plugin, int numParams)
 
 	if (Mode == 0)
 	{
+		// In TimeOnly mode, don't exclude via counter
+		if (g_CooldownMode == CooldownMode_TimeOnly)
+			return 0;
+			
 		Cooldown = InternalGetMapCooldown(map);
 	}
 	else if (Mode == 1)
@@ -274,6 +278,10 @@ public int Native_ExcludeMapTime(Handle plugin, int numParams)
 
 	if (Mode == 0)
 	{
+		// In CounterOnly mode, don't exclude via time
+		if (g_CooldownMode == CooldownMode_CounterOnly)
+			return 0;
+			
 		Cooldown = InternalGetMapCooldownTime(map);
 	}
 	else if (Mode == 1)

@@ -51,9 +51,11 @@ int g_TotalRounds;
 bool g_HasVoteStarted;
 bool g_WaitingForVote;
 bool g_MapVoteCompleted;
+bool g_PendingRevoteActive;
 bool g_ChangeMapAtRoundEnd;
 bool g_ChangeMapInProgress;
 bool g_HasIntermissionStarted = false;
+bool g_bRevoteWarning = false;
 int g_mapFileSerial = -1;
 
 int g_NominateCount = 0;
@@ -96,6 +98,17 @@ enum WarningType
 	WarningType_Vote,
 	WarningType_Revote,
 }
+
+enum CooldownMode
+{
+	CooldownMode_Both = 0,        // Use Cooldown and CooldownTime (default)
+	CooldownMode_CounterOnly = 1, // Use only Cooldown (based on map count)
+	CooldownMode_TimeOnly = 2,    // Use only CooldownTime (based on time)
+	CooldownMode_Priority = 3,    // Use CooldownTime first, then Cooldown
+}
+
+/* Cooldown Mode Control */
+CooldownMode g_CooldownMode = CooldownMode_Both;
 
 #define VOTE_EXTEND "##extend##"
 #define VOTE_DONTCHANGE "##dontchange##"
