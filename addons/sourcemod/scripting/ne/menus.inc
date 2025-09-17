@@ -676,9 +676,9 @@ bool FormatMapRestrictionBadgesDetailed(const char[] map, int client, char[] buf
 			if (playerRestriction != 0)
 			{
 				if (playerRestriction < 0)
-						Format(badges, sizeof(badges), "%s%T|", buffer, "Map Player Restriction", client, "+", playerRestriction * -1);
+						Format(badges, sizeof(badges), "%s%T|", badges, "Map Player Restriction", client, "+", playerRestriction * -1);
 					else
-						Format(badges, sizeof(badges), "%s%T|", buffer, "Map Player Restriction", client, "-", playerRestriction);
+						Format(badges, sizeof(badges), "%s%T|", badges, "Map Player Restriction", client, "-", playerRestriction);
 				hasBadges = true;
 			}
 
