@@ -567,21 +567,22 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 			// Note that the first part is to discard the spacer line
 			else if (strcmp(map, LINE_SPACER, false) != 0)
 			{
+				char formattedDisplay[PLATFORM_MAX_PATH];
+				InternalFormatMapDisplay(map, formattedDisplay, sizeof(formattedDisplay), param1, false);
+
+				// Handle custom map markings
 				if (g_iMarkCustomMaps == 1 && !InternalIsMapOfficial(map))
 				{
-					Format(buffer, sizeof(buffer), "%T", "Custom Marked", param1, map);
+					Format(buffer, sizeof(buffer), "%T", "Custom Marked", param1, formattedDisplay);
 				}
 				else if (g_iMarkCustomMaps == 2 && !InternalIsMapOfficial(map))
 				{
-					Format(buffer, sizeof(buffer), "%T", "Custom", param1, map);
+					Format(buffer, sizeof(buffer), "%T", "Custom", param1, formattedDisplay);
 				}
-				else if (InternalGetMapVIPRestriction(map))
+				else
 				{
-					Format(buffer, sizeof(buffer), "%s (%T)", map, "VIP Nomination", param1);
-				}
-				else if (InternalGetMapLeaderRestriction(map))
-				{
-					Format(buffer, sizeof(buffer), "%s (%T)", map, "Leader Nomination", param1);
+					// Use the formatted display as-is
+					strcopy(buffer, sizeof(buffer), formattedDisplay);
 				}
 			}
 

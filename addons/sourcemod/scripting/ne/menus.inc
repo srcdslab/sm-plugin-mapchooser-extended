@@ -127,31 +127,27 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 		return false;
 	}
 
-	bool restrictionsActive = AreRestrictionsActive();
-
 	static char map[PLATFORM_MAX_PATH];
 	static char display[PLATFORM_MAX_PATH];
+	static char description[PLATFORM_MAX_PATH];
 	for (int i = 0; i < GetArraySize(MapList); i++)
 	{
 		GetArrayString(MapList, i, map, sizeof(map));
 
 		if (!filter[0] || StrContains(map, filter, false) != -1)
 		{
-			strcopy(display, sizeof(display), map);
+			MCE_GetMapDescription(map, description, sizeof(description));
+			MCE_GetMapDisplayName(map, display, sizeof(display));
 
-			bool adminRestriction = IsClientMapAdminRestricted(map);
-			if ((adminRestriction) && restrictionsActive)
-				Format(display, sizeof(display), "%s (%T)", display, "Admin Nomination", client);
+			if (description[0] != '\0')
+				Format(display, sizeof(display), "%s | %s", display, description);
 
-			bool VIPRestriction = IsClientMapVIPRestricted(map);
-			if ((VIPRestriction) && restrictionsActive)
-				Format(display, sizeof(display), "%s (%T)", display, "VIP Nomination", client);
-
-			#if defined _zleader_included
-			bool LeaderRestriction = IsClientMapLeaderRestricted(map);
-			if ((LeaderRestriction) && restrictionsActive)
-				Format(display, sizeof(display), "%s (%T)", display, "Leader Nomination", client);
-			#endif
+			// Add restriction badges if any
+			char badgeBuffer[100];
+			if (FormatMapRestrictionBadgesDetailed(map, client, badgeBuffer, sizeof(badgeBuffer), true))
+			{
+				Format(display, sizeof(display), "%s %s", display, badgeBuffer);
+			}
 
 			int owner = GetArrayCell(OwnerList, i);
 
@@ -246,12 +242,20 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 
 	tempMapList.SortCustom(AlphabeticSortCallback);
 
+	static char display[PLATFORM_MAX_PATH];
+	static char description[PLATFORM_MAX_PATH];
 	for (int i = 0; i < tempMapList.Length; i++)
 	{
 		tempMapList.GetString(i, map, sizeof(map));
-		AddMenuItem(menu, map, map);
+		MCE_GetMapDescription(map, description, sizeof(description));
+		MCE_GetMapDisplayName(map, display, sizeof(display));
+
+		if (description[0] != '\0')
+			Format(display, sizeof(display), "%s | %s", display, description);
+
+		AddMenuItem(menu, map, display);
 	}
-	
+
 	delete tempMapList;
 	SetMenuExitButton(menu, true);
 
@@ -288,11 +292,19 @@ Menu BuildAdminMapMenu(const char[] filter)
 	// Sort the maps in alphabetical order
 	tempMapList.SortCustom(AlphabeticSortCallback);
 	
+	static char display[PLATFORM_MAX_PATH];
+	static char description[PLATFORM_MAX_PATH];
 	// Add the maps to the menu
 	for (int i = 0; i < tempMapList.Length; i++)
 	{
 		tempMapList.GetString(i, map, sizeof(map));
-		AddMenuItem(menu, map, map);
+		MCE_GetMapDescription(map, description, sizeof(description));
+		MCE_GetMapDisplayName(map, display, sizeof(display));
+
+		if (description[0] != '\0')
+			Format(display, sizeof(display), "%s | %s", display, description);
+
+		AddMenuItem(menu, map, display);
 	}
 
 	delete tempMapList;
@@ -435,6 +447,14 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 
 			static char buffer[100];
 			static char display[150];
+			static char displayName[PLATFORM_MAX_PATH];
+			static char description[PLATFORM_MAX_PATH];
+
+			MCE_GetMapDescription(map, description, sizeof(description));
+			MCE_GetMapDisplayName(map, displayName, sizeof(displayName));
+
+			if (description[0] != '\0')
+				Format(displayName, sizeof(displayName), "%s | %s", displayName, description);
 
 			if (mark)
 				official = IsMapOfficial(map);
@@ -445,37 +465,17 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				{
 					case 1:
 					{
-						Format(buffer, sizeof(buffer), "%T", "Custom Marked", param1, map);
+						Format(buffer, sizeof(buffer), "%T", "Custom Marked", param1, displayName);
 					}
 
 					case 2:
 					{
-						Format(buffer, sizeof(buffer), "%T", "Custom", param1, map);
+						Format(buffer, sizeof(buffer), "%T", "Custom", param1, displayName);
 					}
 				}
 			}
 			else
-				strcopy(buffer, sizeof(buffer), map);
-
-			bool adminRestriction = IsClientMapAdminRestricted(map);
-			if (restrictionsActive && adminRestriction)
-			{
-				Format(buffer, sizeof(buffer), "%s (%T)", buffer, "Admin Restriction", param1);
-			}
-
-			bool VIPRestriction = IsClientMapVIPRestricted(map);
-			if (restrictionsActive && VIPRestriction)
-			{
-				Format(buffer, sizeof(buffer), "%s (%T)", buffer, "VIP Restriction", param1);
-			}
-
-			#if defined _zleader_included
-			bool LeaderRestriction = IsClientMapLeaderRestricted(map);
-			if (restrictionsActive && LeaderRestriction)
-			{
-				Format(buffer, sizeof(buffer), "%s (%T)", buffer, "Leader Restriction", param1);
-			}
-			#endif
+				strcopy(buffer, sizeof(buffer), displayName);
 
 			int status;
 			if (GetTrieValue(g_mapTrie, map, status))
@@ -513,49 +513,17 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				return RedrawMenuItem(display);
 			}
 
-			int TimeRestriction = GetMapTimeRestriction(map);
-			if (restrictionsActive && TimeRestriction)
+			// Format restriction badges + Check if we have any badges to display
+			bool hasBadges;
+			char badgeBuffer[100];
+			if (FormatMapRestrictionBadgesDetailed(map, param1, badgeBuffer, sizeof(badgeBuffer), false))
 			{
-				Format(display, sizeof(display), "%s (%T)", buffer, "Map Time Restriction", param1, "+", TimeRestriction / 60, TimeRestriction % 60);
-				return RedrawMenuItem(display);
+				Format(buffer, sizeof(buffer), "%s %s", buffer, badgeBuffer);
+				hasBadges = true;
 			}
 
-			int PlayerRestriction = GetMapPlayerRestriction(map);
-			if (restrictionsActive && PlayerRestriction)
-			{
-				if (PlayerRestriction < 0)
-					Format(display, sizeof(display), "%s (%T)", buffer, "Map Player Restriction", param1, "+", PlayerRestriction * -1);
-				else
-					Format(display, sizeof(display), "%s (%T)", buffer, "Map Player Restriction", param1, "-", PlayerRestriction);
-
-				return RedrawMenuItem(display);
-			}
-
-			int GroupRestriction = GetMapGroupRestriction(map, param1);
-			if (restrictionsActive && GroupRestriction >= 0)
-			{
-				Format(display, sizeof(display), "%s (%T)", buffer, "Map Group Restriction", param1, GroupRestriction);
-				return RedrawMenuItem(display);
-			}
-
-			if (restrictionsActive && adminRestriction)
-			{
-				return RedrawMenuItem(buffer);
-			}
-
-			if (restrictionsActive && VIPRestriction)
-			{
-				return RedrawMenuItem(buffer);
-			}
-
-			#if defined _zleader_included
-			if (restrictionsActive && LeaderRestriction)
-			{
-				return RedrawMenuItem(buffer);
-			}
-			#endif
-
-			if (mark && !official)
+			// If we have badges or custom mark, return the formatted buffer
+			if (hasBadges || (mark && !official))
 				return RedrawMenuItem(buffer);
 
 			return 0;
@@ -654,4 +622,89 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 	}
 
 	return 0;
+}
+
+bool FormatMapRestrictionBadgesDetailed(const char[] map, int client, char[] buffer, int maxlength, bool nominatedlist = false)
+{
+	bool restrictionsActive = AreRestrictionsActive();
+
+	// If map is recently played, don't show badges (it's not nominable anyway)
+	int cooldownTime = GetMapCooldownTime(map);
+	if (restrictionsActive && cooldownTime > GetTime())
+		return false;
+
+	bool hasBadges = false;
+	char badges[200];
+
+	if (restrictionsActive)
+	{
+		bool adminRestriction = IsClientMapAdminRestricted(map);
+		if (adminRestriction)
+		{
+			Format(badges, sizeof(badges), "%s%T|", badges, "Admin Restriction", client);
+			hasBadges = true;
+		}
+
+		bool VIPRestriction = IsClientMapVIPRestricted(map);
+		if (VIPRestriction)
+		{
+			Format(badges, sizeof(badges), "%s%T|", badges, "VIP Restriction", client);
+			hasBadges = true;
+		}
+
+		#if defined _zleader_included
+		bool LeaderRestriction = IsClientMapLeaderRestricted(map);
+		if (LeaderRestriction)
+		{
+			Format(badges, sizeof(badges), "%s%T|", badges, "Leader Restriction", client);
+			hasBadges = true;
+		}
+		#endif
+
+		if (!nominatedlist)
+		{
+			// Time restriction with value
+			int timeRestriction = GetMapTimeRestriction(map);
+			if (timeRestriction > 0)
+			{
+				Format(badges, sizeof(badges), "%s%T|", badges, "Map Time Restriction", client, "+", timeRestriction / 60, timeRestriction % 60);
+				hasBadges = true;
+			}
+
+			// Player restriction with value
+			int playerRestriction = GetMapPlayerRestriction(map);
+			if (playerRestriction != 0)
+			{
+				if (playerRestriction < 0)
+						Format(badges, sizeof(badges), "%s%T|", buffer, "Map Player Restriction", client, "+", playerRestriction * -1);
+					else
+						Format(badges, sizeof(badges), "%s%T|", buffer, "Map Player Restriction", client, "-", playerRestriction);
+				hasBadges = true;
+			}
+
+			// Group restriction with value
+			int groupRestriction = GetMapGroupRestriction(map, client);
+			if (groupRestriction >= 0)
+			{
+				Format(badges, sizeof(badges), "%s%T|", badges, "Map Group Restriction", client, groupRestriction);
+				hasBadges = true;
+			}
+		}
+	}
+
+	if (hasBadges)
+	{
+		// Remove trailing |
+		int len = strlen(badges);
+		if (len > 0 && badges[len-1] == '|')
+		{
+			badges[len-1] = '\0';
+		}
+
+		// Format with brackets
+		Format(buffer, maxlength, "[%s]", badges);
+		return true;
+	}
+
+	return false;
 }
