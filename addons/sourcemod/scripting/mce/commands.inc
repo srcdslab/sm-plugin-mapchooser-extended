@@ -82,6 +82,7 @@ public Action Command_ShowConfig(int client, int args)
 		}
 	}
 
+	char desc[128], displayName[PLATFORM_MAX_PATH], formattedName[PLATFORM_MAX_PATH];
 	int extends = InternalGetMapMaxExtends(map);
 	int extendtime = InternalGetMapExtendTime(map);
 	int extendround = InternalGetMapExtendRound(map);
@@ -95,14 +96,15 @@ public Action Command_ShowConfig(int client, int args)
 	bool adminonly = InternalGetMapAdminRestriction(map);
 	bool viponly = InternalGetMapVIPRestriction(map);
 	bool leaderonly = InternalGetMapLeaderRestriction(map);
-	// char desc[MAX_DESCRIPTION_LENGTH];
-	// bool descr = InternalGetMapDescription(map, desc, sizeof(desc));
+	bool descr = InternalGetMapDescription(map, desc, sizeof(desc));
+	bool hasDisplayName = InternalGetMapDisplayName(map, displayName, sizeof(displayName));
+	InternalFormatMapDisplay(map, formattedName, sizeof(formattedName), client, false);
 
 	if (GetCmdReplySource() == SM_REPLY_TO_CHAT)
 	{
 		CPrintToChat(client, "{green}[MCE]{default} %t", "See console for output");
 	}
-	
+
 	PrintToConsole(client, "-----------------------------------------");
 	PrintToConsole(client, "Showing config info for: %s", map);
 	PrintToConsole(client, "-----------------------------------------");
@@ -119,7 +121,9 @@ public Action Command_ShowConfig(int client, int args)
 	PrintToConsole(client, "%-15s %5b", "Admin Only: ", adminonly);
 	PrintToConsole(client, "%-15s %5b", "VIP Only: ", viponly);
 	PrintToConsole(client, "%-15s %5b", "Leader Only: ", leaderonly);
-	// PrintToConsole(client, "%-15s %5s %s", "Description: ", descr?"Yes:":"No", desc);
+	PrintToConsole(client, "%-15s %s", "Display Name: ", hasDisplayName ? displayName : "None");
+	PrintToConsole(client, "%-15s %s", "Description: ", descr ? desc : "None");
+	PrintToConsole(client, "%-15s %s", "Menu Display: ", formattedName);
 	PrintToConsole(client, "-----------------------------------------");
 	InternalShowMapGroups(client, map);
 	return Plugin_Handled;

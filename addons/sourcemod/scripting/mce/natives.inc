@@ -52,6 +52,8 @@ stock void API_NativesInit()
 	CreateNative("GetMapExtendFrags", Native_GetMapExtendFrag);
 	CreateNative("AreRestrictionsActive", Native_AreRestrictionsActive);
 	CreateNative("SimulateMapEnd", Native_SimulateMapEnd);
+	CreateNative("MCE_GetMapDescription", Native_GetMapDescription);
+	CreateNative("MCE_GetMapDisplayName", Native_GetMapDisplayName);
 }
 
 /* Add natives to allow nominate and initiate vote to be call */
@@ -702,4 +704,44 @@ public int Native_SimulateMapEnd(Handle plugin, int numParams)
 {
 	OnMapEnd();
 	return 0;
+}
+
+public int Native_GetMapDescription(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+	if (len <= 0)
+		return false;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	len = GetNativeCell(3);
+	char[] buffer = new char[len];
+	bool result = InternalGetMapDescription(map, buffer, len);
+
+	SetNativeString(2, buffer, len);
+	return result;
+}
+
+public int Native_GetMapDisplayName(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+	if (len <= 0)
+		return false;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	len = GetNativeCell(3);
+	char[] buffer = new char[len];
+	bool result = InternalGetMapDisplayName(map, buffer, len);
+
+	// If the map display name is not found, use the original map name
+	if (!result)
+		strcopy(buffer, len, map);
+
+	SetNativeString(2, buffer, len);
+	return result;
 }

@@ -41,7 +41,7 @@
 
 #define MCE_V_MAJOR "1"
 #define MCE_V_MINOR "13"
-#define MCE_V_PATCH "7"
+#define MCE_V_PATCH "8"
 
 #define MCE_VERSION MCE_V_MAJOR..."."...MCE_V_MINOR..."."...MCE_V_PATCH
 
@@ -334,6 +334,26 @@ native bool AreRestrictionsActive();
  * @noreturn
  */
 native int SimulateMapEnd();
+
+/**
+ * Get the description for a map
+ *
+ * @param map      Name of map
+ * @param buffer   Buffer to store description
+ * @param maxlen   Maximum length of buffer
+ * @return         true if description exists, false otherwise
+ */
+native bool MCE_GetMapDescription(const char[] map, char[] buffer, int maxlen);
+
+/**
+ * Get the display name for a map
+ *
+ * @param map      Name of map
+ * @param buffer   Buffer to store display name
+ * @param maxlen   Maximum length of buffer
+ * @return         true if display name exists, false otherwise (if false, the original map name is stored in buffer)
+ */
+native bool MCE_GetMapDisplayName(const char[] map, char[] buffer, int maxlen);
 
 public SharedPlugin __pl_mapchooser_extended =
 {

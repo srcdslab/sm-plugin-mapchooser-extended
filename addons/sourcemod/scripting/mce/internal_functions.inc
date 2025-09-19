@@ -590,6 +590,124 @@ stock bool InternalGetMapLeaderRestriction(const char[] map)
 	return view_as<bool>(Leader);
 }
 
+stock bool InternalGetMapDescription(const char[] map, char[] buffer, int maxlen)
+{
+	if (!g_Config)
+		return false;
+
+	g_Config.Rewind();
+	if (!g_Config.JumpToKey(map))
+		return false;
+
+	g_Config.GetString("Description", buffer, maxlen);
+	if (!buffer[0])
+		return false;
+
+	return true;
+}
+
+stock bool InternalGetMapDisplayName(const char[] map, char[] buffer, int maxlen)
+{
+	if (!g_Config)
+		return false;
+
+	g_Config.Rewind();
+	if (!g_Config.JumpToKey(map))
+		return false;
+
+	g_Config.GetString("DisplayName", buffer, maxlen);
+	if (!buffer[0])
+		return false;
+
+	return true;
+}
+
+stock void InternalGetMapStatusBadges(const char[] map, char[] buffer, int maxlen, int client)
+{
+	char badges[128];
+
+	InternalGetMapStatusBadge_Leader(map, badges, sizeof(badges), client);
+	InternalGetMapStatusBadge_Admin(map, badges, sizeof(badges), client);
+	InternalGetMapStatusBadge_VIP(map, badges, sizeof(badges), client);
+
+	// Remove trailing |
+	int len = strlen(badges);
+	if (len > 0 && badges[len-1] == '|')
+	{
+		badges[len-1] = '\0';
+	}
+
+	Format(buffer, maxlen, "%s", badges);
+}
+
+stock void InternalGetMapStatusBadge_Leader(const char[] map, char[] buffer, int maxlen, int client)
+{
+	if (InternalGetMapLeaderRestriction(map))
+	{
+		Format(buffer, maxlen, "%s%T|", buffer, "Leader Restriction", client);
+	}
+}
+
+stock void InternalGetMapStatusBadge_Admin(const char[] map, char[] buffer, int maxlen, int client)
+{
+	if (InternalGetMapAdminRestriction(map))
+	{
+		Format(buffer, maxlen, "%s%T|", buffer, "Admin Restriction", client);
+	}
+}
+
+stock void InternalGetMapStatusBadge_VIP(const char[] map, char[] buffer, int maxlen, int client)
+{
+	if (InternalGetMapVIPRestriction(map))
+	{
+		Format(buffer, maxlen, "%s%T|", buffer, "VIP Restriction", client);
+	}
+}
+
+stock void InternalFormatMapDisplay(const char[] map, char[] buffer, int maxlen, int client, bool includeBadges = true)
+{
+	char displayName[PLATFORM_MAX_PATH];
+	char cleanName[PLATFORM_MAX_PATH];
+	char badges[128];
+	char description[128];
+
+	// Get display name or use original map name
+	if (InternalGetMapDisplayName(map, displayName, sizeof(displayName)))
+	{
+		strcopy(cleanName, sizeof(cleanName), displayName);
+	}
+	else
+	{
+		strcopy(cleanName, sizeof(cleanName), map);
+	}
+
+	// Get status badges
+	if (includeBadges)
+	{
+		InternalGetMapStatusBadges(map, badges, sizeof(badges), client);
+	}
+
+	// Get description if available
+	bool hasDescription = InternalGetMapDescription(map, description, sizeof(description));
+
+	if (hasDescription && badges[0] != '\0')
+	{
+		Format(buffer, maxlen, "%s [%s | %s]", cleanName, badges, description);
+	}
+	else if (badges[0] != '\0')
+	{
+		Format(buffer, maxlen, "%s [%s]", cleanName, badges);
+	}
+	else if (hasDescription)
+	{
+		Format(buffer, maxlen, "%s [%s]", cleanName, description);
+	}
+	else
+	{
+		strcopy(buffer, maxlen, cleanName);
+	}
+}
+
 stock void InternalRestoreMapCooldowns()
 {
 	char sCooldownFile[PLATFORM_MAX_PATH];
@@ -784,10 +902,4 @@ stock bool IsMapValidEx(const char[] map)
 	char displayName[PLATFORM_MAX_PATH];
 	FindMapResult result = FindMap(map, displayName, sizeof(displayName));
 	return (result == FindMap_Found);
-}
-
-public Action Timer_DelayedTimeleftCheck(Handle timer)
-{
-	SetupTimeleftTimer();
-	return Plugin_Stop;
 }
