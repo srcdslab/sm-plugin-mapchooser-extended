@@ -154,14 +154,9 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 		GetArrayString(MapList, i, map, sizeof(map));
 
 		if (!filter[0] || StrContains(map, filter, false) != -1)
-		{
-			char tierName[32];
-			bool hasTier = GetMapTierName(map, tierName, sizeof(tierName));
-				
+		{		
 			MCE_GetMapDescription(map, description, sizeof(description));
 			MCE_GetMapDisplayName(map, display, sizeof(display));
-			if (hasTier)
-				Format(display, sizeof(display), "%s - [%s]", display, tierName);
 
 			if (description[0] != '\0')
 				Format(display, sizeof(display), "%s | %s", display, description);
@@ -172,7 +167,11 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 			{
 				Format(display, sizeof(display), "%s %s", display, badgeBuffer);
 			}
-
+			
+			char tierName[32];
+			if (GetMapTierName(map, tierName, sizeof(tierName)))
+				Format(display, sizeof(display), "%s - [%s]", map, tierName);
+				
 			int owner = GetArrayCell(OwnerList, i);
 
 			char sBuffer[64];
@@ -433,9 +432,9 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				{
 					char sNominatedDisplay[PLATFORM_MAX_PATH];
 					strcopy(sNominatedDisplay, sizeof(sNominatedDisplay), sNominated);
-					int nominatedMapTier;
-					if (MCE_CanShowMapTierInChat() && (nominatedMapTier = GetMapTier(sNominated)) && nominatedMapTier > 0)
-						Format(sNominatedDisplay, sizeof(sNominatedDisplay), "%s %t", sNominated, "MapTierDisplay");
+					char tierName[32];
+					if (MCE_CanShowMapTierInChat() && GetMapTierName(sNominated, tierName, sizeof(tierName)))
+						Format(sNominatedDisplay, sizeof(sNominatedDisplay), "%s %t", sNominated, "MapTierDisplay", tierName);
 				
 					RemoveNominationByOwner(param1);
 					CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", name, sNominatedDisplay);
@@ -682,7 +681,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 			if (GetMapTierName(map, tierName, sizeof(tierName)))
 			{
 				char buffer[PLATFORM_MAX_PATH];
-				Format(buffer, sizeof(buffer), "%s - [%s]", buffer, tierName);
+				Format(buffer, sizeof(buffer), "%s - [%s]", map, tierName);
 				RedrawMenuItem(buffer);
 			}
 			

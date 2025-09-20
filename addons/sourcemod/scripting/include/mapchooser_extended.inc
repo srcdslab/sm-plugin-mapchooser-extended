@@ -376,7 +376,7 @@ native bool GetMapTierName(const char[] map, char[] tierName, int maxlen);
 /**
  * Gets the tier name from tier number
  * 
- * @param map     Name of map
+ * @param tier      Tier number
  * @param tierName 	String to store tier name in
  * @param maxlen    Max Length of tier name
  * @return        	True if tier name was found, false otherwise
