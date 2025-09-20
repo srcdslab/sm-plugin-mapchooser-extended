@@ -416,15 +416,25 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 			FormatEx(sPlayer, sizeof(sPlayer), "%N", i);
 			break;
 		}
-
+		
+		char mapInChat[64];
+		strcopy(mapInChat, sizeof(mapInChat), map);
+		int mapTier;
+		if (InternalShowMapTierInChat() && (mapTier = InternalGetMapTier(map)) && mapTier > 0)
+		{
+			char tierName[32];
+			InternalGetTierNameFromInt(mapTier, tierName, sizeof(tierName));
+			Format(mapInChat, sizeof(mapInChat), "%s %t", map, "MapTierDisplay", tierName);
+		}
+		
 		if (sPlayer[0] && g_bShowNominator)
 		{
-			CPrintToChatAll("{green}[MCE]{default} %t - %t %s", "Nextmap Voting Finished", map, percent, num_votes, "Nominated by", sPlayer);
+			CPrintToChatAll("{green}[MCE]{default} %t - %t %s", "Nextmap Voting Finished", mapInChat, percent, num_votes, "Nominated by", sPlayer);
 			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) Nominated by %s", map, percent, num_votes, sPlayer);
 		}
 		else
 		{
-			CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", map, percent, num_votes);
+			CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", mapInChat, percent, num_votes);
 			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes)", map, percent, num_votes);
 		}
 

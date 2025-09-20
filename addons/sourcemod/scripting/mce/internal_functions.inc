@@ -903,3 +903,53 @@ stock bool IsMapValidEx(const char[] map)
 	FindMapResult result = FindMap(map, displayName, sizeof(displayName));
 	return (result == FindMap_Found);
 }
+
+/* Tiers Internal functions */
+stock int InternalGetMapTier(const char[] map)
+{
+	if (!g_MapTiers)
+		return 0;
+
+	int tier = g_iDefaultTier;
+	if (!g_Config)
+		return tier;
+
+	g_Config.Rewind();
+	if (!g_Config.JumpToKey(map))
+		return tier;
+
+	tier = g_Config.GetNum("Tier", tier);
+	return tier;
+}
+
+stock bool InternalGetMapTierName(const char[] map, char[] tierName, int maxlen)
+{		
+	int tier = InternalGetMapTier(map);
+	return InternalGetTierNameFromInt(tier, tierName, maxlen);
+}
+
+stock bool InternalGetTierNameFromInt(int tier, char[] tierName, int maxlen)
+{
+	if (!g_MapTiers)
+		return false;
+
+	int arrayLength = GetArraySize(g_MapTiers);
+	if (!arrayLength || tier <= 0 || tier > arrayLength)
+		return false;
+
+	GetArrayString(g_MapTiers, tier - 1, tierName, maxlen);
+	return true;
+}
+
+stock int InternalGetTiersCount()
+{
+	if (!g_MapTiers)
+		return 0;
+
+	return GetArraySize(g_MapTiers);
+}
+
+stock bool InternalShowMapTierInChat()
+{
+	return g_bShowMapTierInChat;
+}

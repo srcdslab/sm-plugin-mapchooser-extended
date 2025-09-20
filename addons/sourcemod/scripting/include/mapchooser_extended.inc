@@ -41,7 +41,7 @@
 
 #define MCE_V_MAJOR "1"
 #define MCE_V_MINOR "13"
-#define MCE_V_PATCH "8"
+#define MCE_V_PATCH "9"
 
 #define MCE_VERSION MCE_V_MAJOR..."."...MCE_V_MINOR..."."...MCE_V_PATCH
 
@@ -354,6 +354,48 @@ native bool MCE_GetMapDescription(const char[] map, char[] buffer, int maxlen);
  * @return         true if display name exists, false otherwise (if false, the original map name is stored in buffer)
  */
 native bool MCE_GetMapDisplayName(const char[] map, char[] buffer, int maxlen);
+
+/**
+ * Gets the tier number of map
+ * 
+ * @param map     Name of map
+ * @return        Tier number
+ */
+native int GetMapTier(const char[] map);
+
+/**
+ * Gets the tier name of the map
+ * 
+ * @param map     	Name of map
+ * @param tierName 	String to store tier name in
+ * @param maxlen    Max Length of tier name
+ * @return        	True if tier name was found, false otherwise
+ */
+native bool GetMapTierName(const char[] map, char[] tierName, int maxlen);
+
+/**
+ * Gets the tier name from tier number
+ * 
+ * @param map     Name of map
+ * @param tierName 	String to store tier name in
+ * @param maxlen    Max Length of tier name
+ * @return        	True if tier name was found, false otherwise
+ */
+native bool GetTierNameFromInt(int tier, char[] tierName, int maxlen);
+
+/**
+ * Gets the maximum number of available tiers
+ * 
+ * @return        tiers count
+ */
+native int GetTiersCount();
+
+/**
+ * Gets wheter if map tiers can display in chat or not
+ * 
+ * @return        true if map tiers can display in chat, false otherwise
+ */
+native bool MCE_CanShowMapTierInChat();
 
 public SharedPlugin __pl_mapchooser_extended =
 {
