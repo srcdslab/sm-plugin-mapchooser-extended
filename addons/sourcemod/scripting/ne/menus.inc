@@ -281,7 +281,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 			}
 			
 			// Cookies are cached and client choose to Hide unavailable maps
-			else if (!g_bShowUnavailableMaps[client] && 
+			else if (bCached && !g_bShowUnavailableMaps[client] && 
 				AreRestrictionsActive() &&
 				GetMapCooldown(map) == 0 &&
 				GetMapCooldownTime(map) < GetTime() &&
