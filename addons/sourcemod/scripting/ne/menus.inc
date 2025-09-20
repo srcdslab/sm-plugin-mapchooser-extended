@@ -156,11 +156,12 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 		if (!filter[0] || StrContains(map, filter, false) != -1)
 		{
 			char tierName[32];
-			if (GetMapTierName(map, tierName, sizeof(tierName)))
-				Format(display, sizeof(display), "%s - [%s]", map, tierName);
+			bool hasTier = GetMapTierName(map, tierName, sizeof(tierName));
 				
 			MCE_GetMapDescription(map, description, sizeof(description));
 			MCE_GetMapDisplayName(map, display, sizeof(display));
+			if (hasTier)
+				Format(display, sizeof(display), "%s - [%s]", display, tierName);
 
 			if (description[0] != '\0')
 				Format(display, sizeof(display), "%s | %s", display, description);
