@@ -74,6 +74,52 @@ stock void InitializeGameModeSettings()
 		g_SaveCDOnMapEnd = false;
 }
 
+stock void InitializeMapTiers()
+{
+	if (!g_Config)
+		return;
+	
+	g_Config.Rewind();
+	
+	if (!g_Config.JumpToKey("_tiers"))
+	{
+		delete g_MapTiers;
+		return;
+	}
+	
+	if (!g_Config.GotoFirstSubKey())
+	{
+		delete g_MapTiers;
+		return;
+	}
+	
+	int lastNum = 0;
+	
+	delete g_MapTiers;
+	g_MapTiers = CreateArray(ByteCountToCells(64));
+	
+	do 
+	{
+		// we need an ordered list of tier numbers
+		char tierNumStr[3];
+		g_Config.GetSectionName(tierNumStr, sizeof(tierNumStr));
+		
+		int tierNum = StringToInt(tierNumStr);
+		if (!tierNum || (lastNum && tierNum == lastNum))
+		{
+			LogError("[MCE] Map Tiers Error: Found an unordered list in \"_tiers\" section");
+			delete g_MapTiers;
+			return;
+		}
+		
+		lastNum = tierNum;
+		
+		char name[32];
+		g_Config.GetString("_name", name, sizeof(name));
+		PushArrayString(g_MapTiers, name);
+	} while (g_Config.GotoNextKey());
+}
+
 stock void InitializeGroupSettings()
 {
 	if (!g_Config)
@@ -734,7 +780,18 @@ stock bool IsMapEndVoteAllowed()
 
 stock void AddMapItem(const char[] map)
 {
-	AddMenuItem(g_VoteMenu, map, map);
+	char mapDisplay[64];
+	strcopy(mapDisplay, sizeof(mapDisplay), map);
+	
+	int mapTier = InternalGetMapTier(map);
+	if (mapTier > 0)
+	{
+		char tierName[32];
+		InternalGetTierNameFromInt(mapTier, tierName, sizeof(tierName));
+		Format(mapDisplay, sizeof(mapDisplay), "%s - [%s]", map, tierName);
+	}
+	
+	AddMenuItem(g_VoteMenu, map, mapDisplay);
 }
 
 stock void GetMapItem(Handle menu, int position, char[] map, int mapLen)
