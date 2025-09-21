@@ -910,7 +910,7 @@ stock int InternalGetMapTier(const char[] map)
 	if (!g_MapTiers)
 		return 0;
 
-	int tier = g_iDefaultTier;
+	int tier = 0;
 	if (!g_Config)
 		return tier;
 
