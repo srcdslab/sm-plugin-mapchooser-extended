@@ -80,8 +80,8 @@ Action AttemptNominate(int client, const char[] filter = "", int tier = 0)
 	else
 	{
 		char tierName[32];
-		if (GetTierNameFromInt(tier, tierName, sizeof(tierName)))
-			SetMenuTitle(menu, "%T\n%s - Map List", "Nominate Title", client, tierName);
+		GetTierNameFromInt(tier, tierName, sizeof(tierName))
+		SetMenuTitle(menu, "%T\n%s - Map List", "Nominate Title", client, tierName);
 	}
 	
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
@@ -281,7 +281,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 			}
 			
 			// Cookies are cached and client choose to Hide unavailable maps
-			else if (bCached && !g_bShowUnavailableMaps[client] && 
+			if (bCached && !g_bShowUnavailableMaps[client] && 
 				AreRestrictionsActive() &&
 				GetMapCooldown(map) == 0 &&
 				GetMapCooldownTime(map) < GetTime() &&
@@ -408,7 +408,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			
 			if (strcmp(map, "show_tiers", false) == 0)
 			{
-				AttemptNominate(param1, "", -1);
+				AttemptNominate(param1, _, -1);
 				return 0;
 			}
 
