@@ -403,7 +403,6 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		}
 
 		g_HasVoteStarted = false;
-		g_PendingRevoteActive = false;
 		g_MapVoteCompleted = true;
 		g_PendingRevoteActive = false;
 
