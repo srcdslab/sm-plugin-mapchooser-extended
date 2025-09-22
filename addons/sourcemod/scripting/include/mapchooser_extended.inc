@@ -41,7 +41,7 @@
 
 #define MCE_V_MAJOR "1"
 #define MCE_V_MINOR "13"
-#define MCE_V_PATCH "8"
+#define MCE_V_PATCH "9"
 
 #define MCE_VERSION MCE_V_MAJOR..."."...MCE_V_MINOR..."."...MCE_V_PATCH
 
@@ -364,4 +364,5 @@ public SharedPlugin __pl_mapchooser_extended =
 #else
 	required = 0,
 #endif
+
 };
