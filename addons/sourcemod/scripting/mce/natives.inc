@@ -54,6 +54,11 @@ stock void API_NativesInit()
 	CreateNative("SimulateMapEnd", Native_SimulateMapEnd);
 	CreateNative("MCE_GetMapDescription", Native_GetMapDescription);
 	CreateNative("MCE_GetMapDisplayName", Native_GetMapDisplayName);
+	CreateNative("GetMapTier", Native_GetMapTier);
+	CreateNative("GetMapTierName", Native_GetMapTierName);
+	CreateNative("GetTierNameFromInt", Native_GetTierNameFromInt);
+	CreateNative("GetTiersCount", Native_GetTiersCount);
+	CreateNative("MCE_CanShowMapTierInChat", Native_CanShowMapTierInChat);
 }
 
 /* Add natives to allow nominate and initiate vote to be call */
@@ -744,4 +749,67 @@ public int Native_GetMapDisplayName(Handle plugin, int numParams)
 
 	SetNativeString(2, buffer, len);
 	return result;
+}
+
+public int Native_GetMapTier(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+
+	if (len <= 0)
+		return 0;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	return InternalGetMapTier(map);
+}
+
+public int Native_GetMapTierName(Handle plugin, int numParams)
+{
+	int len;
+	GetNativeStringLength(1, len);
+
+	if (len <= 0)
+		return 0;
+
+	char[] map = new char[len+1];
+	GetNativeString(1, map, len+1);
+
+	int maxlen = GetNativeCell(3);
+	char[] tierName = new char[maxlen];
+
+	GetNativeString(2, tierName, maxlen);
+
+	if (!InternalGetMapTierName(map, tierName, maxlen))
+		return 0;
+
+	SetNativeString(2, tierName, maxlen);
+	return 1;
+}
+
+public int Native_GetTierNameFromInt(Handle plugin, int numParams)
+{
+	int tier = GetNativeCell(1);
+
+	int maxlen = GetNativeCell(3);
+	char[] tierName = new char[maxlen];
+
+	GetNativeString(2, tierName, maxlen);
+
+	if (!InternalGetTierNameFromInt(tier, tierName, maxlen))
+		return 0;
+
+	SetNativeString(2, tierName, maxlen);
+	return 1;
+}
+
+public int Native_GetTiersCount(Handle plugin, int numParams)
+{	
+	return InternalGetTiersCount();
+}
+
+public int Native_CanShowMapTierInChat(Handle plugin, int numParams)
+{
+	return InternalShowMapTierInChat();
 }

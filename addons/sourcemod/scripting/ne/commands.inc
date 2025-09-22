@@ -585,11 +585,21 @@ public Action Command_Nominate(int client, int args)
 	}
 
 	NominateResult result = NominateMap(mapname, false, client);
-
+	
+	char mapnameInChat[64];
+	strcopy(mapnameInChat, sizeof(mapnameInChat), mapname);
+	int mapTier;
+	if (MCE_CanShowMapTierInChat() && (mapTier = GetMapTier(mapname)) && mapTier > 0)
+	{
+		char tierName[32];
+		if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
+			Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", mapname, "MapTierDisplay", tierName);
+	}
+	
 	if (result > Nominate_Replaced)
 	{
 		if (result == Nominate_AlreadyInVote)
-			CPrintToChat(client, "{green}[NE]{default} %t", "Map Already In Vote", mapname);
+			CPrintToChat(client, "{green}[NE]{default} %t", "Map Already In Vote", mapnameInChat);
 		else if (result == Nominate_VoteFull)
 			CPrintToChat(client, "{green}[NE]{default} %t", "Max Nominations");
 
@@ -605,13 +615,13 @@ public Action Command_Nominate(int client, int args)
 
 	if (result == Nominate_Added)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapname);
+		CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapnameInChat);
 		LogMessage("%L has nominated %s", client, mapname);
 		Forward_OnPublicMapInsert(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
 	else if (result == Nominate_Replaced)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "Map Nomination Changed", name, mapname);
+		CPrintToChatAll("{green}[NE]{default} %t", "Map Nomination Changed", name, mapnameInChat);
 		LogMessage("%L has changed their nomination to %s", client, mapname);
 		Forward_OnPublicMapReplaced(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
@@ -630,8 +640,18 @@ public Action Command_UnNominate(int client, int args)
 		CPrintToChat(client, "{green}[NE]{default} %t", "Unable To Unnominate");
 		return Plugin_Handled;
 	}
-
-	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", client, map);
+	
+	char mapnameInChat[64];
+	strcopy(mapnameInChat, sizeof(mapnameInChat), map);
+	int mapTier;
+	if (MCE_CanShowMapTierInChat() && (mapTier = GetMapTier(map)) && mapTier > 0)
+	{
+		char tierName[32];
+		if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
+			Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", map, "MapTierDisplay", tierName);
+	}
+	
+	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", client, mapnameInChat);
 	LogAction(client, -1, "\"%L\" has removed his nomination \"%s\".", client, map);
 
 	return Plugin_Handled;
