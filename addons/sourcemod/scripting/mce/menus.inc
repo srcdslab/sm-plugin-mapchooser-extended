@@ -111,9 +111,10 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 
 	static char map[PLATFORM_MAX_PATH];
 
-	/* No input given - Use our internal nominations and maplist, unless a pending revote exists */
-	if (inputlist == INVALID_HANDLE && !g_PendingRevoteActive)
+	/* No input given - Use our internal nominations and maplist */
+	if (inputlist == INVALID_HANDLE)
 	{
+		g_PendingRevoteActive = false;
 		int allMapsSize = (PLATFORM_MAX_PATH * 3);
 		char[] allMapsBuffer = new char[allMapsSize];
 
@@ -359,6 +360,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		// We extended, so we'll have to vote again.
 		g_RunoffCount = 0;
 		g_HasVoteStarted = false;
+		g_PendingRevoteActive = false;
 		SetupTimeleftTimer();
 
 	}
@@ -376,6 +378,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 
 		g_RunoffCount = 0;
 		g_HasVoteStarted = false;
+		g_PendingRevoteActive = false;
 		SetupTimeleftTimer();
 	}
 	else
