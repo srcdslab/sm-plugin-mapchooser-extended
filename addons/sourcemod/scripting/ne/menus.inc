@@ -13,10 +13,6 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 {
 	switch (action)
 	{
-		case MenuAction_End:
-		{
-			delete menu;
-		}
 		case MenuAction_Select:
 		{
 			char sMap[PLATFORM_MAX_PATH], sParam[PLATFORM_MAX_PATH];
@@ -35,6 +31,11 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 				CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", sName, sMap);
 				LogAction(param1, -1, "\"%L\" has removed his nomination \"%s\".", param1, sMap);
 			}
+		}
+
+		case MenuAction_End:
+		{
+			delete menu;
 		}
 	}
 
@@ -61,8 +62,12 @@ Action AttemptNominate(int client, const char[] filter = "")
 		return Plugin_Handled;
 	}
 
-	Menu menu = g_MapMenu;
-	menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client);
+	Menu menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client);
+
+	if (!filter[0])
+	{
+		g_MapMenu = menu;
+	}
 
 	SetMenuTitle(menu, "%T", "Nominate Title", client);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
@@ -188,7 +193,6 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 			delete g_MapMenu;
 		}
 		menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
-		g_MapMenu = menu;
 	}
 
 	static char map[PLATFORM_MAX_PATH];
@@ -318,11 +322,6 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 
 	switch (action)
 	{
-		case MenuAction_End:
-		{
-			if (menu != g_MapMenu)
-				delete menu;
-		}
 		case MenuAction_Select:
 		{
 			if (!g_bNEAllowed)
@@ -528,6 +527,12 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 
 			return 0;
 		}
+
+		case MenuAction_End:
+		{
+			if (menu != g_MapMenu)
+				delete menu;
+		}
 	}
 
 	return 0;
@@ -537,11 +542,6 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 {
 	switch (action)
 	{
-		case MenuAction_End:
-		{
-			if (menu != g_AdminMapMenu)
-				delete menu;
-		}
 		case MenuAction_Select:
 		{
 			static char map[PLATFORM_MAX_PATH];
@@ -589,6 +589,12 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 		{
 			return Handler_MapSelectMenu(menu, action, param1, param2);
 		}
+
+		case MenuAction_End:
+		{
+			if (menu != g_AdminMapMenu)
+				delete menu;
+		}
 	}
 
 	return 0;
@@ -598,10 +604,6 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 {
 	switch (action)
 	{
-		case MenuAction_End:
-		{
-			delete menu;
-		}
 		case MenuAction_Select:
 		{
 			static char map[PLATFORM_MAX_PATH];
@@ -618,6 +620,11 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 
 			LogAction(param1, -1, "\"%L\" has removed map \"%s\" from nominations.", param1, map);
 			Forward_OnMapNominationRemove(param1, map);
+		}
+
+		case MenuAction_End:
+		{
+			delete menu;
 		}
 	}
 
