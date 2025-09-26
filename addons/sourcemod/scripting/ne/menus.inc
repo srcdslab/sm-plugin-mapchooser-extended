@@ -86,7 +86,7 @@ Action AttemptAdminNominate(int client, const char[] filter = "")
 		return Plugin_Handled;
 	}
 
-	Menu menu = BuildAdminMapMenu(filter);
+	Menu menu = BuildAdminMapMenu(filter[0] ? filter : "");
 
 	SetMenuTitle(menu, "%T", "Nominate Title", client);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
