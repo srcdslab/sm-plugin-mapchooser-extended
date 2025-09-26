@@ -12,10 +12,6 @@
 Handle g_mapTrie;
 Handle g_MapList = INVALID_HANDLE;
 Handle g_AdminMapList = INVALID_HANDLE;
-Handle g_hDelayNominate = INVALID_HANDLE;
-
-Menu g_MapMenu;
-Menu g_AdminMapMenu;
 
 #define MAPSTATUS_ENABLED (1<<0)
 #define MAPSTATUS_DISABLED (1<<1)
@@ -69,23 +65,7 @@ stock void VerifyMapLists()
 
 stock void InitTimerDelayNominate()
 {
-	if (g_hDelayNominate != INVALID_HANDLE)
-		delete g_hDelayNominate;
-
-	g_hDelayNominate = CreateTimer(g_Cvar_InitialDelay.FloatValue, Timer_DelayNominate, _, TIMER_FLAG_NO_MAPCHANGE);
-}
-
-stock void UpdateMapMenus()
-{
-	if (g_MapMenu != INVALID_HANDLE)
-		delete g_MapMenu;
-
-	g_MapMenu = BuildMapMenu("", -1);
-
-	if (g_AdminMapMenu != INVALID_HANDLE)
-		delete g_AdminMapMenu;
-
-	g_AdminMapMenu = BuildAdminMapMenu("");
+	CreateTimer(g_Cvar_InitialDelay.FloatValue, Timer_DelayNominate, _, TIMER_FLAG_NO_MAPCHANGE);
 }
 
 stock void UpdateMapTrie()
@@ -136,7 +116,6 @@ stock void UpdateMapTrie()
 
 stock void MapEndCleanUp()
 {
-	g_hDelayNominate = INVALID_HANDLE;
 	g_bNEAllowed = false;
 	g_bNextMapSet = false;
 }
@@ -305,6 +284,6 @@ public int AlphabeticSortCallback(int index1, int index2, Handle array, Handle h
 	char map1[PLATFORM_MAX_PATH], map2[PLATFORM_MAX_PATH];
 	GetArrayString(view_as<ArrayList>(array), index1, map1, sizeof(map1));
 	GetArrayString(view_as<ArrayList>(array), index2, map2, sizeof(map2));
-	
+
 	return strcmp(map1, map2, false);
 }

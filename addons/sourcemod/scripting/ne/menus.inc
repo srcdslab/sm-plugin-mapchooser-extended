@@ -17,6 +17,7 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 		{
 			delete menu;
 		}
+
 		case MenuAction_Select:
 		{
 			char sMap[PLATFORM_MAX_PATH], sParam[PLATFORM_MAX_PATH];
@@ -61,8 +62,7 @@ Action AttemptNominate(int client, const char[] filter = "")
 		return Plugin_Handled;
 	}
 
-	Menu menu = g_MapMenu;
-	menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client);
+	Menu menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client);
 
 	SetMenuTitle(menu, "%T", "Nominate Title", client);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
@@ -86,9 +86,7 @@ Action AttemptAdminNominate(int client, const char[] filter = "")
 		return Plugin_Handled;
 	}
 
-	Menu menu = g_AdminMapMenu;
-	if (filter[0])
-		menu = BuildAdminMapMenu(filter);
+	Menu menu = BuildAdminMapMenu(filter[0] ? filter : "");
 
 	SetMenuTitle(menu, "%T", "Nominate Title", client);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
@@ -173,23 +171,8 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 
 Menu BuildMapMenu(const char[] filter, int client = -1)
 {
-	// If we have a filter, create a new temporary menu
-	// Otherwise use the global menu
-	Menu menu;
-	if (filter[0])
-	{
-		menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
-	}
-	else
-	{
-		// If global menu exists, delete it first
-		if (g_MapMenu != null)
-		{
-			delete g_MapMenu;
-		}
-		menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
-		g_MapMenu = menu;
-	}
+	// Always create a new menu - no more global menu reuse
+	Menu menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
 
 	static char map[PLATFORM_MAX_PATH];
 	bool bValid = client > 0 && client <= MaxClients && IsClientInGame(client);
@@ -320,9 +303,9 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 	{
 		case MenuAction_End:
 		{
-			if (menu != g_MapMenu)
-				delete menu;
+			delete menu;
 		}
+
 		case MenuAction_Select:
 		{
 			if (!g_bNEAllowed)
@@ -539,9 +522,9 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 	{
 		case MenuAction_End:
 		{
-			if (menu != g_AdminMapMenu)
-				delete menu;
+			delete menu;
 		}
+
 		case MenuAction_Select:
 		{
 			static char map[PLATFORM_MAX_PATH];
@@ -602,6 +585,7 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 		{
 			delete menu;
 		}
+
 		case MenuAction_Select:
 		{
 			static char map[PLATFORM_MAX_PATH];
