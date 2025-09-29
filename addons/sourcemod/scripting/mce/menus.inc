@@ -596,6 +596,10 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 				}
 			}
 
+			char mapDisplay[32]
+			if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
+				Format(buffer, sizeof(buffer), "%s [%s]", buffer, mapDisplay);
+				
 			if (buffer[0] != '\0')
 			{
 				return RedrawMenuItem(buffer);

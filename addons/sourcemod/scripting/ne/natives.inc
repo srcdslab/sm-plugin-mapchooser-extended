@@ -36,7 +36,6 @@ public int Native_PushMapIntoNominationPool(Handle plugin, int numArgs)
 	SetArrayString(g_MapList, 0, map);
 
 	UpdateMapTrie();
-	UpdateMapMenus();
 
 	return 0;
 }
@@ -60,7 +59,6 @@ public int Native_PushMapsIntoNominationPool(Handle plugin, int numArgs)
 	delete maps;
 
 	UpdateMapTrie();
-	UpdateMapMenus();
 
 	return 0;
 }
@@ -77,7 +75,6 @@ public int Native_RemoveMapFromNominationPool(Handle plugin, int numArgs)
 		RemoveFromArray(g_MapList, idx);
 
 	UpdateMapTrie();
-	UpdateMapMenus();
 
 	return 0;
 }
@@ -100,7 +97,6 @@ public int Native_RemoveMapsFromNominationPool(Handle plugin, int numArgs)
 	delete maps;
 
 	UpdateMapTrie();
-	UpdateMapMenus();
 
 	return 0;
 }

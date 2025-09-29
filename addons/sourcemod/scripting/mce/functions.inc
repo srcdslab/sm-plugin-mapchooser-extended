@@ -780,18 +780,7 @@ stock bool IsMapEndVoteAllowed()
 
 stock void AddMapItem(const char[] map)
 {
-	char mapDisplay[64];
-	strcopy(mapDisplay, sizeof(mapDisplay), map);
-	
-	int mapTier = InternalGetMapTier(map);
-	if (mapTier > 0)
-	{
-		char tierName[32];
-		InternalGetTierNameFromInt(mapTier, tierName, sizeof(tierName));
-		Format(mapDisplay, sizeof(mapDisplay), "%s - [%s]", map, tierName);
-	}
-	
-	AddMenuItem(g_VoteMenu, map, mapDisplay);
+	AddMenuItem(g_VoteMenu, map, map);
 }
 
 stock void GetMapItem(Handle menu, int position, char[] map, int mapLen)

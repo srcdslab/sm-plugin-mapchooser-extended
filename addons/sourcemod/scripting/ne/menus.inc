@@ -72,8 +72,7 @@ Action AttemptNominate(int client, const char[] filter = "", int tier = 0)
 		return Plugin_Handled;
 	}
 
-	Menu menu = g_MapMenu;
-	menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client, tier);
+	Menu menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client, tier);
 
 	if (tier <= 0)
 		SetMenuTitle(menu, "%T", "Nominate Title", client);
@@ -105,9 +104,7 @@ Action AttemptAdminNominate(int client, const char[] filter = "")
 		return Plugin_Handled;
 	}
 
-	Menu menu = g_AdminMapMenu;
-	if (filter[0])
-		menu = BuildAdminMapMenu(filter);
+	Menu menu = BuildAdminMapMenu(filter[0] ? filter : "");
 
 	SetMenuTitle(menu, "%T", "Nominate Title", client);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
@@ -196,23 +193,8 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 
 Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 {
-	// If we have a filter, create a new temporary menu
-	// Otherwise use the global menu
-	Menu menu;
-	if (filter[0])
-	{
-		menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
-	}
-	else
-	{
-		// If global menu exists, delete it first
-		if (g_MapMenu != null)
-		{
-			delete g_MapMenu;
-		}
-		menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
-		g_MapMenu = menu;
-	}
+	// Always create a new menu - no more global menu reuse
+	Menu menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
 
 	if (tier == 0)
 	{
@@ -377,8 +359,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 	{
 		case MenuAction_End:
 		{
-			if (menu != g_MapMenu)
-				delete menu;
+			delete menu;
 		}
 		case MenuAction_Select:
 		{
@@ -636,8 +617,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 	{
 		case MenuAction_End:
 		{
-			if (menu != g_AdminMapMenu)
-				delete menu;
+			delete menu;
 		}
 		case MenuAction_Select:
 		{
