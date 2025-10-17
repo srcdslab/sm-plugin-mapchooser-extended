@@ -116,7 +116,6 @@ stock void UpdateMapTrie()
 
 stock void MapEndCleanUp()
 {
-	g_hDelayNominate = INVALID_HANDLE;
 	g_bNEAllowed = false;
 	g_bNextMapSet = false;
 }
@@ -285,6 +284,6 @@ public int AlphabeticSortCallback(int index1, int index2, Handle array, Handle h
 	char map1[PLATFORM_MAX_PATH], map2[PLATFORM_MAX_PATH];
 	GetArrayString(view_as<ArrayList>(array), index1, map1, sizeof(map1));
 	GetArrayString(view_as<ArrayList>(array), index2, map2, sizeof(map2));
-	
+
 	return strcmp(map1, map2, false);
 }

@@ -17,6 +17,7 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 		{
 			delete menu;
 		}
+
 		case MenuAction_Select:
 		{
 			char sMap[PLATFORM_MAX_PATH], sParam[PLATFORM_MAX_PATH];
@@ -361,6 +362,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 		{
 			delete menu;
 		}
+
 		case MenuAction_Select:
 		{
 			if (!g_bNEAllowed)
@@ -619,6 +621,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 		{
 			delete menu;
 		}
+
 		case MenuAction_Select:
 		{
 			static char map[PLATFORM_MAX_PATH];
@@ -690,6 +693,7 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 		{
 			delete menu;
 		}
+
 		case MenuAction_Select:
 		{
 			static char map[PLATFORM_MAX_PATH];

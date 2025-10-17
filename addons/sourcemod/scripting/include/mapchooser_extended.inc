@@ -406,4 +406,5 @@ public SharedPlugin __pl_mapchooser_extended =
 #else
 	required = 0,
 #endif
+
 };

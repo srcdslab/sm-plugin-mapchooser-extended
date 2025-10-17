@@ -109,6 +109,6 @@ public int Native_ToggleNominations(Handle plugin, int numArgs)
 		g_bNEAllowed = false;
 	else
 		g_bNEAllowed = true;
-		
+
 	return 1;
 }
