@@ -38,7 +38,7 @@ jobs:
           cp -R sound /tmp/package/common/
 
       - name: Upload build archive for test runners
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: package
           path: /tmp/package
