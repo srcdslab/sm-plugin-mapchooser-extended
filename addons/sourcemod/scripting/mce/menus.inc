@@ -409,7 +409,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
 
 		// Check who nominated the map
-		char sPlayer[32];
+		char sPlayer[32] = "unconnected";
 		for (int i = 1; i <= MaxClients; i++)
 		{
 			if (strcmp(g_sNominations[i], map, false) != 0)
@@ -420,14 +420,14 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 			break;
 		}
 
-		if (sPlayer[0] && g_bShowNominator)
+		CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", map, percent, num_votes);
+		if (g_bShowNominator)
 		{
-			CPrintToChatAll("{green}[MCE]{default} %t - %t %s", "Nextmap Voting Finished", map, percent, num_votes, "Nominated by", sPlayer);
+			CPrintToChatAll("{green}[MCE]{default} %t %s", "Nominated by", sPlayer);
 			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) Nominated by %s", map, percent, num_votes, sPlayer);
 		}
 		else
 		{
-			CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", map, percent, num_votes);
 			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes)", map, percent, num_votes);
 		}
 
