@@ -120,3 +120,6 @@ CooldownMode g_CooldownMode = CooldownMode_Both;
 #define FAILURE_TIMER_LENGTH 5
 
 char g_sExcludeMapsTime[32];
+
+/* Map Tiers Global Variables */
+Handle g_MapTiers;
