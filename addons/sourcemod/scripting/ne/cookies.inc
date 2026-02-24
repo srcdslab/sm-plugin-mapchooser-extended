@@ -19,7 +19,7 @@ stock void CookiesInit()
 {
 	SetCookieMenuItem(NE_CookieHandler, 0, "Nominations Extended Settings");
 	g_hShowUnavailableMaps = RegClientCookie("NE_hide_unavailable", "Hide unavailable maps from the nominations list", CookieAccess_Protected);
-	g_hHideMapsTiers = RegClientCookie("NE_hide_maps_tiers", "Hide Maps Tiers names from the nominations list", CookiesAccess_Protected);
+	g_hHideMapsTiers = RegClientCookie("NE_hide_maps_tiers", "Hide Maps Tiers names from the nominations list", CookieAccess_Protected);
 
 	InitNomBanCookies();
 
@@ -69,7 +69,7 @@ public void SetClientCookies(int client)
 
 	Format(sValue, sizeof(sValue), "%i", g_bHideMapsTiers[client]);
 	SetClientCookie(client, g_hHideMapsTiers, sValue);
-	
+
 	SaveClientNombanStatus(client);
 }
 
@@ -91,19 +91,18 @@ public void NE_ClientSettings_Menu(int client)
 
 	bool bCached = AreClientCookiesCached(client);
 	char buffer[128];
-
-	if (!bCached)
+	if (bCached)
 	{
-		Format(buffer, sizeof(buffer), "%T", "Can not Load Cookies", client);
-		menu.AddItem(NULL_STRING, buffer, ITEMDRAW_DISABLED);
-	}
-	else
-	{	
 		Format(buffer, sizeof(buffer), "%T: %T", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "Yes" : "No", client);
 		menu.AddItem(NULL_STRING, buffer);
 
 		Format(buffer, sizeof(buffer), "%T: %T", "ShowMapsTiers", client, !g_bHideMapsTiers[client] ? "Yes" : "No", client);
 		menu.AddItem(NULL_STRING, buffer);
+	}
+	else
+	{
+		Format(buffer, sizeof(buffer), "%T", "Can not Load Cookies", client);
+		menu.AddItem(NULL_STRING, buffer, ITEMDRAW_DISABLED);
 	}
 	
 	menu.AddItem("ShowMap", buffer, bCached ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
