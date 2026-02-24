@@ -5,7 +5,7 @@
 *
 *  File:          mce/natives.inc
 *  Description:   Natives handlers for the MCE API
-* 
+*
 * ============================================================================
 */
 
@@ -244,7 +244,7 @@ public int Native_ExcludeMap(Handle plugin, int numParams)
 		// In TimeOnly mode, don't exclude via counter
 		if (g_CooldownMode == CooldownMode_TimeOnly)
 			return 0;
-			
+
 		Cooldown = InternalGetMapCooldown(map);
 	}
 	else if (Mode == 1)
@@ -288,7 +288,7 @@ public int Native_ExcludeMapTime(Handle plugin, int numParams)
 		// In CounterOnly mode, don't exclude via time
 		if (g_CooldownMode == CooldownMode_CounterOnly)
 			return 0;
-			
+
 		Cooldown = InternalGetMapCooldownTime(map);
 	}
 	else if (Mode == 1)
@@ -805,7 +805,7 @@ public int Native_GetTierNameFromInt(Handle plugin, int numParams)
 }
 
 public int Native_GetTiersCount(Handle plugin, int numParams)
-{	
+{
 	return InternalGetTiersCount();
 }
 
