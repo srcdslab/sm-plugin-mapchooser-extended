@@ -5,7 +5,7 @@
 *
 *  File:          mce/menus.inc
 *  Description:   Base menu functions for the plugin
-* 
+*
 * ============================================================================
 */
 
@@ -419,7 +419,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 			FormatEx(sPlayer, sizeof(sPlayer), "%N", i);
 			break;
 		}
-		
+
 		char mapInChat[64];
 		strcopy(mapInChat, sizeof(mapInChat), map);
 		int mapTier;
@@ -429,7 +429,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 			InternalGetTierNameFromInt(mapTier, tierName, sizeof(tierName));
 			Format(mapInChat, sizeof(mapInChat), "%s %t", map, "MapTierDisplay", tierName);
 		}
-		
+
 		if (sPlayer[0] && g_bShowNominator)
 		{
 			CPrintToChatAll("{green}[MCE]{default} %t - %t %s", "Nextmap Voting Finished", mapInChat, percent, num_votes, "Nominated by", sPlayer);
@@ -602,7 +602,7 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 			char mapDisplay[32]
 			if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
 				Format(buffer, sizeof(buffer), "%s [%s]", buffer, mapDisplay);
-				
+
 			if (buffer[0] != '\0')
 			{
 				return RedrawMenuItem(buffer);
