@@ -5,7 +5,7 @@
 *
 *  File:          mce/cvars.inc
 *  Description:   Config creation and cvar control
-* 
+*
 * ============================================================================
 */
 
@@ -211,10 +211,10 @@ stock void CvarsInit()
 	g_Cvar_SharedCDMode = CreateConVar("mce_sharedcd_mode", "1", "Group maps with shared cooldowns mode (See ExcludeMap native docs for mode)", _, true, 0.0, true, 2.0);
 	g_Cvar_CooldownMode = CreateConVar("mce_cooldown_mode", "0", "Cooldown mode: 0 = Both (Cooldown + CooldownTime), 1 = Counter only (Cooldown), 2 = Time only (CooldownTime), 3 = Priority (CooldownTime first, then Cooldown)", _, true, 0.0, true, 3.0);
 	g_Cvar_ShowMapTierInChat = CreateConVar("mce_showmaptier_in_chat", "1", "See the map tier name in chat", _, true, 0.0, true, 1.0);
-	
+
 	AutoExecConfig(true, "mapchooser_extended");
 
-	// Hooks cvars changes 
+	// Hooks cvars changes
 	g_Cvar_ForceLowerCase.AddChangeHook(OnConVarChanged);
 	g_Cvar_EndOfMapVote.AddChangeHook(OnConVarChanged);
 	g_Cvar_EndOfMapInfo.AddChangeHook(OnConVarChanged);
@@ -260,7 +260,7 @@ stock void CvarsInit()
 	g_Cvar_SharedCDMode.AddChangeHook(OnConVarChanged);
 	g_Cvar_CooldownMode.AddChangeHook(OnConVarChanged);
 	g_Cvar_ShowMapTierInChat.AddChangeHook(OnConVarChanged);
-	
+
 	// Cache cvars values
 	g_bForceLowerCase = GetConVarBool(g_Cvar_ForceLowerCase);
 	g_bEndOfMapVote = GetConVarBool(g_Cvar_EndOfMapVote);
@@ -280,7 +280,7 @@ stock void CvarsInit()
 	g_bRandomizeNominations = GetConVarBool(g_Cvar_RandomizeNominations);
 	g_bExtendPositionTop = GetConVarBool(g_Cvar_ExtendPosition);
 	g_bShowMapTierInChat = GetConVarBool(g_Cvar_ShowMapTierInChat);
-	
+
 	GetConVarString(g_Cvar_ExcludeMapsTime, g_sExcludeMapsTime, sizeof(g_sExcludeMapsTime));
 
 	g_iStartRounds = GetConVarInt(g_Cvar_StartRounds);
@@ -307,7 +307,7 @@ stock void CvarsInit()
 	g_iTimeFrameMax = GetConVarInt(g_Cvar_NoRestrictionTimeframeMaxTime);
 	g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
 	g_CooldownMode = view_as<CooldownMode>(GetConVarInt(g_Cvar_CooldownMode));
-	
+
 	g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
 	g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
 }
