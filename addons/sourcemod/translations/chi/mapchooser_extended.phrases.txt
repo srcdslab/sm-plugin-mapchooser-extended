@@ -385,4 +385,14 @@
 		"chi"		"{lightgreen}下一张地图：{green}{1}"
 	}
 
+	"MapTierDisplay"
+	{
+		"chi"		"[{lightgreen}{1}{default}]"
+	}
+
+	"ShowMapsTiers"
+	{
+		"chi"		"显示地图等级"
+	}
+
 }
