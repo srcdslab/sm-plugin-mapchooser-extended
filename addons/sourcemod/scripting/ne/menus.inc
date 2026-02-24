@@ -5,7 +5,7 @@
 *
 *  File:          ne/menus.inc
 *  Description:   Base menu functions for the plugin
-* 
+*
 * ============================================================================
 */
 
@@ -33,7 +33,7 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 				GetClientName(param1, sName, sizeof(sName));
 
 				RemoveNominationByOwner(param1);
-				
+
 				char mapnameInChat[64];
 				strcopy(mapnameInChat, sizeof(mapnameInChat), sMap);
 				int mapTier;
@@ -43,7 +43,7 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 					if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
 						Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", sMap, "MapTierDisplay", tierName);
 				}
-				
+
 				CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", sName, mapnameInChat);
 				LogAction(param1, -1, "\"%L\" has removed his nomination \"%s\".", param1, sMap);
 			}
@@ -60,7 +60,7 @@ Action AttemptNominate(int client, const char[] filter = "", int tier = 0)
 		ReplyToCommand(client, "[SM] Cannot use this command from server console.");
 		return Plugin_Handled;
 	}
-	
+
 	if (!g_bNEAllowed)
 	{
 		CReplyToCommand(client, "{green}[NE]{default} Map nominations is currently locked.");
@@ -83,7 +83,7 @@ Action AttemptNominate(int client, const char[] filter = "", int tier = 0)
 		GetTierNameFromInt(tier, tierName, sizeof(tierName))
 		SetMenuTitle(menu, "%T\n%s - Map List", "Nominate Title", client, tierName);
 	}
-	
+
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
 	return Plugin_Handled;
 }
@@ -152,7 +152,7 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 		GetArrayString(MapList, i, map, sizeof(map));
 
 		if (!filter[0] || StrContains(map, filter, false) != -1)
-		{		
+		{
 			MCE_GetMapDescription(map, description, sizeof(description));
 			MCE_GetMapDisplayName(map, display, sizeof(display));
 
@@ -165,11 +165,11 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 			{
 				Format(display, sizeof(display), "%s %s", display, badgeBuffer);
 			}
-			
+
 			char tierName[32];
 			if (GetMapTierName(map, tierName, sizeof(tierName)))
 				Format(display, sizeof(display), "%s - [%s]", map, tierName);
-				
+
 			int owner = GetArrayCell(OwnerList, i);
 
 			char sBuffer[64];
@@ -207,7 +207,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 	{
 		int tiersCount = GetTiersCount();
 		if (tiersCount > 0)
-		{	
+		{
 			for (int i = 1; i <= tiersCount; i++)
 			{
 				char tierName[32];
@@ -223,7 +223,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 			}
 		}
 	}
-	
+
 	static char map[PLATFORM_MAX_PATH];
 	bool bValid = client > 0 && client <= MaxClients && IsClientInGame(client);
 	bool bCached = bValid && AreClientCookiesCached(client);
@@ -262,9 +262,9 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 					tempMapList.PushString(map);
 				}
 			}
-			
+
 			// Cookies are cached and client choose to Hide unavailable maps
-			if (bCached && !g_bShowUnavailableMaps[client] && 
+			if (bCached && !g_bShowUnavailableMaps[client] &&
 				AreRestrictionsActive() &&
 				GetMapCooldown(map) == 0 &&
 				GetMapCooldownTime(map) < GetTime() &&
@@ -295,7 +295,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 	}
 
 	delete tempMapList;
-	
+
 	if (tier == -1 || tier > 0)
 		SetMenuExitButton(menu, true);
 
@@ -331,7 +331,7 @@ Menu BuildAdminMapMenu(const char[] filter)
 
 	// Sort the maps in alphabetical order
 	tempMapList.SortCustom(AlphabeticSortCallback);
-	
+
 	static char display[PLATFORM_MAX_PATH];
 	static char description[PLATFORM_MAX_PATH];
 	// Add the maps to the menu
@@ -370,7 +370,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				CPrintToChat(param1, "{green}[NE]{default} %t", "Nominations Locked");
 				return 0;
 			}
-			
+
 			if (g_Player_NominationDelay[param1] > iCurrentTime)
 			{
 				CPrintToChat(param1, "{green}[NE]{default} %t", "Wait to Nominate", g_Player_NominationDelay[param1] - iCurrentTime);
@@ -388,7 +388,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				AttemptNominate(param1, "");
 				return 0;
 			}
-			
+
 			if (strcmp(map, "show_tiers", false) == 0)
 			{
 				AttemptNominate(param1, _, -1);
@@ -405,9 +405,9 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				AttemptNominate(param1, "", tier);
 				return 0;
 			}
-			
+
 			GetClientName(param1, name, MAX_NAME_LENGTH);
-	
+
 			if (strcmp(map, "show_nominated", false) == 0)
 			{
 				char sNominated[PLATFORM_MAX_PATH];
@@ -418,7 +418,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 					char tierName[32];
 					if (MCE_CanShowMapTierInChat() && GetMapTierName(sNominated, tierName, sizeof(tierName)))
 						Format(sNominatedDisplay, sizeof(sNominatedDisplay), "%s %t", sNominated, "MapTierDisplay", tierName);
-				
+
 					RemoveNominationByOwner(param1);
 					CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", name, sNominatedDisplay);
 					LogAction(param1, -1, "\"%L\" has removed his nomination \"%s\".", param1, sNominated);
@@ -450,7 +450,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			/* Map was nominated! - Disable the menu item and update the trie */
 			SetTrieValue(g_mapTrie, map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
 			g_Player_NominationDelay[param1] = iCurrentTime + GetConVarInt(g_Cvar_NominateDelay);
-			
+
 			char mapnameInChat[64];
 			strcopy(mapnameInChat, sizeof(mapnameInChat), map);
 			int mapTier;
@@ -460,7 +460,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
 					Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", map, "MapTierDisplay", tierName);
 			}
-			
+
 			if (result == Nominate_Added)
 			{
 				CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapnameInChat);
@@ -549,14 +549,14 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			}
 			else
 				strcopy(buffer, sizeof(buffer), displayName);
-				
+
 			char tierName[32];
 			if (GetMapTierName(map, tierName, sizeof(tierName)))
 				Format(buffer, sizeof(buffer), "%s - [%s]", buffer, tierName);
-				
+
 			int status;
 			if (GetTrieValue(g_mapTrie, map, status))
-			{				
+			{
 				if ((status & MAPSTATUS_DISABLED) == MAPSTATUS_DISABLED)
 				{
 					if ((status & MAPSTATUS_EXCLUDE_CURRENT) == MAPSTATUS_EXCLUDE_CURRENT)
@@ -602,10 +602,10 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			// If we have badges or custom mark, return the formatted buffer
 			if (hasBadges || (mark && !official))
 				return RedrawMenuItem(buffer);
-			
+
 			if (StrContains(map, "show_", false) == -1 && tierName[0])
 				return RedrawMenuItem(buffer);
-				
+
 			return 0;
 		}
 	}
@@ -667,7 +667,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 				Format(buffer, sizeof(buffer), "%s - [%s]", map, tierName);
 				RedrawMenuItem(buffer);
 			}
-			
+
 			if (!CheckCommandAccess(param1, "sm_nominate_ignore", ADMFLAG_CHEATS, true))
 			{
 				return Handler_MapSelectMenu(menu, action, param1, param2);
