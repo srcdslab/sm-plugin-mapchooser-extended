@@ -53,7 +53,7 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 	return 0;
 }
 
-Action AttemptNominate(int client, const char[] filter = "", int tier = 0)
+Action AttemptNominate(int client, const char[] filter = "")
 {
 	if (!client)
 	{
