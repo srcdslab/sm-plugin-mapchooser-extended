@@ -233,6 +233,10 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 	if (bCached && !filter[0])
 	{
 		char buffer[128];
+
+		Format(buffer, sizeof(buffer), "%T: %T", "ShowMapsTiers", client, !g_bHideMapsTiers[client] ? "Yes" : "No", client);
+		menu.AddItem("hide_tiers", buffer);
+
 		Format(buffer, sizeof(buffer), "%T: %T\n ", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "Yes" : "No", client);
 		menu.AddItem("show_unavailable", buffer);
 	}
@@ -270,8 +274,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 				GetMapCooldownTime(map) < GetTime() &&
 				GetMapTimeRestriction(map) == 0 &&
 				GetMapPlayerRestriction(map) == 0 &&
-				GetMapGroupRestriction(map, client) < 0 &&
-				(!tier || (tier > 0 && GetMapTier(map) == tier)))
+				GetMapGroupRestriction(map, client) < 0)
 			{
 				tempMapList.PushString(map);
 			}
@@ -389,20 +392,10 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				return 0;
 			}
 
-			if (strcmp(map, "show_tiers", false) == 0)
+			if (strcmp(map, "hide_tiers", false) == 0)
 			{
-				AttemptNominate(param1, _, -1);
-				return 0;
-			}
-
-			if (StrContains(map, "show_tier_") != -1)
-			{
-				ReplaceString(map, sizeof(map), "show_tier_", "");
-				int tier = StringToInt(map);
-				if (!tier)
-					return 0;
-
-				AttemptNominate(param1, "", tier);
+				g_bHideMapsTiers[param1] = !g_bHideMapsTiers[param1];
+				AttemptNominate(param1, "");
 				return 0;
 			}
 
@@ -550,9 +543,12 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			else
 				strcopy(buffer, sizeof(buffer), displayName);
 
-			char tierName[32];
-			if (GetMapTierName(map, tierName, sizeof(tierName)))
-				Format(buffer, sizeof(buffer), "%s - [%s]", buffer, tierName);
+			if (!g_bHideMapsTiers[param1])
+			{
+				char tierName[32];
+				if (GetMapTierName(map, tierName, sizeof(tierName)))
+					Format(buffer, sizeof(buffer), "%s - [%s]", buffer, tierName);
+			}
 
 			int status;
 			if (GetTrieValue(g_mapTrie, map, status))

@@ -10,12 +10,16 @@
 */
 
 Handle g_hShowUnavailableMaps = INVALID_HANDLE;
+Handle g_hHideMapsTiers = INVALID_HANDLE;
+
 bool g_bShowUnavailableMaps[MAXPLAYERS + 1] = { false, ... };
+bool g_bHideMapsTiers[MAXPLAYERS + 1] = { false, ... };
 
 stock void CookiesInit()
 {
 	SetCookieMenuItem(NE_CookieHandler, 0, "Nominations Extended Settings");
 	g_hShowUnavailableMaps = RegClientCookie("NE_hide_unavailable", "Hide unavailable maps from the nominations list", CookieAccess_Protected);
+	g_hHideMapsTiers = RegClientCookie("NE_hide_maps_tiers", "Hide Maps Tiers names from the nominations list", CookiesAccess_Protected);
 
 	InitNomBanCookies();
 
@@ -48,6 +52,9 @@ public void ReadClientCookies(int client) {
 	// Otherwise, apply the value from the cookie
 	g_bShowUnavailableMaps[client] = (buffer[0] != '\0') ? view_as<bool>(StringToInt(buffer)) : false;
 
+	GetClientCookie(client, g_hHideMapsTiers, buffer, sizeof(buffer));
+	g_bHideMapsTiers[client] = (buffer[0] != '\0') ? view_as<bool>(StringToInt(buffer)) : false;
+
 	ReadClientNombanCookies(client);
 }
 
@@ -59,6 +66,10 @@ public void SetClientCookies(int client)
 	char sValue[8];
 	Format(sValue, sizeof(sValue), "%i", g_bShowUnavailableMaps[client]);
 	SetClientCookie(client, g_hShowUnavailableMaps, sValue);
+
+	Format(sValue, sizeof(sValue), "%i", g_bHideMapsTiers[client]);
+	SetClientCookie(client, g_hHideMapsTiers, sValue);
+	
 	SaveClientNombanStatus(client);
 }
 
@@ -80,10 +91,20 @@ public void NE_ClientSettings_Menu(int client)
 
 	bool bCached = AreClientCookiesCached(client);
 	char buffer[128];
-	if (bCached)
-		Format(buffer, sizeof(buffer), "%T: %T", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "Yes" : "No", client);
-	else
+
+	if (!bCached)
+	{
 		Format(buffer, sizeof(buffer), "%T", "Can not Load Cookies", client);
+		menu.AddItem(NULL_STRING, buffer, ITEMDRAW_DISABLED);
+	}
+	else
+	{	
+		Format(buffer, sizeof(buffer), "%T: %T", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "Yes" : "No", client);
+		menu.AddItem(NULL_STRING, buffer);
+
+		Format(buffer, sizeof(buffer), "%T: %T", "ShowMapsTiers", client, !g_bHideMapsTiers[client] ? "Yes" : "No", client);
+		menu.AddItem(NULL_STRING, buffer);
+	}
 	
 	menu.AddItem("ShowMap", buffer, bCached ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
 
@@ -98,10 +119,10 @@ public int NE_ClientSettingsHandler(Menu menu, MenuAction action, int param1, in
 	{
 		case MenuAction_Select:
 		{
-			char info[64];
-			menu.GetItem(param2, info, sizeof(info));
-			if (strcmp(info, "ShowMap", false) == 0)
+			if (param2 == 0)
 				g_bShowUnavailableMaps[param1] = !g_bShowUnavailableMaps[param1];
+			else
+				g_bHideMapsTiers[param1] = !g_bHideMapsTiers[param1];
 
 			NE_ClientSettings_Menu(param1);
 		}
