@@ -188,7 +188,7 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 	return true;
 }
 
-Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
+Menu BuildMapMenu(const char[] filter, int client = -1)
 {
 	// Always create a new menu - no more global menu reuse
 	Menu menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
