@@ -73,16 +73,9 @@ Action AttemptNominate(int client, const char[] filter = "")
 		return Plugin_Handled;
 	}
 
-	Menu menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client, tier);
+	Menu menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client);
 
-	if (tier <= 0)
-		SetMenuTitle(menu, "%T", "Nominate Title", client);
-	else
-	{
-		char tierName[32];
-		GetTierNameFromInt(tier, tierName, sizeof(tierName))
-		SetMenuTitle(menu, "%T\n%s - Map List", "Nominate Title", client, tierName);
-	}
+	SetMenuTitle(menu, "%T", "Nominate Title", client);
 
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
 	return Plugin_Handled;
@@ -166,9 +159,12 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 				Format(display, sizeof(display), "%s %s", display, badgeBuffer);
 			}
 
-			char tierName[32];
-			if (GetMapTierName(map, tierName, sizeof(tierName)))
-				Format(display, sizeof(display), "%s - [%s]", map, tierName);
+			if (client > 0 && !g_bHideMapsTiers[client])
+			{
+				char tierName[32];
+				if (GetMapTierName(map, tierName, sizeof(tierName)))
+					Format(display, sizeof(display), "%s - [%s]", map, tierName);
+			}
 
 			int owner = GetArrayCell(OwnerList, i);
 
