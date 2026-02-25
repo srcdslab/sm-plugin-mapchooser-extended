@@ -5,7 +5,7 @@
 *
 *  File:          mce/menus.inc
 *  Description:   Base menu functions for the plugin
-* 
+*
 * ============================================================================
 */
 
@@ -420,14 +420,24 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 			break;
 		}
 
+		char mapInChat[64];
+		strcopy(mapInChat, sizeof(mapInChat), map);
+		int mapTier;
+		if (InternalShowMapTierInChat() && (mapTier = InternalGetMapTier(map)) && mapTier > 0)
+		{
+			char tierName[32];
+			InternalGetTierNameFromInt(mapTier, tierName, sizeof(tierName));
+			Format(mapInChat, sizeof(mapInChat), "%s %t", map, "MapTierDisplay", tierName);
+		}
+
 		if (sPlayer[0] && g_bShowNominator)
 		{
-			CPrintToChatAll("{green}[MCE]{default} %t - %t %s", "Nextmap Voting Finished", map, percent, num_votes, "Nominated by", sPlayer);
+			CPrintToChatAll("{green}[MCE]{default} %t - %t %s", "Nextmap Voting Finished", mapInChat, percent, num_votes, "Nominated by", sPlayer);
 			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) Nominated by %s", map, percent, num_votes, sPlayer);
 		}
 		else
 		{
-			CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", map, percent, num_votes);
+			CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", mapInChat, percent, num_votes);
 			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes)", map, percent, num_votes);
 		}
 
@@ -588,6 +598,10 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 					strcopy(buffer, sizeof(buffer), formattedDisplay);
 				}
 			}
+
+			char mapDisplay[32]
+			if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
+				Format(buffer, sizeof(buffer), "%s [%s]", buffer, mapDisplay);
 
 			if (buffer[0] != '\0')
 			{

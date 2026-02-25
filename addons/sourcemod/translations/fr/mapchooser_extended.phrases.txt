@@ -385,4 +385,14 @@
 	{
 		"fr"		"{lightgreen}Prochaine carte: {green}{1}"
 	}
+
+	"MapTierDisplay"
+	{
+		"fr"		"[{lightgreen}{1}{default}]"
+	}
+
+	"ShowMapsTiers"
+	{
+		"fr"		"Afficher les tiers des cartes"
+	}
 }

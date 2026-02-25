@@ -141,6 +141,7 @@ public void OnMapStart()
 {
 	InitializeGameModeSettings();
 	InitializeGroupSettings();
+	InitializeMapTiers();
 }
 
 public void OnConfigsExecuted()

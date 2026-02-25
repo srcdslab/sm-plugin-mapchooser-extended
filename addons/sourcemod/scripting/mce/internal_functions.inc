@@ -5,7 +5,7 @@
 *
 *  File:          mce/internal_functions.inc
 *  Description:   All internal functions mostly used by mce_functions + natives
-* 
+*
 * ============================================================================
 */
 
@@ -245,7 +245,7 @@ stock int InternalGetMapMinTime(const char[] map)
 	g_Config.Rewind();
 	if (!g_Config.JumpToKey(map))
 		return MinTime;
-	
+
 	MinTime = g_Config.GetNum("MinTime", MinTime);
 	return MinTime;
 }
@@ -255,11 +255,11 @@ stock int InternalGetMapMaxTime(const char[] map)
 	int MaxTime = 0;
 	if (!g_Config)
 		return MaxTime;
-	
+
 	g_Config.Rewind();
 	if (!g_Config.JumpToKey(map))
 		return MaxTime;
-	
+
 	MaxTime = g_Config.GetNum("MaxTime", MaxTime);
 	return MaxTime;
 }
@@ -838,7 +838,7 @@ stock void InternalStoreMapCooldowns()
 
 stock void InternalShowMapGroups(int client, const char[] map)
 {
-	if (!g_Config) 
+	if (!g_Config)
 	{
 		PrintToConsole(client, "Config is not loaded, no group information.");
 		return;
@@ -861,13 +861,13 @@ stock void InternalShowMapGroups(int client, const char[] map)
 
 	char groupName[PLATFORM_MAX_PATH];
 	int count = 0;
-	
+
 	do
 	{
 		if (!g_Config.JumpToKey(map))
 			continue;
 		g_Config.GoBack();
-		
+
 		count++;
 		g_Config.GetString("_name", groupName, sizeof(groupName), "This group has no name configured.");
 		PrintToConsole(client, "[%03d] Group Name: \"%s\"", count, groupName);
@@ -902,4 +902,54 @@ stock bool IsMapValidEx(const char[] map)
 	char displayName[PLATFORM_MAX_PATH];
 	FindMapResult result = FindMap(map, displayName, sizeof(displayName));
 	return (result == FindMap_Found);
+}
+
+/* Tiers Internal functions */
+stock int InternalGetMapTier(const char[] map)
+{
+	if (!g_MapTiers)
+		return 0;
+
+	int tier = 0;
+	if (!g_Config)
+		return tier;
+
+	g_Config.Rewind();
+	if (!g_Config.JumpToKey(map))
+		return tier;
+
+	tier = g_Config.GetNum("Tier", tier);
+	return tier;
+}
+
+stock bool InternalGetMapTierName(const char[] map, char[] tierName, int maxlen)
+{
+	int tier = InternalGetMapTier(map);
+	return InternalGetTierNameFromInt(tier, tierName, maxlen);
+}
+
+stock bool InternalGetTierNameFromInt(int tier, char[] tierName, int maxlen)
+{
+	if (!g_MapTiers)
+		return false;
+
+	int arrayLength = GetArraySize(g_MapTiers);
+	if (!arrayLength || tier <= 0 || tier > arrayLength)
+		return false;
+
+	GetArrayString(g_MapTiers, tier - 1, tierName, maxlen);
+	return true;
+}
+
+stock int InternalGetTiersCount()
+{
+	if (!g_MapTiers)
+		return 0;
+
+	return GetArraySize(g_MapTiers);
+}
+
+stock bool InternalShowMapTierInChat()
+{
+	return g_bShowMapTierInChat;
 }

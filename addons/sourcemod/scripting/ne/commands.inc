@@ -5,7 +5,7 @@
 *
 *  File:          ne/commands.inc
 *  Description:   Console command creation and hooking
-* 
+*
 * ============================================================================
 */
 
@@ -19,7 +19,7 @@ stock void CommandsInit()
 
 	RegConsoleCmd("sm_noms", Command_NominateList, "Shows a list of currently nominated maps");
 	RegConsoleCmd("sm_nomlist", Command_NominateList, "Shows a list of currently nominated maps");
-	
+
 	RegConsoleCmd("sm_unnominate", Command_UnNominate, "Removes your nomination");
 	RegConsoleCmd("sm_unominate", Command_UnNominate, "Removes your nomination");
 	RegConsoleCmd("sm_unnom", Command_UnNominate, "Removes your nomination");
@@ -289,10 +289,10 @@ public Action Command_Nomban(int client, int args)
 		CPrintToChat(client, "{green}[NE]{default} %t", "Nomban usage");
 		return Plugin_Handled;
 	}
-	
+
 	char target_argument[64];
 	GetCmdArg(1, target_argument, sizeof(target_argument));
-	
+
 	int target = -1;
 	if ((target = FindTarget(client, target_argument, true, false)) == -1)
 	{
@@ -304,7 +304,7 @@ public Action Command_Nomban(int client, int args)
 		CPrintToChat(client, "{green}[NE]{default} %t", "Already nombanned", target);
 		return Plugin_Handled;
 	}
-	
+
 	char sLen[64];
 	GetCmdArg(2, sLen, sizeof(sLen));
 	int length = StringToInt(sLen);
@@ -322,7 +322,7 @@ public Action Command_Nomban(int client, int args)
 	{
 		CPrintToChat(client, "{green}[NE]{default} %t", "Nomban usage");
 	}
-		
+
 	return Plugin_Handled;
 }
 
@@ -333,10 +333,10 @@ public Action Command_UnNomban(int client, int args)
 		CPrintToChat(client, "{green}[NE]{default} %t", "UnNomban usage");
 		return Plugin_Handled;
 	}
-	
+
 	char target_argument[64];
 	GetCmdArg(1, target_argument, sizeof(target_argument));
-	
+
 	int target = -1;
 	if ((target = FindTarget(client, target_argument, true, false)) == -1)
 		return Plugin_Handled;
@@ -346,9 +346,9 @@ public Action Command_UnNomban(int client, int args)
 		CPrintToChat(client, "{green}[NE]{default} %t", "Already not nombanned", target);
 		return Plugin_Handled;
 	}
-	
+
 	UnNomBanClient(target, client);
-		
+
 	return Plugin_Handled;
 }
 
@@ -479,7 +479,7 @@ public Action Command_Nominate(int client, int args)
 		CReplyToCommand(client, "{green}[NE]{default} %t", "Nominations Locked");
 		return Plugin_Handled;
 	}
-	
+
 	if (args == 0)
 	{
 		AttemptNominate(client);
@@ -586,10 +586,20 @@ public Action Command_Nominate(int client, int args)
 
 	NominateResult result = NominateMap(mapname, false, client);
 
+	char mapnameInChat[64];
+	strcopy(mapnameInChat, sizeof(mapnameInChat), mapname);
+	int mapTier;
+	if (MCE_CanShowMapTierInChat() && (mapTier = GetMapTier(mapname)) && mapTier > 0)
+	{
+		char tierName[32];
+		if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
+			Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", mapname, "MapTierDisplay", tierName);
+	}
+
 	if (result > Nominate_Replaced)
 	{
 		if (result == Nominate_AlreadyInVote)
-			CPrintToChat(client, "{green}[NE]{default} %t", "Map Already In Vote", mapname);
+			CPrintToChat(client, "{green}[NE]{default} %t", "Map Already In Vote", mapnameInChat);
 		else if (result == Nominate_VoteFull)
 			CPrintToChat(client, "{green}[NE]{default} %t", "Max Nominations");
 
@@ -605,13 +615,13 @@ public Action Command_Nominate(int client, int args)
 
 	if (result == Nominate_Added)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapname);
+		CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapnameInChat);
 		LogMessage("%L has nominated %s", client, mapname);
 		Forward_OnPublicMapInsert(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
 	else if (result == Nominate_Replaced)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "Map Nomination Changed", name, mapname);
+		CPrintToChatAll("{green}[NE]{default} %t", "Map Nomination Changed", name, mapnameInChat);
 		LogMessage("%L has changed their nomination to %s", client, mapname);
 		Forward_OnPublicMapReplaced(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
@@ -631,7 +641,17 @@ public Action Command_UnNominate(int client, int args)
 		return Plugin_Handled;
 	}
 
-	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", client, map);
+	char mapnameInChat[64];
+	strcopy(mapnameInChat, sizeof(mapnameInChat), map);
+	int mapTier;
+	if (MCE_CanShowMapTierInChat() && (mapTier = GetMapTier(map)) && mapTier > 0)
+	{
+		char tierName[32];
+		if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
+			Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", map, "MapTierDisplay", tierName);
+	}
+
+	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", client, mapnameInChat);
 	LogAction(client, -1, "\"%L\" has removed his nomination \"%s\".", client, map);
 
 	return Plugin_Handled;
