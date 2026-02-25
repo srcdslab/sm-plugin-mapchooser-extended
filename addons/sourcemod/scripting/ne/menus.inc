@@ -197,33 +197,6 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 	// Always create a new menu - no more global menu reuse
 	Menu menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
 
-	if (tier == 0)
-	{
-		char mapsTiers[PLATFORM_MAX_PATH];
-		Format(mapsTiers, sizeof(mapsTiers), "%t\n ", "ShowMapsTiers");
-		menu.AddItem("show_tiers", mapsTiers);
-	}
-	else if(tier == -1)
-	{
-		int tiersCount = GetTiersCount();
-		if (tiersCount > 0)
-		{
-			for (int i = 1; i <= tiersCount; i++)
-			{
-				char tierName[32];
-				GetTierNameFromInt(i, tierName, sizeof(tierName));
-
-				char item[18];
-				Format(item, sizeof(item), "show_tier_%d", i);
-
-				if (i == tiersCount)
-					Format(tierName, sizeof(tierName), "%s\n", tierName);
-
-				menu.AddItem(item, tierName);
-			}
-		}
-	}
-
 	static char map[PLATFORM_MAX_PATH];
 	bool bValid = client > 0 && client <= MaxClients && IsClientInGame(client);
 	bool bCached = bValid && AreClientCookiesCached(client);
@@ -259,12 +232,9 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 		if (!filter[0] || StrContains(map, filter, false) != -1)
 		{
 			// If client does not have cookies cached or choose see unavailable maps: Show all maps
-			if (tier == 0)
+			if (!bCached || bCached && g_bShowUnavailableMaps[client])
 			{
-				if (!bCached || bCached && g_bShowUnavailableMaps[client])
-				{
-					tempMapList.PushString(map);
-				}
+				tempMapList.PushString(map);
 			}
 
 			// Cookies are cached and client choose to Hide unavailable maps
@@ -299,9 +269,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1, int tier = 0)
 
 	delete tempMapList;
 
-	if (tier == -1 || tier > 0)
-		SetMenuExitButton(menu, true);
-
+	SetMenuExitButton(menu, true);
 	return menu;
 }
 
@@ -543,11 +511,15 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			else
 				strcopy(buffer, sizeof(buffer), displayName);
 
+			bool displayMapTier = false;
 			if (!g_bHideMapsTiers[param1])
 			{
 				char tierName[32];
 				if (GetMapTierName(map, tierName, sizeof(tierName)))
+				{
 					Format(buffer, sizeof(buffer), "%s - [%s]", buffer, tierName);
+					displayMapTier = true;
+				}
 			}
 
 			int status;
@@ -599,9 +571,9 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			if (hasBadges || (mark && !official))
 				return RedrawMenuItem(buffer);
 
-			if (StrContains(map, "show_", false) == -1 && tierName[0])
+			if (displayMapTier)
 				return RedrawMenuItem(buffer);
-
+				
 			return 0;
 		}
 	}
