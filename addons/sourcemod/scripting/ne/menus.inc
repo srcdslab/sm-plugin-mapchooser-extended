@@ -228,7 +228,7 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 	{
 		GetArrayString(g_MapList, i, map, sizeof(map));
 
-		if (!filter[0] || StrContains(map, filter, false) != -1 || 
+		if (!filter[0] || StrContains(map, filter, false) != -1 ||
 			(MCE_GetMapDisplayName(map, display, sizeof(display)) && StrContains(display, filter, false) != -1) ||
 			(MCE_GetMapDescription(map, description, sizeof(description)) && StrContains(description, filter, false) != -1))
 		{
@@ -301,8 +301,12 @@ Menu BuildAdminMapMenu(const char[] filter)
 		{
 			GetArrayString(g_MapList, i, map, sizeof(map));
 
-			if (!filter[0] || StrContains(map, filter, false) != -1)
+			if (!filter[0] || StrContains(map, filter, false) != -1 ||
+				(MCE_GetMapDisplayName(map, display, sizeof(display)) && StrContains(display, filter, false) != -1) ||
+				(MCE_GetMapDescription(map, description, sizeof(description)) && StrContains(description, filter, false) != -1))
+			{
 				tempMapList.PushString(map);
+			}
 		}
 	}
 
