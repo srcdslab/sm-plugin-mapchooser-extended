@@ -230,33 +230,30 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 
 		GetArrayString(g_MapList, i, map, sizeof(map));
 
-		MCE_GetMapDisplayName(map, display, sizeof(display));
-		if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
-			FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description)
-
-		if (filter[0] && StrContains(map, filter, false) == -1 && StrContains(display, filter, false) == -1)
-			continue;
-
-		// If client does not have cookies cached or choose see unavailable maps: Show all maps
-		if (!bCached || bCached && g_bShowUnavailableMaps[client])
-		{
-			tempMapList.PushString(map);
-		}
-
-		if (display[0])
-			displayCache.SetString(map, display);
-
-		// Cookies are cached and client choose to Hide unavailable maps
-		if (bCached && !g_bShowUnavailableMaps[client] &&
+		// If client has cookies cached and doesnt want to show unavailable maps
+		if (!(!bCached || bCached && g_bShowUnavailableMaps[client]) &&
+			!(bCached && !g_bShowUnavailableMaps[client] &&
 			AreRestrictionsActive() &&
 			GetMapCooldown(map) == 0 &&
 			GetMapCooldownTime(map) < GetTime() &&
 			GetMapTimeRestriction(map) == 0 &&
 			GetMapPlayerRestriction(map) == 0 &&
-			GetMapGroupRestriction(map, client) < 0)
+			GetMapGroupRestriction(map, client) < 0))
 		{
-			tempMapList.PushString(map);
+			continue;
 		}
+
+		MCE_GetMapDisplayName(map, display, sizeof(display));
+		if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
+			FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description);
+
+		if (filter[0] && StrContains(map, filter, false) == -1 && StrContains(display, filter, false) == -1)
+			continue;
+
+		if (display[0])
+			displayCache.SetString(map, display);
+
+		tempMapList.PushString(map);
 	}
 
 	tempMapList.SortCustom(AlphabeticSortCallback);
@@ -298,7 +295,7 @@ Menu BuildAdminMapMenu(const char[] filter)
 
 		MCE_GetMapDisplayName(map, display, sizeof(display));
 		if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
-			FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description)
+			FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description);
 
 		if (filter[0] && StrContains(map, filter, false) == -1 && StrContains(display, filter, false) == -1)
 			continue;
@@ -321,7 +318,7 @@ Menu BuildAdminMapMenu(const char[] filter)
 
 			MCE_GetMapDisplayName(map, display, sizeof(display));
 			if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
-				FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description)
+				FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description);
 
 			if (StrContains(map, filter, false) == -1 && StrContains(display, filter, false) == -1)
 				continue;
