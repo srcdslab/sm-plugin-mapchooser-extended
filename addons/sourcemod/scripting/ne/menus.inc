@@ -220,50 +220,57 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 		}
 	}
 
+	StringMap displayCache = new StringMap();
+
 	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
 	for (int i = 0; i < GetArraySize(g_MapList); i++)
 	{
+		char display[PLATFORM_MAX_PATH];
+		char description[PLATFORM_MAX_PATH];
+
 		GetArrayString(g_MapList, i, map, sizeof(map));
 
-		if (!filter[0] || StrContains(map, filter, false) != -1)
+		// If client has cookies cached and doesnt want to show unavailable maps
+		if (!(!bCached || bCached && g_bShowUnavailableMaps[client]) &&
+			!(bCached && !g_bShowUnavailableMaps[client] &&
+			AreRestrictionsActive() &&
+			GetMapCooldown(map) == 0 &&
+			GetMapCooldownTime(map) < GetTime() &&
+			GetMapTimeRestriction(map) == 0 &&
+			GetMapPlayerRestriction(map) == 0 &&
+			GetMapGroupRestriction(map, client) < 0))
 		{
-			// If client does not have cookies cached or choose see unavailable maps: Show all maps
-			if (!bCached || bCached && g_bShowUnavailableMaps[client])
-			{
-				tempMapList.PushString(map);
-			}
-
-			// Cookies are cached and client choose to Hide unavailable maps
-			if (bCached && !g_bShowUnavailableMaps[client] &&
-				AreRestrictionsActive() &&
-				GetMapCooldown(map) == 0 &&
-				GetMapCooldownTime(map) < GetTime() &&
-				GetMapTimeRestriction(map) == 0 &&
-				GetMapPlayerRestriction(map) == 0 &&
-				GetMapGroupRestriction(map, client) < 0)
-			{
-				tempMapList.PushString(map);
-			}
+			continue;
 		}
+
+		MCE_GetMapDisplayName(map, display, sizeof(display));
+		if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
+			FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description);
+
+		if (filter[0] && StrContains(map, filter, false) == -1 && StrContains(display, filter, false) == -1)
+			continue;
+
+		if (display[0])
+			displayCache.SetString(map, display);
+
+		tempMapList.PushString(map);
 	}
 
 	tempMapList.SortCustom(AlphabeticSortCallback);
 
-	static char display[PLATFORM_MAX_PATH];
-	static char description[PLATFORM_MAX_PATH];
 	for (int i = 0; i < tempMapList.Length; i++)
 	{
 		tempMapList.GetString(i, map, sizeof(map));
-		MCE_GetMapDescription(map, description, sizeof(description));
-		MCE_GetMapDisplayName(map, display, sizeof(display));
-
-		if (description[0] != '\0')
-			Format(display, sizeof(display), "%s | %s", display, description);
+		
+		char display[PLATFORM_MAX_PATH];
+		if (!displayCache.GetString(map, display, sizeof(display)))
+			strcopy(display, sizeof(display), map);
 
 		AddMenuItem(menu, map, display);
 	}
 
 	delete tempMapList;
+	delete displayCache;
 
 	SetMenuExitButton(menu, true);
 	return menu;
@@ -274,14 +281,29 @@ Menu BuildAdminMapMenu(const char[] filter)
 	Menu menu = CreateMenu(Handler_AdminMapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
 	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
 
+	StringMap displayCache = new StringMap();
+
 	static char map[PLATFORM_MAX_PATH];
+
 	// Add the maps from the admin map list
 	for (int i = 0; i < GetArraySize(g_AdminMapList); i++)
 	{
+		char display[PLATFORM_MAX_PATH];
+		char description[PLATFORM_MAX_PATH];
+
 		GetArrayString(g_AdminMapList, i, map, sizeof(map));
 
-		if (!filter[0] || StrContains(map, filter, false) != -1)
-			tempMapList.PushString(map);
+		MCE_GetMapDisplayName(map, display, sizeof(display));
+		if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
+			FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description);
+
+		if (filter[0] && StrContains(map, filter, false) == -1 && StrContains(display, filter, false) == -1)
+			continue;
+
+		if (display[0])
+			displayCache.SetString(map, display);
+
+		tempMapList.PushString(map);
 	}
 
 	if (filter[0])
@@ -289,32 +311,41 @@ Menu BuildAdminMapMenu(const char[] filter)
 		// Search normal maps aswell if filter is specified
 		for (int i = 0; i < GetArraySize(g_MapList); i++)
 		{
+			char display[PLATFORM_MAX_PATH];
+			char description[PLATFORM_MAX_PATH];
+
 			GetArrayString(g_MapList, i, map, sizeof(map));
 
-			if (!filter[0] || StrContains(map, filter, false) != -1)
-				tempMapList.PushString(map);
+			MCE_GetMapDisplayName(map, display, sizeof(display));
+			if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
+				FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description);
+
+			if (StrContains(map, filter, false) == -1 && StrContains(display, filter, false) == -1)
+				continue;
+
+			if (display[0])
+				displayCache.SetString(map, display);
+
+			tempMapList.PushString(map);
 		}
 	}
 
 	// Sort the maps in alphabetical order
 	tempMapList.SortCustom(AlphabeticSortCallback);
 
-	static char display[PLATFORM_MAX_PATH];
-	static char description[PLATFORM_MAX_PATH];
 	// Add the maps to the menu
 	for (int i = 0; i < tempMapList.Length; i++)
 	{
 		tempMapList.GetString(i, map, sizeof(map));
-		MCE_GetMapDescription(map, description, sizeof(description));
-		MCE_GetMapDisplayName(map, display, sizeof(display));
-
-		if (description[0] != '\0')
-			Format(display, sizeof(display), "%s | %s", display, description);
+		char display[PLATFORM_MAX_PATH];
+		if (!displayCache.GetString(map, display, sizeof(display)))
+			strcopy(display, sizeof(display), map);
 
 		AddMenuItem(menu, map, display);
 	}
 
 	delete tempMapList;
+	delete displayCache;
 	return menu;
 }
 
