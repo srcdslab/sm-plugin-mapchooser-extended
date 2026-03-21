@@ -220,12 +220,17 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 		}
 	}
 
+	static char display[PLATFORM_MAX_PATH];
+	static char description[PLATFORM_MAX_PATH];
+
 	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
 	for (int i = 0; i < GetArraySize(g_MapList); i++)
 	{
 		GetArrayString(g_MapList, i, map, sizeof(map));
 
-		if (!filter[0] || StrContains(map, filter, false) != -1)
+		if (!filter[0] || StrContains(map, filter, false) != -1 || 
+			(MCE_GetMapDisplayName(map, display, sizeof(display)) && StrContains(display, filter, false) != -1) ||
+			(MCE_GetMapDescription(map, description, sizeof(description)) && StrContains(description, filter, false) != -1))
 		{
 			// If client does not have cookies cached or choose see unavailable maps: Show all maps
 			if (!bCached || bCached && g_bShowUnavailableMaps[client])
@@ -249,8 +254,6 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 
 	tempMapList.SortCustom(AlphabeticSortCallback);
 
-	static char display[PLATFORM_MAX_PATH];
-	static char description[PLATFORM_MAX_PATH];
 	for (int i = 0; i < tempMapList.Length; i++)
 	{
 		tempMapList.GetString(i, map, sizeof(map));
@@ -275,13 +278,20 @@ Menu BuildAdminMapMenu(const char[] filter)
 	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
 
 	static char map[PLATFORM_MAX_PATH];
+	static char display[PLATFORM_MAX_PATH];
+	static char description[PLATFORM_MAX_PATH];
+
 	// Add the maps from the admin map list
 	for (int i = 0; i < GetArraySize(g_AdminMapList); i++)
 	{
 		GetArrayString(g_AdminMapList, i, map, sizeof(map));
 
-		if (!filter[0] || StrContains(map, filter, false) != -1)
+		if (!filter[0] || StrContains(map, filter, false) != -1 ||
+			(MCE_GetMapDisplayName(map, display, sizeof(display)) && StrContains(display, filter, false) != -1) ||
+			(MCE_GetMapDescription(map, description, sizeof(description)) && StrContains(description, filter, false) != -1))
+		{
 			tempMapList.PushString(map);
+		}
 	}
 
 	if (filter[0])
@@ -299,8 +309,6 @@ Menu BuildAdminMapMenu(const char[] filter)
 	// Sort the maps in alphabetical order
 	tempMapList.SortCustom(AlphabeticSortCallback);
 
-	static char display[PLATFORM_MAX_PATH];
-	static char description[PLATFORM_MAX_PATH];
 	// Add the maps to the menu
 	for (int i = 0; i < tempMapList.Length; i++)
 	{
