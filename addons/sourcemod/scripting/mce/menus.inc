@@ -431,7 +431,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		}
 
 		CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", mapInChat, percent, num_votes);
-		if (sPlayer[0] && g_bShowNominator)
+		if (g_bShowNominator)
 		{
 			CPrintToChatAll("{green}[MCE]{default} %t %s", "Nominated by", sPlayer);
 			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) Nominated by %s", map, percent, num_votes, sPlayer);
