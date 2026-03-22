@@ -386,4 +386,14 @@
 		"es"		"{lightgreen}Siguiente mapa: {green}{1}"
 	}
 
+	"MapTierDisplay"
+	{
+		"es"		"[{lightgreen}{1}{default}]"
+	}
+
+	"ShowMapsTiers"
+	{
+		"es"		"Mostrar niveles de mapas"
+	}
+
 }

@@ -23,7 +23,7 @@ jobs:
         include:
           - os: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build sourcemod plugin
         uses: maxime1907/action-sourceknight@v1
         with:
@@ -38,7 +38,7 @@ jobs:
           cp -R sound /tmp/package/common/
 
       - name: Upload build archive for test runners
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package
           path: /tmp/package
@@ -48,7 +48,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
 
       - uses: dev-drprasad/delete-tag-and-release@v1.1
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: package
           path: artifacts

@@ -114,5 +114,4 @@ public void OnConfigsExecuted()
 	g_bNEAllowed = false;
 	InitTimerDelayNominate();
 	UpdateMapTrie();
-	UpdateMapMenus();
 }

@@ -5,7 +5,7 @@
 *
 *  File:          mce/functions.inc
 *  Description:   Handles MCE functions
-* 
+*
 * ============================================================================
 */
 
@@ -72,6 +72,52 @@ stock void InitializeGameModeSettings()
 		g_SaveCDOnMapEnd = true;
 	else
 		g_SaveCDOnMapEnd = false;
+}
+
+stock void InitializeMapTiers()
+{
+	if (!g_Config)
+		return;
+
+	g_Config.Rewind();
+
+	if (!g_Config.JumpToKey("_tiers"))
+	{
+		delete g_MapTiers;
+		return;
+	}
+
+	if (!g_Config.GotoFirstSubKey())
+	{
+		delete g_MapTiers;
+		return;
+	}
+
+	int lastNum = 0;
+
+	delete g_MapTiers;
+	g_MapTiers = CreateArray(ByteCountToCells(64));
+
+	do
+	{
+		// we need an ordered list of tier numbers
+		char tierNumStr[3];
+		g_Config.GetSectionName(tierNumStr, sizeof(tierNumStr));
+
+		int tierNum = StringToInt(tierNumStr);
+		if (!tierNum || (lastNum && tierNum == lastNum))
+		{
+			LogError("[MCE] Map Tiers Error: Found an unordered list in \"_tiers\" section");
+			delete g_MapTiers;
+			return;
+		}
+
+		lastNum = tierNum;
+
+		char name[32];
+		g_Config.GetString("_name", name, sizeof(name));
+		PushArrayString(g_MapTiers, name);
+	} while (g_Config.GotoNextKey());
 }
 
 stock void InitializeGroupSettings()
@@ -293,7 +339,7 @@ void SetupTimeleftTimer()
 				//g_VoteTimer = CreateTimer(float(time - startTime), Timer_StartMapVoteTimer_StartMapVote, _, TIMER_FLAG_NO_MAPCHANGE);
 				float interval = float((time - startTime));
 				float random = GetRandomFloat(interval, (interval + g_fRandomStartTime));
-				
+
 				g_VoteTimer = CreateTimer(random, Timer_StartWarningTimer, _, TIMER_FLAG_NO_MAPCHANGE);
 			}
 		}
