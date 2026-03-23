@@ -99,7 +99,7 @@
 
 	"Custom Marked"
 	{
-		"en"		"*{1}"
+		"ru"		"*{1}"
 	}
 
 	"Map Cooldown Time Error"
@@ -314,12 +314,17 @@
 
 	"Menu Got UnNombanned"
 	{
-		"en"		"Вы были разбанены в номинировании карт."
+		"ru"		"Вы были разбанены в номинировании карт."
 	}
 
 	"Nominated by"
 	{
 		"ru"		"Предложена:"
+	}
+
+	"Disconnected Player"
+	{
+		"ru"		"Игрок отключен."
 	}
 
 	"Client inserted Map"
