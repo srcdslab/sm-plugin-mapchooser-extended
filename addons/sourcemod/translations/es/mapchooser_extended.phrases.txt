@@ -321,6 +321,11 @@
 		"es"		"Nominado por:"
 	}
 
+	"Disconnected Player"
+	{
+		"es"		"Jugador desconectado"
+	}
+
 	"Client inserted Map"
 	{
 		"es"		"{1} ha insertado {2} en las nominaciones."

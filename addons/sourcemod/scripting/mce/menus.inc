@@ -220,12 +220,6 @@ void InitiateVote(MapChange when, Handle inputlist=INVALID_HANDLE)
 			randomizeList = INVALID_HANDLE;
 		}
 
-		/* Wipe out our nominations list - Nominations have already been informed of this */
-		g_NominateCount = 0;
-		g_NominateReservedCount = 0;
-		ClearArray(g_NominateOwners);
-		ClearArray(g_NominateList);
-
 		if (!g_bExtendPositionTop) {
 			if (InternalGetMapMaxExtends(map) - g_Extends > 0)
 				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
@@ -362,6 +356,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		g_HasVoteStarted = false;
 		g_PendingRevoteActive = false;
 		SetupTimeleftTimer();
+		ClearNominationsLists();
 
 	}
 	else if (strcmp(map, VOTE_DONTCHANGE, false) == 0)
@@ -380,6 +375,7 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		g_HasVoteStarted = false;
 		g_PendingRevoteActive = false;
 		SetupTimeleftTimer();
+		ClearNominationsLists();
 	}
 	else
 	{
@@ -408,16 +404,34 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 
 		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
 
-		// Check who nominated the map
-		char sPlayer[32] = "unconnected";
-		for (int i = 1; i <= MaxClients; i++)
+		char sPlayer[128];
+		if (g_bShowNominator)
 		{
-			if (strcmp(g_sNominations[i], map, false) != 0)
-				continue;
-			if (!IsClientInGame(i))
-				continue;
-			FormatEx(sPlayer, sizeof(sPlayer), "%N", i);
-			break;
+			static char nominatedMap[PLATFORM_MAX_PATH];
+			bool foundNomination = false;
+
+			int owner = -1;
+			int nominateCount = GetArraySize(g_NominateList);
+
+			for (int i = 0; i < nominateCount; i++)
+			{
+				GetArrayString(g_NominateList, i, nominatedMap, sizeof(nominatedMap));
+				int testOwner = GetArrayCell(g_NominateOwners, i);
+				if (strcmp(nominatedMap, map, false) == 0)
+				{
+					owner = testOwner;
+					foundNomination = true;
+					break;
+				}
+			}
+
+			if (foundNomination && owner > 0)
+			{
+				if (IsClientInGame(owner))
+					FormatEx(sPlayer, sizeof(sPlayer), "%t %N", "Nominated by", owner);
+				else
+					FormatEx(sPlayer, sizeof(sPlayer), "%t %t", "Nominated by", "Disconnected Player");
+			}
 		}
 
 		char mapInChat[64];
@@ -431,17 +445,15 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 		}
 
 		CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", mapInChat, percent, num_votes);
-		if (g_bShowNominator)
-		{
-			CPrintToChatAll("{green}[MCE]{default} %t %s", "Nominated by", sPlayer);
-			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes) Nominated by %s", map, percent, num_votes, sPlayer);
-		}
-		else
-		{
-			LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"\%% of %d votes)", map, percent, num_votes);
-		}
+
+		if (g_bShowNominator && sPlayer[0] != '\0')
+			CPrintToChatAll("{green}[MCE]{default} %s", sPlayer);
+
+		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"%% of %d votes) %s", map, percent, num_votes, sPlayer);
 
 		// Vote has finished, clear nominations
+		ClearNominationsLists();
+
 		for (int i = 1; i <= MaxClients; i++)
 		{
 			if (!IsClientConnected(i) || !IsClientInGame(i))

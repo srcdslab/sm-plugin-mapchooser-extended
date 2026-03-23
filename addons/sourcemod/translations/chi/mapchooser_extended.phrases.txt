@@ -320,6 +320,11 @@
 		"chi"		"提名人："
 	}
 
+	"Disconnected Player"
+	{
+		"chi"		"断开连接的玩家"
+	}
+
 	"Client inserted Map"
 	{
 		"chi"		"{1} 将 {2} 插入到提名中."

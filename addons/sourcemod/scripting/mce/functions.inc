@@ -170,11 +170,8 @@ stock void InitializeMapVoteSettings()
 
 	g_TotalRounds = 0;
 	g_Extends = 0;
-	g_NominateCount = 0;
-	g_NominateReservedCount = 0;
 
-	ClearArray(g_NominateList);
-	ClearArray(g_NominateOwners);
+	ClearNominationsLists();
 
 	for (int i = 0; i < MAXTEAMS; i++)
 		g_winCount[i] = 0;
@@ -193,6 +190,15 @@ stock void ConfigureBonusRoundTime()
 	// If you display a vote during bonus time good defaults are 17 vote duration and 19 mp_bonustime
 	if (g_Cvar_Bonusroundtime != INVALID_HANDLE)
 		SetConVarBounds(g_Cvar_Bonusroundtime, ConVarBound_Upper, true, 30.0);
+}
+
+stock void ClearNominationsLists()
+{
+	// Wipe out our nominations list
+	g_NominateCount = 0;
+	g_NominateReservedCount = 0;
+	ClearArray(g_NominateOwners);
+	ClearArray(g_NominateList);
 }
 
 stock void CleanOnMapEnd()

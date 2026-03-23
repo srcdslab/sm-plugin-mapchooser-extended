@@ -360,6 +360,11 @@
 		"en"		"Nominated by:"
 	}
 
+	"Disconnected Player"
+	{
+		"en"		"Disconnected player"
+	}
+
 	"Client inserted Map"
 	{
 		"#format"	"{1:N},{2:s}"
