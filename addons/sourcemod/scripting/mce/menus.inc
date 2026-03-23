@@ -404,63 +404,79 @@ public void Handler_VoteFinishedGeneric(Handle menu,
 
 		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
 
-		char sPlayer[128];
+		int owner = -1;
+		bool foundNomination = false;
+
 		if (g_bShowNominator)
 		{
 			static char nominatedMap[PLATFORM_MAX_PATH];
-			bool foundNomination = false;
-
-			int owner = -1;
 			int nominateCount = GetArraySize(g_NominateList);
-
 			for (int i = 0; i < nominateCount; i++)
 			{
 				GetArrayString(g_NominateList, i, nominatedMap, sizeof(nominatedMap));
-				int testOwner = GetArrayCell(g_NominateOwners, i);
 				if (strcmp(nominatedMap, map, false) == 0)
 				{
-					owner = testOwner;
+					owner = GetArrayCell(g_NominateOwners, i);
 					foundNomination = true;
 					break;
 				}
 			}
-
-			if (foundNomination && owner > 0)
-			{
-				if (IsClientInGame(owner))
-					FormatEx(sPlayer, sizeof(sPlayer), "%t %N", "Nominated by", owner);
-				else
-					FormatEx(sPlayer, sizeof(sPlayer), "%t %t", "Nominated by", "Disconnected Player");
-			}
 		}
 
-		char mapInChat[64];
-		strcopy(mapInChat, sizeof(mapInChat), map);
-		int mapTier;
-		if (InternalShowMapTierInChat() && (mapTier = InternalGetMapTier(map)) && mapTier > 0)
+		// Cache Nominator Name
+		char ownerName[MAX_NAME_LENGTH];
+		bool isOwnerConnected = (g_bShowNominator && foundNomination && owner > 0 && IsClientInGame(owner));
+		if (isOwnerConnected)
+			GetClientName(owner, ownerName, sizeof(ownerName));
+
+		// Cache Map Display Name with Tier (Static)
+		char mapInChat[128];
+		int mapTier = InternalGetMapTier(map);
+		if (InternalShowMapTierInChat() && mapTier > 0)
 		{
 			char tierName[32];
 			InternalGetTierNameFromInt(mapTier, tierName, sizeof(tierName));
-			Format(mapInChat, sizeof(mapInChat), "%s %t", map, "MapTierDisplay", tierName);
+			FormatEx(mapInChat, sizeof(mapInChat), "%s (%s)", map, tierName);
+		}
+		else
+		{
+			strcopy(mapInChat, sizeof(mapInChat), map);
 		}
 
-		CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Finished", mapInChat, percent, num_votes);
-
-		if (g_bShowNominator && sPlayer[0] != '\0')
-			CPrintToChatAll("{green}[MCE]{default} %s", sPlayer);
-
-		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"%% of %d votes) %s", map, percent, num_votes, sPlayer);
-
-		// Vote has finished, clear nominations
-		ClearNominationsLists();
-
+		// Per-client chat loop
 		for (int i = 1; i <= MaxClients; i++)
 		{
-			if (!IsClientConnected(i) || !IsClientInGame(i))
+			if (!IsClientInGame(i) || (IsFakeClient(i) && !IsClientSourceTV(i)))
 				continue;
+
+			CPrintToChat(i, "{green}[MCE]{default} %t", "Nextmap Voting Finished", mapInChat, percent, num_votes);
+
+			if (g_bShowNominator && foundNomination && owner > 0)
+			{
+				if (isOwnerConnected)
+					CPrintToChat(i, "{green}[MCE]{default} %t %s", "Nominated by", ownerName);
+				else
+					CPrintToChat(i, "{green}[MCE]{default} %t %t", "Nominated by", "Disconnected Player");
+			}
 
 			ClearStoredNomination(i);
 		}
+
+		// Build Log String (Server Language)
+		char sPlayerLog[128];
+		if (g_bShowNominator && foundNomination && owner > 0)
+		{
+			SetGlobalTransTarget(LANG_SERVER);
+			if (isOwnerConnected)
+				FormatEx(sPlayerLog, sizeof(sPlayerLog), " \n%t %s", "Nominated by", ownerName);
+			else
+				FormatEx(sPlayerLog, sizeof(sPlayerLog), " \n%t %t", "Nominated by", "Disconnected Player");
+		}
+
+		LogAction(-1, -1, "[MCE] Voting for next map has finished. \nNextmap: %s. (Received \"%d\"%% of %d votes)%s", 
+			map, percent, num_votes, sPlayerLog);
+
+		ClearNominationsLists();
 	}
 }
 
