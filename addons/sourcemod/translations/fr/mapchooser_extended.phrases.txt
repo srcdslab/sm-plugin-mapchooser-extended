@@ -218,7 +218,7 @@
 
 	"Cookies are not cached"
 	{
-		"fr"		"Les cookies ne sont pas encore en cache. Reessayez dans un instant."
+		"fr"		"Les cookies ne sont pas encore en cache. Réessayez dans un instant."
 	}
 
 	"Map was not found"
