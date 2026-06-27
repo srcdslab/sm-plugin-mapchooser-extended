@@ -216,6 +216,11 @@
 		"es"		"No se puede cargar la configuracion de las cookies."
 	}
 
+	"Cookies are not cached"
+	{
+		"es"		"Las cookies aun no estan en cache. Intentalo de nuevo en un momento."
+	}
+
 	"Map was not found"
 	{
 		"es"		"El mapa '{1}' no se ha encontrado."
