@@ -237,6 +237,11 @@
 		"en"		"Can not load cookies settings."
 	}
 
+	"Cookies are not cached"
+	{
+		"en"		"Cookies are not cached yet. Please try again in a moment."
+	}
+
 	"Map was not found"
 	{
 		// 1: Name of map
@@ -447,4 +452,5 @@
 	{
 		"en"		"Show Maps Tiers"
 	}
+
 }
