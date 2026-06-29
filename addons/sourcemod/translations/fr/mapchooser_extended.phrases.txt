@@ -216,6 +216,11 @@
 		"fr"		"Impossible de charger les paramètres des cookies."
 	}
 
+	"Cookies are not cached"
+	{
+		"fr"		"Les cookies ne sont pas encore en cache. Réessayez dans un instant."
+	}
+
 	"Map was not found"
 	{
 		"fr"		"La carte '{1}' n'a pas été trouvée."

@@ -215,6 +215,11 @@
 		"chi"		"无法加载用户设置."
 	}
 
+	"Cookies are not cached"
+	{
+		"chi"		"Cookies 尚未缓存，请稍后再试."
+	}
+
 	"Map was not found"
 	{
 		"chi"		"未找到地图 '{1}'."
