@@ -64,14 +64,14 @@ The codebase uses a highly modular approach where each `.inc` file contains rela
 ### Language and Platform
 - **Language**: SourcePawn (SourceMod scripting language)
 - **Platform**: SourceMod 1.12+ (minimum requirement)
-- **Compiler**: SourcePawn Compiler (spcomp) via SourceKnight build system
+- **Compiler**: SourcePawn Compiler (spcomp) via native GitHub Actions CI
 - **Target**: Source Engine game servers (CS:GO, CSS, TF2, etc.)
 
 ### Build System
-The project uses **SourceKnight** for dependency management and compilation:
-- **Configuration**: `sourceknight.yaml` defines dependencies and build targets
-- **Dependencies**: Automatically fetches required SourceMod plugins and includes
-- **Build Command**: `sourceknight build` (handled by CI/CD)
+The project uses a native **GitHub Actions** workflow (`.github/workflows/ci.yml`) for dependency management and compilation:
+- **Compiler setup**: `rumblefrog/setup-sp@v1.3.1` installs SourcePawn compiler (SourceMod 1.12.x)
+- **Dependencies**: Cloned directly from their source repositories and copied into `addons/sourcemod/scripting/include`
+- **Build Command**: `spcomp` invoked per plugin target (handled by CI/CD)
 - **Output**: Compiled `.smx` files in standard SourceMod plugin directory
 
 ### Key Dependencies
@@ -199,26 +199,27 @@ Maps are configured in `addons/sourcemod/configs/mapchooser_extended.cfg` using 
 
 ### Setting Up Development Environment
 1. **Clone repository**: Standard git clone
-2. **Install SourceKnight**: Required for building and dependency management
-3. **Run build**: `sourceknight build` to download dependencies and compile
-4. **Testing**: Deploy to development SourceMod server for testing
+2. **Install SourcePawn compiler**: Grab `spcomp` (via `rumblefrog/setup-sp` in CI, or SourceMod 1.12.x locally)
+3. **Fetch dependencies**: Clone each dependency repo listed in `.github/workflows/ci.yml` and copy its include files into `addons/sourcemod/scripting/include`
+4. **Run build**: `spcomp -i include -o ../plugins/<name>.smx <name>.sp` from `addons/sourcemod/scripting`
+5. **Testing**: Deploy to development SourceMod server for testing
 
 ### Building and Testing
 ```bash
-# Build all plugins (via CI or locally with SourceKnight)
-sourceknight build
+# Build all plugins (via CI or locally with spcomp)
+spcomp -i include -o ../plugins/mapchooser_extended.smx mapchooser_extended.sp
 
 # Output locations:
-# - Compiled plugins: .sourceknight/package/common/addons/sourcemod/plugins/
-# - Include files: .sourceknight/package/common/addons/sourcemod/scripting/include/
-# - Configs: .sourceknight/package/common/addons/sourcemod/configs/
-# - Translations: .sourceknight/package/common/addons/sourcemod/translations/
+# - Compiled plugins: addons/sourcemod/plugins/
+# - Include files: addons/sourcemod/scripting/include/
+# - Configs: addons/sourcemod/configs/
+# - Translations: addons/sourcemod/translations/
 ```
 
 ### CI/CD Pipeline
 The project uses GitHub Actions (`.github/workflows/ci.yml`) for:
-- **Automated building** on push/PR
-- **Dependency resolution** via SourceKnight
+- **Automated building** on push/PR via `rumblefrog/setup-sp` + `spcomp`
+- **Dependency resolution** by cloning each dependency repo directly
 - **Package creation** with all necessary files
 - **Release management** for tagged versions
 
@@ -301,7 +302,7 @@ The project uses a centralized version system:
 ## Troubleshooting Common Issues
 
 ### Build Issues
-- **Missing dependencies**: Check `sourceknight.yaml` and ensure all repositories are accessible
+- **Missing dependencies**: Check the dependency clone steps in `.github/workflows/ci.yml` and ensure all repositories are accessible
 - **Compilation errors**: Verify SourceMod version compatibility and include paths
 - **Version conflicts**: Ensure dependency versions match requirements
 
