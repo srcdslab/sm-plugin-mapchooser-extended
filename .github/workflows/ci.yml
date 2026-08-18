@@ -1,58 +1,74 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - main
-      - master
-    tags:
-      - '*'
-  pull_request:
-    branches:
-      - main
-      - master
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    name: "Build"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04]
-        include:
-          - os: ubuntu-24.04
+    name: Build
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Build sourcemod plugin
-        uses: maxime1907/action-sourceknight@v1
+
+      - name: Setup SourcePawn compiler
+        uses: rumblefrog/setup-sp@v1.3.1
         with:
-          cmd: build
+          version: "1.12.x"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+          mkdir -p addons/sourcemod/scripting/include deps
+          git clone --depth=1 https://github.com/srcdslab/sm-plugin-MultiColors.git deps/multicolors
+          cp -R deps/multicolors/addons/sourcemod/scripting/include/* addons/sourcemod/scripting/include/
+          git clone --depth=1 https://github.com/srcdslab/sm-plugin-AFKManager.git deps/afkmanager
+          cp -R deps/afkmanager/addons/sourcemod/scripting/include/* addons/sourcemod/scripting/include/
+          git clone --depth=1 https://github.com/srcdslab/sourcebans-pp.git deps/sourcecomms
+          cp -R deps/sourcecomms/game/addons/sourcemod/scripting/include/* addons/sourcemod/scripting/include/
+          git clone --depth=1 https://github.com/srcdslab/sm-plugin-PlayerManager.git deps/playermanager
+          cp -R deps/playermanager/addons/sourcemod/scripting/include/* addons/sourcemod/scripting/include/
+          git clone --depth=1 https://github.com/srcdslab/sm-plugin-ZLeader.git deps/zleader
+          cp -R deps/zleader/addons/sourcemod/scripting/include/* addons/sourcemod/scripting/include/
+          git clone --depth=1 https://github.com/srcdslab/sm-plugin-DynamicChannels.git deps/dynamicchannels
+          cp -R deps/dynamicchannels/scripting/include/* addons/sourcemod/scripting/include/
+          git clone --depth=1 https://github.com/srcdslab/sm-plugin-UtilsHelper.git deps/utilshelper
+          cp -R deps/utilshelper/addons/sourcemod/scripting/include/* addons/sourcemod/scripting/include/
+
+      - name: Build sourcemod plugin
+        working-directory: addons/sourcemod/scripting
+        run: |
+          set -euo pipefail
+          mkdir -p ../plugins
+          spcomp -i include -o ../plugins/mapchooser_extended.smx mapchooser_extended.sp
+          spcomp -i include -o ../plugins/nominations_extended.smx nominations_extended.sp
+          spcomp -i include -o ../plugins/rockthevote_extended.smx rockthevote_extended.sp
+          spcomp -i include -o ../plugins/mapchooser_extended_sounds.smx mapchooser_extended_sounds.sp
 
       - name: Create package
         run: |
-          mkdir -p /tmp/package
-          cp -R .sourceknight/package/* /tmp/package
-          cp -R addons/sourcemod/translations /tmp/package/common/addons/sourcemod/
-          cp -R addons/sourcemod/configs /tmp/package/common/addons/sourcemod/
-          cp -R sound /tmp/package/common/
+          set -euo pipefail
+          mkdir -p /tmp/package/addons/sourcemod/plugins
+          cp addons/sourcemod/plugins/*.smx /tmp/package/addons/sourcemod/plugins/
+          cp -R addons/sourcemod/configs /tmp/package/addons/sourcemod/
+          cp -R addons/sourcemod/translations /tmp/package/addons/sourcemod/
+          mkdir -p /tmp/package/sound
+          cp -R sound/* /tmp/package/sound/
 
       - name: Upload build archive for test runners
         uses: actions/upload-artifact@v7
         with:
-          name: package
+          name: ${{ runner.os }}
           path: /tmp/package
 
   tag:
     name: Tag
     needs: build
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
 
       - name: Delete existing "latest" release and tag
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
         run: |
           set -euo pipefail
           gh release delete latest --cleanup-tag --yes || true
@@ -60,44 +76,47 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: rickstaa/action-create-tag@v1
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
         with:
-          tag: "latest"
+          tag: latest
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release:
     name: Release
-    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     needs: [build, tag]
+    if: |
+      always() &&
+      needs.build.result == 'success' &&
+      (needs.tag.result == 'success' || needs.tag.result == 'skipped') &&
+      (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v8
         with:
-          name: package
+          name: ${{ runner.os }}
           path: artifacts
 
       - name: Versioning
         run: |
+          set -euo pipefail
           version="latest"
-          if [[ "${{ github.ref_type }}" == 'tag' ]]; then
-            version=`echo $GITHUB_REF | sed "s/refs\/tags\///"`;
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version="${GITHUB_REF_NAME}"
           fi
-          echo "RELEASE_VERSION=$version" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$version" >> "$GITHUB_ENV"
 
       - name: Package
         run: |
+          set -euo pipefail
           cd artifacts
-          ls -Rall
-          tar -czf ../${{ github.event.repository.name }}-${{ env.RELEASE_VERSION }}.tar.gz .
+          tar -czf "../${{ github.event.repository.name }}-${{ env.RELEASE_VERSION }}.tar.gz" .
           cd ..
-          ls -la *.tar.gz
 
       - name: Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: '*.tar.gz'
+          file: "*.tar.gz"
           tag: ${{ env.RELEASE_VERSION }}
           file_glob: true
           overwrite: true
