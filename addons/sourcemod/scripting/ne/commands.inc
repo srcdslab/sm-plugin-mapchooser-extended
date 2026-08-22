@@ -661,7 +661,7 @@ public Action Command_NomStatus(int client, int args)
 {
 	if (client == 0)
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "Can only use command in game"); // custom phrase (was undefined anywhere, causing a fatal translation error)
+		CPrintToChat(client, "{green}[NE]{default} %t", "Can only use command in game");
 		return Plugin_Handled;
 	}
 
