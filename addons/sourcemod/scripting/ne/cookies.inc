@@ -87,16 +87,16 @@ public void NE_CookieHandler(int client, CookieMenuAction action, any info, char
 public void NE_ClientSettings_Menu(int client)
 {
 	Menu menu = new Menu(NE_ClientSettingsHandler, MENU_ACTIONS_ALL);
-	menu.SetTitle("%T %T", "Nominate Title", client, "Client Settings", client);
+	menu.SetTitle("%T %T", "NE Nominate Title", client, "NE Client Settings", client);
 
 	bool bCached = AreClientCookiesCached(client);
 	char buffer[128];
 	if (bCached)
 	{
-		Format(buffer, sizeof(buffer), "%T: %T", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "Yes" : "No", client);
+		Format(buffer, sizeof(buffer), "%T: %T", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "NE Yes" : "NE No", client);
 		menu.AddItem(NULL_STRING, buffer);
 
-		Format(buffer, sizeof(buffer), "%T: %T", "ShowMapsTiers", client, !g_bHideMapsTiers[client] ? "Yes" : "No", client);
+		Format(buffer, sizeof(buffer), "%T: %T", "ShowMapsTiers", client, !g_bHideMapsTiers[client] ? "NE Yes" : "NE No", client);
 		menu.AddItem(NULL_STRING, buffer);
 	}
 	else

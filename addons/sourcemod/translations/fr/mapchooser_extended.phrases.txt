@@ -218,7 +218,7 @@
 
 	"Cookies are not cached"
 	{
-		"fr"		"Les cookies ne sont pas encore en cache. Réessayez dans un instant."
+		"fr"		"Les cookies ne sont pas encore en cache. Réessayez dans un instant."
 	}
 
 	"Map was not found"
@@ -404,5 +404,140 @@
 	"ShowMapsTiers"
 	{
 		"fr"		"Afficher les tiers des cartes"
+	}
+
+	"NE Current Map"
+	{
+		"fr"		"Carte actuelle"
+	}
+
+	"NE Recently Played"
+	{
+		"fr"		"Récemment jouée"
+	}
+
+	"NE Nominated"
+	{
+		"fr"		"Sélectionnée"
+	}
+
+	"NE Cant Nominate Current Map"
+	{
+		"fr"		"Vous ne pouvez pas sélectionner la carte actuelle."
+	}
+
+	"NE Map In Exclude List"
+	{
+		"fr"		"Cette carte a été jouée récemment et ne peut pas être sélectionnée."
+	}
+
+	"NE Map Already Nominated"
+	{
+		"fr"		"Cette carte a déjà été sélectionnée."
+	}
+
+	"NE Map Already In Vote"
+	{
+		"fr"		"La carte '{1}' est déjà dans la liste des nominations."
+	}
+
+	"NE Map Inserted"
+	{
+		"fr"		"La carte '{1}' a été ajoutée à la liste des nominations."
+	}
+
+	"NE Max Nominations"
+	{
+		"fr"		"Le nombre maximum de sélections a été atteint."
+	}
+
+	"NE Map Nominated"
+	{
+		"fr"		"{1} a sélectionné {2}."
+	}
+
+	"NE Map Nomination Changed"
+	{
+		"fr"		"{1} a changé sa sélection pour {2}."
+	}
+
+	"NE Map Not In Pool"
+	{
+		"fr"		"La carte '{1}' n'est pas dans la liste des nominations."
+	}
+
+	"NE Nominate Title"
+	{
+		"fr"		"Sélectionner une carte :"
+	}
+
+	"NE Client Settings"
+	{
+		"fr"		"Paramètres du joueur"
+	}
+
+	"Can only use command in game"
+	{
+		"fr"		"Cette commande ne peut être utilisée qu'en jeu."
+	}
+
+	"No clients nombanned"
+	{
+		"fr"		"Aucun joueur n'est actuellement restreint pour les nominations."
+	}
+
+	"NombanList Client Not valid"
+	{
+		"fr"		"Ce joueur n'est plus valide."
+	}
+
+	"NE Yes"
+	{
+		"fr"		"Oui"
+	}
+
+	"NE No"
+	{
+		"fr"		"Non"
+	}
+
+	"MCE See Console For Output"
+	{
+		"fr"		"Voir la console pour le résultat."
+	}
+
+	"Vote Map Initiated"
+	{
+		"fr"		"A lancé un vote de map."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"fr"		"Le changement de map n'est pas encore autorisé."
+	}
+
+	"RTVE Started"
+	{
+		"fr"		"Le vote pour changer de map a déjà commencé."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"fr"		"Le nombre minimum de joueurs requis n'a pas été atteint."
+	}
+
+	"RTVE Already Voted"
+	{
+		"fr"		"Vous avez déjà voté pour changer de map. ({1} votes, {2} requis)"
+	}
+
+	"RTVE Requested"
+	{
+		"fr"		"{1} veut changer de map. ({2} votes, {3} requis)"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"fr"		"Changement vers la carte {1} ! Le vote a tranché !"
 	}
 }

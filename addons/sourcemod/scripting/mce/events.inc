@@ -186,7 +186,7 @@ public void Event_WinPanel(Handle event, const char[] name, bool dontBroadcast)
 
 	CPrintToChatAll("%t", "Nextmap", nextMap);
 	CPrintToChatAll("%t", "Nextmap", nextMap);
-	CPrintToChatAll("%t", "Nextmap", nextMap);	
+	CPrintToChatAll("%t", "Nextmap", nextMap);
 
 	delete g_hHud;
 }

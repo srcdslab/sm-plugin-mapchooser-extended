@@ -182,13 +182,13 @@ stock bool IsNominateAllowed(int client)
 		{
 			char map[PLATFORM_MAX_PATH];
 			GetNextMap(map, sizeof(map));
-			CReplyToCommand(client, "{green}[NE]{default} %t", "Next Map", map);
+			CReplyToCommand(client, "{green}[NE]{default} %t", "Nextmap", map);
 			return false;
 		}
 /*
 		case CanNominate_No_VoteFull:
 		{
-			CReplyToCommand(client, "{green}[NE]{default} %t", "Max Nominations");
+			CReplyToCommand(client, "{green}[NE]{default} %t", "NE Max Nominations");
 			return false;
 		}
 */

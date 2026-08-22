@@ -102,7 +102,7 @@ public Action Command_ShowConfig(int client, int args)
 
 	if (GetCmdReplySource() == SM_REPLY_TO_CHAT)
 	{
-		CPrintToChat(client, "{green}[MCE]{default} %t", "See console for output");
+		CPrintToChat(client, "{green}[MCE]{default} %t", "MCE See Console For Output");
 	}
 
 	PrintToConsole(client, "-----------------------------------------");
@@ -143,7 +143,7 @@ public Action Command_ExtendsLeft(int client, int args)
 
 public Action Command_Mapvote(int client, int args)
 {
-	CShowActivity2(client, "{green}[MCE]{olive} ", "{default}%t", "Initiated Vote Map");
+	CShowActivity2(client, "{green}[MCE]{olive} ", "{default}%t", "Vote Map Initiated");
 	LogAction(client, -1, "[MCE] \"%L\" Initiated a map vote.", client);
 
 	SetupWarningTimer(WarningType_Vote, MapChange_MapEnd, INVALID_HANDLE, true);
