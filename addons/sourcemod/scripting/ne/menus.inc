@@ -75,7 +75,7 @@ Action AttemptNominate(int client, const char[] filter = "")
 
 	Menu menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client);
 
-	SetMenuTitle(menu, "%T", "Nominate Title", client);
+	SetMenuTitle(menu, "%T", "NE Nominate Title", client);
 
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
 	return Plugin_Handled;
@@ -100,7 +100,7 @@ Action AttemptAdminNominate(int client, const char[] filter = "")
 
 	Menu menu = BuildAdminMapMenu(filter[0] ? filter : "");
 
-	SetMenuTitle(menu, "%T", "Nominate Title", client);
+	SetMenuTitle(menu, "%T", "NE Nominate Title", client);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
 	return Plugin_Handled;
 }
@@ -426,12 +426,12 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			/* Don't need to check for InvalidMap because the menu did that already */
 			if (result == Nominate_AlreadyInVote)
 			{
-				CPrintToChat(param1, "{green}[NE]{default} %t", "Map Already Nominated");
+				CPrintToChat(param1, "{green}[NE]{default} %t", "NE Map Already Nominated");
 				return 0;
 			}
 			else if (result == Nominate_VoteFull)
 			{
-				CPrintToChat(param1, "{green}[NE]{default} %t", "Max Nominations");
+				CPrintToChat(param1, "{green}[NE]{default} %t", "NE Max Nominations");
 				return 0;
 			}
 
@@ -451,13 +451,13 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 
 			if (result == Nominate_Added)
 			{
-				CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapnameInChat);
+				CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nominated", name, mapnameInChat);
 				LogMessage("%L has nominated %s", param1, map);
 				Forward_OnPublicMapInsert(param1, map, IsMapVIPRestricted(map), IsMapLeaderRestricted(map), IsMapAdminRestricted(map));
 			}
 			else if (result == Nominate_Replaced)
 			{
-				CPrintToChatAll("{green}[NE]{default} %t", "Map Nomination Changed", name, mapnameInChat);
+				CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nomination Changed", name, mapnameInChat);
 				LogMessage("%L has changed their nomination to %s", param1, map);
 				Forward_OnPublicMapReplaced(param1, map, IsMapVIPRestricted(map), IsMapLeaderRestricted(map), IsMapAdminRestricted(map));
 			}
@@ -556,20 +556,20 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				{
 					if ((status & MAPSTATUS_EXCLUDE_CURRENT) == MAPSTATUS_EXCLUDE_CURRENT)
 					{
-						Format(display, sizeof(display), "%s (%T)", buffer, "Current Map", param1);
+						Format(display, sizeof(display), "%s (%T)", buffer, "NE Current Map", param1);
 						return RedrawMenuItem(display);
 					}
 
 					if (restrictionsActive && (status & MAPSTATUS_EXCLUDE_PREVIOUS) == MAPSTATUS_EXCLUDE_PREVIOUS)
 					{
 						int Cooldown = GetMapCooldown(map);
-						Format(display, sizeof(display), "%s (%T %d)", buffer, "Recently Played", param1, Cooldown);
+						Format(display, sizeof(display), "%s (%T %d)", buffer, "NE Recently Played", param1, Cooldown);
 						return RedrawMenuItem(display);
 					}
 
 					if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
 					{
-						Format(display, sizeof(display), "%s (%T)", buffer, "Nominated", param1);
+						Format(display, sizeof(display), "%s (%T)", buffer, "NE Nominated", param1);
 						return RedrawMenuItem(display);
 					}
 				}
@@ -581,7 +581,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 				int Seconds = Cooldown - iCurrentTime;
 				char time[16];
 				CustomFormatTime(Seconds, time, sizeof(time));
-				Format(display, sizeof(display), "%s (%T %s)", buffer, "Recently Played", param1, time);
+				Format(display, sizeof(display), "%s (%T %s)", buffer, "NE Recently Played", param1, time);
 				return RedrawMenuItem(display);
 			}
 
@@ -636,14 +636,14 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 			if (result > Nominate_Replaced)
 			{
 				/* We assume already in vote is the casue because the maplist does a Map Validity check and we forced, so it can't be full */
-				CPrintToChat(param1, "{green}[NE]{default} %t", "Map Already In Vote", map);
+				CPrintToChat(param1, "{green}[NE]{default} %t", "NE Map Already In Vote", map);
 				return 0;
 			}
 
 			/* Map was nominated! - Disable the menu item and update the trie */
 			SetTrieValue(g_mapTrie, map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
 
-			CPrintToChat(param1, "{green}[NE]{default} %t", "Map Inserted", map);
+			CPrintToChat(param1, "{green}[NE]{default} %t", "NE Map Inserted", map);
 			CPrintToChatAll("{green}[NE]{default} %t", "Client inserted Map", param1, map);
 
 			LogAction(param1, -1, "[NE] \"%L\" has inserted map \"%s\".", param1, map);
@@ -696,7 +696,7 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 
 			if (!RemoveNominationByMap(map))
 			{
-				CReplyToCommand(param1, "{green}[NE]{default} %t", "Map Not In Pool", map);
+				CReplyToCommand(param1, "{green}[NE]{default} %t", "NE Map Not In Pool", map);
 				return 0;
 			}
 

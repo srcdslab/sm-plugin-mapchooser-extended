@@ -63,7 +63,7 @@ public Action Command_Addmap(int client, int args)
 	int status;
 	if (!GetTrieValue(g_mapTrie, mapname, status))
 	{
-		CReplyToCommand(client, "{green}[NE]{default} %t", "Map Not In Pool", mapname);
+		CReplyToCommand(client, "{green}[NE]{default} %t", "NE Map Not In Pool", mapname);
 		AttemptAdminNominate(client, mapname);
 		return Plugin_Handled;
 	}
@@ -77,16 +77,16 @@ public Action Command_Addmap(int client, int args)
 			if ((status & MAPSTATUS_DISABLED) == MAPSTATUS_DISABLED)
 			{
 				if ((status & MAPSTATUS_EXCLUDE_CURRENT) == MAPSTATUS_EXCLUDE_CURRENT)
-					CPrintToChat(client, "{green}[NE]{default} %t", "Can't Nominate Current Map");
+					CPrintToChat(client, "{green}[NE]{default} %t", "NE Cant Nominate Current Map");
 
 				if (restrictionsActive && (status & MAPSTATUS_EXCLUDE_PREVIOUS) == MAPSTATUS_EXCLUDE_PREVIOUS)
 				{
 					int Cooldown = GetMapCooldown(mapname);
-					CPrintToChat(client, "{green}[NE]{default} %t (%d)", "Map in Exclude List", Cooldown);
+					CPrintToChat(client, "{green}[NE]{default} %t (%d)", "NE Map In Exclude List", Cooldown);
 				}
 
 				if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
-					CPrintToChat(client, "{green}[NE]{default} %t", "Map Already Nominated");
+					CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Nominated");
 
 				return Plugin_Handled;
 			}
@@ -140,7 +140,7 @@ public Action Command_Addmap(int client, int args)
 	if (result > Nominate_Replaced)
 	{
 		/* We assume already in vote is the casue because the maplist does a Map Validity check and we forced, so it can't be full */
-		CReplyToCommand(client, "{green}[NE]{default} %t", "Map Already In Vote", mapname);
+		CReplyToCommand(client, "{green}[NE]{default} %t", "NE Map Already In Vote", mapname);
 
 		return Plugin_Handled;
 	}
@@ -148,7 +148,7 @@ public Action Command_Addmap(int client, int args)
 	/* Map was nominated! - Disable the menu item and update the trie */
 	SetTrieValue(g_mapTrie, mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
 
-	CReplyToCommand(client, "{green}[NE]{default} %t", "Map Inserted", mapname);
+	CReplyToCommand(client, "{green}[NE]{default} %t", "NE Map Inserted", mapname);
 	CPrintToChatAll("{green}[NE]{default} %t", "Client inserted Map", client, mapname);
 
 	LogAction(client, -1, "\"%L\" has inserted map \"%s\".", client, mapname);
@@ -183,7 +183,7 @@ public Action Command_Removemap(int client, int args)
 
 	if (!RemoveNominationByMap(mapname))
 	{
-		CReplyToCommand(client, "{green}[NE]{default} %t", "Map Not In Pool", mapname);
+		CReplyToCommand(client, "{green}[NE]{default} %t", "NE Map Not In Pool", mapname);
 
 		return Plugin_Handled;
 	}
@@ -499,7 +499,7 @@ public Action Command_Nominate(int client, int args)
 	int status;
 	if (!GetTrieValue(g_mapTrie, mapname, status))
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "Map Not In Pool", mapname);
+		CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Not In Pool", mapname);
 		AttemptNominate(client, mapname);
 		return Plugin_Handled;
 	}
@@ -509,16 +509,16 @@ public Action Command_Nominate(int client, int args)
 	if ((status & MAPSTATUS_DISABLED) == MAPSTATUS_DISABLED)
 	{
 		if ((status & MAPSTATUS_EXCLUDE_CURRENT) == MAPSTATUS_EXCLUDE_CURRENT)
-			CPrintToChat(client, "{green}[NE]{default} %t", "Can't Nominate Current Map");
+			CPrintToChat(client, "{green}[NE]{default} %t", "NE Cant Nominate Current Map");
 
 		if (restrictionsActive && (status & MAPSTATUS_EXCLUDE_PREVIOUS) == MAPSTATUS_EXCLUDE_PREVIOUS)
 		{
 			int Cooldown = GetMapCooldown(mapname);
-			CPrintToChat(client, "{green}[NE]{default} %t (%d)", "Map in Exclude List", Cooldown);
+			CPrintToChat(client, "{green}[NE]{default} %t (%d)", "NE Map In Exclude List", Cooldown);
 		}
 
 		if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
-			CPrintToChat(client, "{green}[NE]{default} %t", "Map Already Nominated");
+			CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Nominated");
 
 		return Plugin_Handled;
 	}
@@ -599,9 +599,9 @@ public Action Command_Nominate(int client, int args)
 	if (result > Nominate_Replaced)
 	{
 		if (result == Nominate_AlreadyInVote)
-			CPrintToChat(client, "{green}[NE]{default} %t", "Map Already In Vote", mapnameInChat);
+			CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already In Vote", mapnameInChat);
 		else if (result == Nominate_VoteFull)
-			CPrintToChat(client, "{green}[NE]{default} %t", "Max Nominations");
+			CPrintToChat(client, "{green}[NE]{default} %t", "NE Max Nominations");
 
 		return Plugin_Handled;
 	}
@@ -615,13 +615,13 @@ public Action Command_Nominate(int client, int args)
 
 	if (result == Nominate_Added)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "Map Nominated", name, mapnameInChat);
+		CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nominated", name, mapnameInChat);
 		LogMessage("%L has nominated %s", client, mapname);
 		Forward_OnPublicMapInsert(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
 	else if (result == Nominate_Replaced)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "Map Nomination Changed", name, mapnameInChat);
+		CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nomination Changed", name, mapnameInChat);
 		LogMessage("%L has changed their nomination to %s", client, mapname);
 		Forward_OnPublicMapReplaced(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
@@ -661,7 +661,7 @@ public Action Command_NomStatus(int client, int args)
 {
 	if (client == 0)
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "Can only use command in game");
+		CPrintToChat(client, "{green}[NE]{default} %t", "Can only use command in game"); // custom phrase (was undefined anywhere, causing a fatal translation error)
 		return Plugin_Handled;
 	}
 

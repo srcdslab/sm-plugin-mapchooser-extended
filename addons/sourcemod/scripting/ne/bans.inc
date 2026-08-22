@@ -152,7 +152,7 @@ public void PrepareNombanListMenu(int client)
 
 	if (total == 0)
 	{
-		Format(display, sizeof(display), "%T", "No clients nombanned", client);
+		Format(display, sizeof(display), "%T", "No clients nombanned", client); // custom phrase (was undefined anywhere, causing a fatal translation error)
 		menu.AddItem("nothing", display, ITEMDRAW_DISABLED);
 	}
 	
@@ -173,7 +173,7 @@ public int Nombanlist_Handler(Menu menu, MenuAction action, int param1, int para
 
 			if (client == 0)
 			{
-				CPrintToChat(param1, "{green}[NE]{default} %t", "NombanList Client Not valid");
+				CPrintToChat(param1, "{green}[NE]{default} %t", "NombanList Client Not valid"); // custom phrase (was undefined anywhere, causing a fatal translation error)
 				PrepareNombanListMenu(param1);
 			}
 			else

@@ -406,4 +406,89 @@
 		"es"		"Mostrar niveles de mapas"
 	}
 
+	"NE Current Map"
+	{
+		"es"		"Mapa actual"
+	}
+
+	"NE Recently Played"
+	{
+		"es"		"Jugado recientemente"
+	}
+
+	"NE Nominated"
+	{
+		"es"		"Nominado"
+	}
+
+	"NE Cant Nominate Current Map"
+	{
+		"es"		"No puedes nominar el mapa actual."
+	}
+
+	"NE Map In Exclude List"
+	{
+		"es"		"Este mapa se jugo recientemente y no puede ser nominado."
+	}
+
+	"NE Map Already Nominated"
+	{
+		"es"		"Este mapa ya ha sido nominado."
+	}
+
+	"NE Map Already In Vote"
+	{
+		"es"		"El mapa '{1}' ya esta en la lista de nominaciones."
+	}
+
+	"NE Map Inserted"
+	{
+		"es"		"El mapa '{1}' se ha añadido a la lista de nominaciones."
+	}
+
+	"NE Max Nominations"
+	{
+		"es"		"Se ha alcanzado el numero maximo de nominaciones."
+	}
+
+	"NE Map Nominated"
+	{
+		"es"		"{1} ha nominado {2}."
+	}
+
+	"NE Map Nomination Changed"
+	{
+		"es"		"{1} ha cambiado su nominacion a {2}."
+	}
+
+	"NE Map Not In Pool"
+	{
+		"es"		"El mapa '{1}' no esta en la lista de nominaciones."
+	}
+
+	"NE Nominate Title"
+	{
+		"es"		"Nominar mapa:"
+	}
+
+	"NE Client Settings"
+	{
+		"es"		"Configuracion del jugador"
+	}
+
+	"Can only use command in game"
+	{
+		"es"		"Este comando solo se puede usar dentro del juego."
+	}
+
+	"No clients nombanned"
+	{
+		"es"		"Ningun jugador esta restringido de nominaciones actualmente."
+	}
+
+	"NombanList Client Not valid"
+	{
+		"es"		"Ese jugador ya no es valido."
+	}
+
 }

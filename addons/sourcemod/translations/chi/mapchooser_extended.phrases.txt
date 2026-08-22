@@ -405,4 +405,89 @@
 		"chi"		"显示地图等级"
 	}
 
+	"NE Current Map"
+	{
+		"chi"		"当前地图"
+	}
+
+	"NE Recently Played"
+	{
+		"chi"		"最近游玩过"
+	}
+
+	"NE Nominated"
+	{
+		"chi"		"已提名"
+	}
+
+	"NE Cant Nominate Current Map"
+	{
+		"chi"		"您不能提名当前地图."
+	}
+
+	"NE Map In Exclude List"
+	{
+		"chi"		"该地图最近已玩过，无法提名."
+	}
+
+	"NE Map Already Nominated"
+	{
+		"chi"		"该地图已被提名."
+	}
+
+	"NE Map Already In Vote"
+	{
+		"chi"		"地图 '{1}' 已在提名列表中."
+	}
+
+	"NE Map Inserted"
+	{
+		"chi"		"地图 '{1}' 已添加到提名列表."
+	}
+
+	"NE Max Nominations"
+	{
+		"chi"		"已达到最大提名数量."
+	}
+
+	"NE Map Nominated"
+	{
+		"chi"		"{1} 提名了 {2}."
+	}
+
+	"NE Map Nomination Changed"
+	{
+		"chi"		"{1} 将提名更改为 {2}."
+	}
+
+	"NE Map Not In Pool"
+	{
+		"chi"		"地图 '{1}' 不在提名列表中."
+	}
+
+	"NE Nominate Title"
+	{
+		"chi"		"提名地图："
+	}
+
+	"NE Client Settings"
+	{
+		"chi"		"玩家设置"
+	}
+
+	"Can only use command in game"
+	{
+		"chi"		"此命令只能在游戏中使用."
+	}
+
+	"No clients nombanned"
+	{
+		"chi"		"目前没有玩家被限制提名."
+	}
+
+	"NombanList Client Not valid"
+	{
+		"chi"		"该玩家已失效."
+	}
+
 }
