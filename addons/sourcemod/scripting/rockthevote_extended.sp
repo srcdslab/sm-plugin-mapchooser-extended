@@ -47,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.11.4"
+#define RTVE_VERSION "1.12.0"
 
 public Plugin myinfo =
 {
