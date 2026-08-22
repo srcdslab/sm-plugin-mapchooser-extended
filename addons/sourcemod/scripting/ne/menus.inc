@@ -203,10 +203,10 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 	{
 		char buffer[128];
 
-		Format(buffer, sizeof(buffer), "%T: %T", "ShowMapsTiers", client, !g_bHideMapsTiers[client] ? "Yes" : "No", client);
+		Format(buffer, sizeof(buffer), "%T: %T", "ShowMapsTiers", client, !g_bHideMapsTiers[client] ? "NE Yes" : "NE No", client);
 		menu.AddItem("hide_tiers", buffer);
 
-		Format(buffer, sizeof(buffer), "%T: %T\n ", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "Yes" : "No", client);
+		Format(buffer, sizeof(buffer), "%T: %T\n ", "Nominations Show Unavailable", client, g_bShowUnavailableMaps[client] ? "NE Yes" : "NE No", client);
 		menu.AddItem("show_unavailable", buffer);
 	}
 

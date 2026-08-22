@@ -491,4 +491,54 @@
 		"es"		"Ese jugador ya no es valido."
 	}
 
+	"NE Yes"
+	{
+		"es"		"Si"
+	}
+
+	"NE No"
+	{
+		"es"		"No"
+	}
+
+	"MCE See Console For Output"
+	{
+		"es"		"Ver la consola para el resultado."
+	}
+
+	"Vote Map Initiated"
+	{
+		"es"		"Ha iniciado una votacion de mapa."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"es"		"Rock the Vote aun no esta permitido."
+	}
+
+	"RTVE Started"
+	{
+		"es"		"Rock the Vote ya ha comenzado."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"es"		"No se ha alcanzado el numero minimo de jugadores requerido."
+	}
+
+	"RTVE Already Voted"
+	{
+		"es"		"Ya has votado para Rock the Vote. ({1} votos, {2} requeridos)"
+	}
+
+	"RTVE Requested"
+	{
+		"es"		"{1} quiere hacer Rock the Vote. ({2} votos, {3} requeridos)"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"es"		"Cambiando al mapa {1}! Rock the Vote ha hablado!"
+	}
+
 }

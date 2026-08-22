@@ -490,4 +490,54 @@
 	{
 		"fr"		"Ce joueur n'est plus valide."
 	}
+
+	"NE Yes"
+	{
+		"fr"		"Oui"
+	}
+
+	"NE No"
+	{
+		"fr"		"Non"
+	}
+
+	"MCE See Console For Output"
+	{
+		"fr"		"Voir la console pour le résultat."
+	}
+
+	"Vote Map Initiated"
+	{
+		"fr"		"A lancé un vote de map."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"fr"		"Le changement de map n'est pas encore autorisé."
+	}
+
+	"RTVE Started"
+	{
+		"fr"		"Le vote pour changer de map a déjà commencé."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"fr"		"Le nombre minimum de joueurs requis n'a pas été atteint."
+	}
+
+	"RTVE Already Voted"
+	{
+		"fr"		"Vous avez déjà voté pour changer de map. ({1} votes, {2} requis)"
+	}
+
+	"RTVE Requested"
+	{
+		"fr"		"{1} veut changer de map. ({2} votes, {3} requis)"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"fr"		"Changement vers la carte {1} ! Le vote a tranché !"
+	}
 }

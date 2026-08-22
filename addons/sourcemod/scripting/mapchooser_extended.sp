@@ -84,8 +84,6 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
 	LoadTranslations("mapchooser_extended.phrases");
-	LoadTranslations("basevotes.phrases");
-	LoadTranslations("common.phrases");
 
 	EngineVersion version = GetEngineVersion();
 

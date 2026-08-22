@@ -47,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.11.3"
+#define RTVE_VERSION "1.11.4"
 
 public Plugin myinfo =
 {
@@ -83,9 +83,7 @@ bool g_bPlugin_AFK = false;
 
 public void OnPluginStart()
 {
-	LoadTranslations("common.phrases");
-	LoadTranslations("rockthevote.phrases");
-	LoadTranslations("basevotes.phrases");
+	LoadTranslations("mapchooser_extended.phrases");
 
 	g_Cvar_Needed = CreateConVar("sm_rtv_needed", "0.65", "Percentage of Steam players added to rockthevote calculation (Def 65%)", 0, true, 0.05, true, 1.0);
 	g_Cvar_MinPlayers = CreateConVar("sm_rtv_minplayers", "0", "Number of players required before RTV will be enabled.", 0, true, 0.0, true, float(MAXPLAYERS));
@@ -280,25 +278,25 @@ void AttemptRTV(int client)
 {
 	if (!RTVAllowed() || (g_Cvar_RTVPostVoteAction.IntValue == 1 && HasEndOfMapVoteFinished()))
 	{
-		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTV Not Allowed");
+		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Not Allowed");
 		return;
 	}
 
 	if (!CanMapChooserStartVote())
 	{
-		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTV Started");
+		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Started");
 		return;
 	}
 
 	if (GetClientCount(true) < g_Cvar_MinPlayers.IntValue)
 	{
-		CReplyToCommand(client, "{green}[RTVE]{default} %t", "Minimal Players Not Met");
+		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Minimal Players Not Met");
 		return;
 	}
 
 	if (g_Voted[client])
 	{
-		CReplyToCommand(client, "{green}[RTVE]{default} %t", "Already Voted", g_Votes, g_VotesNeeded);
+		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Already Voted", g_Votes, g_VotesNeeded);
 		return;
 	}
 
@@ -308,7 +306,7 @@ void AttemptRTV(int client)
 	g_Votes++;
 	g_Voted[client] = true;
 
-	CPrintToChatAll("{green}[RTVE]{default} %t", "RTV Requested", name, g_Votes, g_VotesNeeded);
+	CPrintToChatAll("{green}[RTVE]{default} %t", "RTVE Requested", name, g_Votes, g_VotesNeeded);
 
 	if (g_Votes >= g_VotesNeeded)
 	{
@@ -339,7 +337,7 @@ void StartRTV()
 		{
 			GetMapDisplayNameOptimized(map, map, sizeof(map));
 
-			CPrintToChatAll("{green}[RTVE]{default} %t", "Changing Maps", map);
+			CPrintToChatAll("{green}[RTVE]{default} %t", "RTVE Changing Maps", map);
 			CreateTimer(5.0, Timer_ChangeMap, _, TIMER_FLAG_NO_MAPCHANGE);
 			g_InChange = true;
 
@@ -411,7 +409,7 @@ public Action Command_ForceRTV(int client, int args)
 		return Plugin_Handled;
 	}
 
-	CShowActivity2(client, "{green}[RTVE]{olive} ", "{default}%t", "Initiated Vote Map");
+	CShowActivity2(client, "{green}[RTVE]{olive} ", "{default}%t", "Vote Map Initiated");
 	LogAction(client, -1, "\"%L\" Initiated a map vote. (Forced RockTheVote)", client);
 
 	StartRTV();

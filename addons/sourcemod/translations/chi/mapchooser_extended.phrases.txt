@@ -490,4 +490,54 @@
 		"chi"		"该玩家已失效."
 	}
 
+	"NE Yes"
+	{
+		"chi"		"是"
+	}
+
+	"NE No"
+	{
+		"chi"		"否"
+	}
+
+	"MCE See Console For Output"
+	{
+		"chi"		"请查看控制台以获取输出."
+	}
+
+	"Vote Map Initiated"
+	{
+		"chi"		"已发起地图投票."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"chi"		"目前还不允许投票换图."
+	}
+
+	"RTVE Started"
+	{
+		"chi"		"投票换图已经开始."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"chi"		"未达到所需的最低玩家人数."
+	}
+
+	"RTVE Already Voted"
+	{
+		"chi"		"您已投票换图. ({1} 票, 需要 {2} 票)"
+	}
+
+	"RTVE Requested"
+	{
+		"chi"		"{1} 想要投票换图. ({2} 票, 需要 {3} 票)"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"chi"		"正在切换到地图 {1}! 投票已经决定!"
+	}
+
 }

@@ -453,13 +453,6 @@
 		"en"		"Show Maps Tiers"
 	}
 
-	// The phrases below used to be pulled from SourceMod's own stock
-	// translations/nominations.phrases.txt and translations/basetriggers.phrases.txt.
-	// "Current Map" is declared by BOTH of those stock files with a different
-	// number of parameters (0 vs 1), which is what caused:
-	//   "Translation string formatted incorrectly - missing at least 1 parameters"
-	// Defining our own copies here removes the dependency on stock files entirely
-	// so behavior can never change based on load order or SM version.
 	"NE Current Map"
 	{
 		"en"		"Current Map"
@@ -535,11 +528,6 @@
 		"en"		"Client Settings"
 	}
 
-	// The phrases below never existed in any SourceMod translation file
-	// (custom or stock), so using them via %t previously threw a fatal
-	// "could not find any instance of the translation phrase" error.
-	// Note: "Cookies are not cached" was already fixed separately (see
-	// "Can not Load Cookies" block above) before this branch was rebased.
 	"Can only use command in game"
 	{
 		"en"		"This command can only be used in-game."
@@ -553,5 +541,58 @@
 	"NombanList Client Not valid"
 	{
 		"en"		"That client is no longer valid."
+	}
+
+	"NE Yes"
+	{
+		"en"		"Yes"
+	}
+
+	"NE No"
+	{
+		"en"		"No"
+	}
+
+	"MCE See Console For Output"
+	{
+		"en"		"See console for output."
+	}
+
+	"Vote Map Initiated"
+	{
+		"en"		"Initiated a map vote."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"en"		"Rock the Vote is not allowed yet."
+	}
+
+	"RTVE Started"
+	{
+		"en"		"Rock the Vote has already started."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"en"		"The minimal number of players required has not been met."
+	}
+
+	"RTVE Already Voted"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"		"You have already voted to Rock the Vote. ({1} votes, {2} required)"
+	}
+
+	"RTVE Requested"
+	{
+		"#format"	"{1:s},{2:d},{3:d}"
+		"en"		"{1} wants to rock the vote. ({2} votes, {3} required)"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"#format"	"{1:s}"
+		"en"		"Changing map to {1}! Rock the Vote has spoken!"
 	}
 }
