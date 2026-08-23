@@ -38,6 +38,11 @@
 		"en"		"Current map continues! The Vote has spoken! (Received {1}%% of {2} votes)"
 	}
 
+	"MCE No Votes Cast"
+	{
+		"en"		"No votes were cast."
+	}
+
 	"Changed Next Map"
 	{
 		"#format"	"{1:s}"

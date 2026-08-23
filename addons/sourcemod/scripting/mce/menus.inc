@@ -640,6 +640,11 @@ public int Handler_MapVoteMenu(Handle menu, MenuAction action, int param1, int p
 
 		case MenuAction_VoteCancel:
 		{
+			if (param1 == VoteCancel_NoVotes)
+			{
+				CPrintToChatAll("{green}[MCE]{default} %t", "MCE No Votes Cast");
+			}
+
 			// If we receive 0 votes, pick at random.
 			if (param1 == VoteCancel_NoVotes && g_bNoVoteMode)
 			{

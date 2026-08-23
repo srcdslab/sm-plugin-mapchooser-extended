@@ -36,6 +36,11 @@
 		"fr"			"La map continue! Le vote a tranché! (Reçu {1}%% sur {2} votes)"
 	}
 
+	"MCE No Votes Cast"
+	{
+		"fr"			"Aucun vote n'a été enregistré."
+	}
+
 	"Changed Next Map"
 	{
 		"fr"        "La map suivante sera \"{1}\"."

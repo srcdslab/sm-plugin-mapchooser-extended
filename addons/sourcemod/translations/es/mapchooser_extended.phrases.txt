@@ -36,6 +36,11 @@
 		"es"			"El mapa actual continua! La votacion ha hablado! (Recibidos {1}%% de {2} votos)"
 	}
 
+	"MCE No Votes Cast"
+	{
+		"es"			"No se emitieron votos."
+	}
+
 	"Changed Next Map"
 	{
 		"es"		"El siguiente mapa ha cambiado a \"{1}\"."	
