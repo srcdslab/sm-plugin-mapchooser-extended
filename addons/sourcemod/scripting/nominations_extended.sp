@@ -68,6 +68,7 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
 	LoadTranslations("mapchooser_extended.phrases");
+	LoadTranslations("common.phrases");
 
 	InitializeMapLists();
 	CvarsInit();
