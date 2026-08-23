@@ -286,7 +286,7 @@ public Action Command_Nomban(int client, int args)
 {
 	if (GetCmdArgs() != 2)
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "Nomban usage");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Nomban usage");
 		return Plugin_Handled;
 	}
 
@@ -301,7 +301,7 @@ public Action Command_Nomban(int client, int args)
 
 	if (IsClientNomBanned(target))
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "Already nombanned", target);
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Already nombanned", target);
 		return Plugin_Handled;
 	}
 
@@ -320,7 +320,7 @@ public Action Command_Nomban(int client, int args)
 	}
 	else
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "Nomban usage");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Nomban usage");
 	}
 
 	return Plugin_Handled;
@@ -330,7 +330,7 @@ public Action Command_UnNomban(int client, int args)
 {
 	if (GetCmdArgs() < 1)
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "UnNomban usage");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "UnNomban usage");
 		return Plugin_Handled;
 	}
 
@@ -343,7 +343,7 @@ public Action Command_UnNomban(int client, int args)
 
 	if (!IsClientNomBanned(target))
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "Already not nombanned", target);
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Already not nombanned", target);
 		return Plugin_Handled;
 	}
 
