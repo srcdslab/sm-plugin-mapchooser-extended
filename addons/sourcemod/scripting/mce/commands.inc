@@ -29,7 +29,7 @@ stock void CommandsInit()
 
 public Action Command_Version(int client, int args)
 {
-	CPrintToChat(client, "{green}[MCE]{default} Version %s", MCE_VERSION);
+	ReplyToCommand(client, "[MCE] Version %s", MCE_VERSION);
 	return Plugin_Handled;
 }
 
