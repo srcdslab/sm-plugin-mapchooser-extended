@@ -49,11 +49,6 @@
 		"en"		"Runoff Vote for the next map!"
 	}
 
-	"Number Of Votes"
-	{
-		"en"		"Number of votes"
-	}
-
 	"Custom"
 	{
 		"#format"	"{1:s}"
@@ -120,21 +115,6 @@
 	"Nominated by Admin"
 	{
 		"en"		"Admin Nomination"
-	}
-
-	"Admin Nomination"
-	{
-		"en"		"Admin"
-	}
-
-	"VIP Nomination"
-	{
-		"en"		"VIP"
-	}
-    
-    "Leader Nomination"
-	{
-		"en"		"Leader"
 	}
 
 	"Map Nominate Admin Error"

@@ -47,11 +47,6 @@
 		"ru"		"Следующая карта изменена на \"{1}\"."	
 	}
 
-	"Number Of Votes"
-	{
-		"ru"		"Количество голосов"
-	}
-
 	"Custom"
 	{
 		"ru"		"{1} (Случайная)"
@@ -110,21 +105,6 @@
 	"Nominated by Admin"
 	{
 		"ru"		"Карта предложена администратором"
-	}
-
-	"Admin Nomination"
-	{
-		"ru"		"Номинация администратора"
-	}
-
-	"VIP Nomination"
-	{
-		"ru"		"ВИП номинация"
-	}
-
-	"Leader Nomination"
-	{
-		"ru"		"Номинация лидера"
 	}
 
 	"Map Nominate Admin Error"

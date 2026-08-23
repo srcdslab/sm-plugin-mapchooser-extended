@@ -45,11 +45,6 @@
 		"chi"		"为下一张地图进行决选投票！"
 	}
 
-	"Number Of Votes"
-	{
-		"chi"		"投票数"
-	}
-
 	"Custom"
 	{
 		"chi"		"{1} (风俗)"
@@ -108,21 +103,6 @@
 	"Nominated by Admin"
 	{
 		"chi"		"行政提名"
-	}
-
-	"Admin Nomination"
-	{
-		"chi"		"行政"
-	}
-
-	"VIP Nomination"
-	{
-		"chi"		"贵宾"
-	}
-    
-    "Leader Nomination"
-	{
-		"chi"		"领导者"
 	}
 
 	"Map Nominate Admin Error"

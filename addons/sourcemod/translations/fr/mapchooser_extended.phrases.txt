@@ -46,11 +46,6 @@
 		"fr"        "Votez à nouveau pour la prochaine Map!"
 	}
 
-	"Number Of Votes"
-	{
-		"fr"		"Nombres de votes"
-	}
-
 	"Custom"
 	{
 		"fr"        "{1} (Custom)"
@@ -109,21 +104,6 @@
 	"Nominated by Admin"
 	{
 		"fr"		"Sélectionnée par un Admin"
-	}
-
-	"Admin Nomination"
-	{
-		"fr"		"Admin"
-	}
-
-	"VIP Nomination"
-	{
-		"fr"		"VIP"
-	}
-    
-    "Leader Nomination"
-	{
-		"fr"		"Leader"
 	}
 
 	"Map Nominate Admin Error"

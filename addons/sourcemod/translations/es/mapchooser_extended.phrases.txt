@@ -46,11 +46,6 @@
 		"es"		"Hacer votacion para el siguiente mapa!"
 	}
 
-	"Number Of Votes"
-	{
-		"es"		"Numero de Votaciones"
-	}
-
 	"Custom"
 	{
 		"es"		"{1} (Custom)"
@@ -109,21 +104,6 @@
 	"Nominated by Admin"
 	{
 		"es"		"Nominacion de Admin"
-	}
-
-	"Admin Nomination"
-	{
-		"es"		"Admin"
-	}
-
-	"VIP Nomination"
-	{
-		"es"		"VIP"
-	}
-    
-    "Leader Nomination"
-	{
-		"es"		"Lider"
 	}
 
 	"Map Nominate Admin Error"
