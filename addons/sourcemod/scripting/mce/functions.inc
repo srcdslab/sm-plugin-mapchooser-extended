@@ -290,7 +290,7 @@ stock void CleanOnMapEnd()
 		if (Cooldown < iCurrentTime)
 			g_TimeMapList.Remove(map);
 	}
-	delete OldMapListSnapshot;
+	delete TimeMapListSnapshot;
 }
 
 stock void NominationsOnClientDisconnect(client)
