@@ -76,7 +76,7 @@ int g_VotesNeeded = 0;			// Necessary votes before map vote begins. (voters * pe
 bool g_Voted[MAXPLAYERS+1] = {false, ...};
 
 bool g_InChange = false;
-Handle g_hDelayRTVTimer = INVALID_HANDLE;
+Handle g_hDelayRTVTimer = null;
 
 bool g_bPlugin_PM = false;
 bool g_bPlugin_AFK = false;
@@ -170,10 +170,10 @@ public void OnConfigsExecuted()
 
 void KillDelayRTVTimer()
 {
-	if (g_hDelayRTVTimer != INVALID_HANDLE)
+	if (g_hDelayRTVTimer != null)
 	{
 		KillTimer(g_hDelayRTVTimer);
-		g_hDelayRTVTimer = INVALID_HANDLE;
+		g_hDelayRTVTimer = null;
 	}
 }
 
