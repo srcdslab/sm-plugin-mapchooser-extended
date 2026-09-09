@@ -133,6 +133,12 @@ public void OnMapStart()
 	g_VotesNeeded = 0;
 	g_InChange = false;
 
+	/* The delay timer uses TIMER_FLAG_NO_MAPCHANGE, so SourceMod already
+	   destroyed it during the map change without running Timer_DelayRTV.
+	   Just drop the stale handle here - calling KillTimer() on it would log
+	   an "Invalid timer handle" error. */
+	g_hDelayRTVTimer = INVALID_HANDLE;
+
 	/* Clear any votes carried over from the previous map. Clients that stay
 	   connected across a map change keep their g_Voted[] flag otherwise, which
 	   locks them out of RTV and makes g_Votes go negative on disconnect. */
