@@ -230,11 +230,11 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 
 		GetArrayString(g_MapList, i, map, sizeof(map));
 
-		// If client has cookies cached and doesnt want to show unavailable maps
-		if (!(!bCached || bCached && g_bShowUnavailableMaps[client]) &&
-			!(bCached && !g_bShowUnavailableMaps[client] &&
-			AreRestrictionsActive() &&
-			GetMapCooldown(map) == 0 &&
+		// If client has cookies cached and doesnt want to show unavailable maps,
+		// hide the ones that are currently not nominable. When restrictions are
+		// not active nothing is unavailable, so every map stays visible.
+		if (bCached && !g_bShowUnavailableMaps[client] && AreRestrictionsActive() &&
+			!(GetMapCooldown(map) == 0 &&
 			GetMapCooldownTime(map) < GetTime() &&
 			GetMapTimeRestriction(map) == 0 &&
 			GetMapPlayerRestriction(map) == 0 &&
