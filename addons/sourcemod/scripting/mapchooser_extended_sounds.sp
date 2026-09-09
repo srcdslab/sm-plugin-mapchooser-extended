@@ -41,7 +41,7 @@
 #include <mapchooser_extended>
 #include <sdktools>
 
-#define VERSION "1.10.6"
+#define VERSION "1.10.7"
 
 #define CONFIG_DIRECTORY "configs/mapchooser_extended/sounds"
 #define DEFAULT_SOUND_SET "tf2"
@@ -292,7 +292,9 @@ stock void PlaySound(SoundEvent event)
 			if (GetArrayString(g_TypeNames, view_as<int>(event), currentType, sizeof(currentType)) > 0)
 			{
 				SoundStore soundData;
-				GetTrieArray(g_CurrentSoundSet, currentType, soundData, sizeof(soundData));
+				if (!GetTrieArray(g_CurrentSoundSet, currentType, soundData, sizeof(soundData)))
+					return;
+
 				if (soundData.SoundStore_Type == SoundType_Event)
 				{
 					Handle broadcastEvent = CreateEvent("teamplay_broadcast_audio");
@@ -589,10 +591,13 @@ stock void CloseSoundArrayHandles()
 		Handle arrayHandle;
 		
 		GetArrayString(g_SetNames, i, currentSet, sizeof(currentSet));
-		GetTrieValue(g_SoundFiles, currentSet, trieHandle);
+		if (!GetTrieValue(g_SoundFiles, currentSet, trieHandle) || trieHandle == INVALID_HANDLE)
+			continue;
+
 		// "counter" is an adt_trie, close that too
-		GetTrieValue(trieHandle, "counter", arrayHandle);
-		CloseHandle(arrayHandle);
+		if (GetTrieValue(trieHandle, "counter", arrayHandle) && arrayHandle != INVALID_HANDLE)
+			CloseHandle(arrayHandle);
+
 		CloseHandle(trieHandle);
 	}
 	ClearTrie(g_SoundFiles);
