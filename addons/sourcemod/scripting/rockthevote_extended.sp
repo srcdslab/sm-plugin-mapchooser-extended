@@ -137,7 +137,7 @@ public void OnMapStart()
 	   destroyed it during the map change without running Timer_DelayRTV.
 	   Just drop the stale handle here - calling KillTimer() on it would log
 	   an "Invalid timer handle" error. */
-	g_hDelayRTVTimer = INVALID_HANDLE;
+	g_hDelayRTVTimer = null;
 
 	/* Clear any votes carried over from the previous map. Clients that stay
 	   connected across a map change keep their g_Voted[] flag otherwise, which
