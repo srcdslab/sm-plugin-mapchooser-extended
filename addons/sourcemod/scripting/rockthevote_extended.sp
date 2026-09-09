@@ -47,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.12.0"
+#define RTVE_VERSION "1.12.1"
 
 public Plugin myinfo =
 {
@@ -76,7 +76,7 @@ int g_VotesNeeded = 0;			// Necessary votes before map vote begins. (voters * pe
 bool g_Voted[MAXPLAYERS+1] = {false, ...};
 
 bool g_InChange = false;
-Handle g_hDelayRTVTimer = INVALID_HANDLE;
+Handle g_hDelayRTVTimer = null;
 
 bool g_bPlugin_PM = false;
 bool g_bPlugin_AFK = false;
@@ -130,9 +130,19 @@ public void OnLibraryAdded(const char[] name)
 public void OnMapStart()
 {
 	g_Voters = 0;
-	g_Votes = 0;
 	g_VotesNeeded = 0;
 	g_InChange = false;
+
+	/* The delay timer uses TIMER_FLAG_NO_MAPCHANGE, so SourceMod already
+	   destroyed it during the map change without running Timer_DelayRTV.
+	   Just drop the stale handle here - calling KillTimer() on it would log
+	   an "Invalid timer handle" error. */
+	g_hDelayRTVTimer = null;
+
+	/* Clear any votes carried over from the previous map. Clients that stay
+	   connected across a map change keep their g_Voted[] flag otherwise, which
+	   locks them out of RTV and makes g_Votes go negative on disconnect. */
+	ResetRTV();
 
 	/* Handle late load */
 	for (int i=1; i<=MaxClients; i++)
@@ -154,7 +164,17 @@ public void OnConfigsExecuted()
 {
 	g_CanRTV = true;
 	g_RTVAllowed = false;
+	KillDelayRTVTimer();
 	g_hDelayRTVTimer = CreateTimer(g_Cvar_InitialDelay.FloatValue, Timer_DelayRTV, _, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+void KillDelayRTVTimer()
+{
+	if (g_hDelayRTVTimer != null)
+	{
+		KillTimer(g_hDelayRTVTimer);
+		g_hDelayRTVTimer = null;
+	}
 }
 
 public void OnClientPutInServer(int client)
@@ -357,10 +377,7 @@ void StartRTV()
 
 		g_RTVAllowed = false;
 
-		if (g_hDelayRTVTimer != INVALID_HANDLE)
-		{
-			delete g_hDelayRTVTimer;
-		}
+		KillDelayRTVTimer();
 		g_hDelayRTVTimer = CreateTimer(g_Cvar_Interval.FloatValue, Timer_DelayRTV, _, TIMER_FLAG_NO_MAPCHANGE);
 	}
 }
@@ -424,10 +441,7 @@ public Action Command_DisableRTV(int client, int args)
 		LogAction(client, -1, "\"%L\" Disabled RockTheVote.", client);
 	
 		g_RTVAllowed = false;
-		if (g_hDelayRTVTimer != INVALID_HANDLE)
-		{
-			delete g_hDelayRTVTimer;
-		}
+		KillDelayRTVTimer();
 	}
 	else
 	{
