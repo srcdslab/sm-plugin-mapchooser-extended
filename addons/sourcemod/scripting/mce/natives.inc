@@ -117,7 +117,7 @@ public int Native_RemoveNominationByOwner(Handle plugin, int numParams)
 public int Native_InitiateVote(Handle plugin, int numParams)
 {
 	MapChange when = view_as<MapChange>(GetNativeCell(1));
-	Handle inputarray = view_as<Handle>(GetNativeCell(2));
+	ArrayList inputarray = view_as<ArrayList>(GetNativeCell(2));
 
 	LogAction(-1, -1, "[MCE] Starting map vote countdown because players RTV.");
 
@@ -143,8 +143,8 @@ public int Native_EndOfMapVoteEnabled(Handle plugin, int numParams)
 
 public int Native_GetExcludeMapList(Handle plugin, int numParams)
 {
-	Handle array = view_as<Handle>(GetNativeCell(1));
-	if (array == INVALID_HANDLE)
+	ArrayList array = view_as<ArrayList>(GetNativeCell(1));
+	if (array == null)
 		return 0;
 
 	static char map[PLATFORM_MAX_PATH];
@@ -152,7 +152,7 @@ public int Native_GetExcludeMapList(Handle plugin, int numParams)
 	for (int i = 0; i < OldMapListSnapshot.Length; i++)
 	{
 		OldMapListSnapshot.GetKey(i, map, sizeof(map));
-		PushArrayString(array, map);
+		array.PushString(map);
 	}
 	delete OldMapListSnapshot;
 	return 0;
@@ -160,24 +160,24 @@ public int Native_GetExcludeMapList(Handle plugin, int numParams)
 
 public int Native_GetNominatedMapList(Handle plugin, int numParams)
 {
-	Handle maparray = view_as<Handle>(GetNativeCell(1));
-	Handle ownerarray = view_as<Handle>(GetNativeCell(2));
+	ArrayList maparray = view_as<ArrayList>(GetNativeCell(1));
+	ArrayList ownerarray = view_as<ArrayList>(GetNativeCell(2));
 
-	if (maparray == INVALID_HANDLE)
+	if (maparray == null)
 		return 0;
 
 	static char map[PLATFORM_MAX_PATH];
 
-	for (int i = 0; i < GetArraySize(g_NominateList); i++)
+	for (int i = 0; i < g_NominateList.Length; i++)
 	{
-		GetArrayString(g_NominateList, i, map, PLATFORM_MAX_PATH);
-		PushArrayString(maparray, map);
+		g_NominateList.GetString(i, map, PLATFORM_MAX_PATH);
+		maparray.PushString(map);
 
 		// If the optional parameter for an owner list was passed, then we need to fill that out as well
-		if (ownerarray != INVALID_HANDLE)
+		if (ownerarray != null)
 		{
-			int index = GetArrayCell(g_NominateOwners, i);
-			PushArrayCell(ownerarray, index);
+			int index = g_NominateOwners.Get(i);
+			ownerarray.Push(index);
 		}
 	}
 	return 0;
@@ -477,9 +477,9 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 		{
 			static char map_[PLATFORM_MAX_PATH];
 			int groups_[32];
-			for (int i = 0; i < GetArraySize(g_NominateList); i++)
+			for (int i = 0; i < g_NominateList.Length; i++)
 			{
-				GetArrayString(g_NominateList, i, map_, PLATFORM_MAX_PATH);
+				g_NominateList.GetString(i, map_, PLATFORM_MAX_PATH);
 				int tmp = InternalGetMapGroups(map_, groups_, sizeof(groups_));
 				if (FindIntInArray(groups_, tmp, groups[group]) != -1)
 					groupcur++;
@@ -491,11 +491,11 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 				bool okay = false;
 				if (client >= 1 && client <= MaxClients)
 				{
-					int index = FindValueInArray(g_NominateOwners, client);
+					int index = g_NominateOwners.FindValue(client);
 					if (index != -1)
 					{
 						static char oldmap[PLATFORM_MAX_PATH];
-						GetArrayString(g_NominateList, index, oldmap, PLATFORM_MAX_PATH);
+						g_NominateList.GetString(index, oldmap, PLATFORM_MAX_PATH);
 						static int oldgroups[32];
 						int tmp = InternalGetMapGroups(oldmap, oldgroups, sizeof(oldgroups));
 						if (FindIntInArray(groups_, tmp, groups[group]) != -1)

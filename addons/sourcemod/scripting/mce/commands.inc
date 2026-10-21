@@ -75,7 +75,7 @@ public Action Command_ShowConfig(int client, int args)
 	else
 	{
 		GetCmdArg(1, map, sizeof(map));
-		if (FindStringInArray(g_MapList, map) == -1)
+		if (g_MapList.FindString(map) == -1)
 		{
 			CReplyToCommand(client, "{green}[MCE]{default} %t", "Map was not found", map);
 			return Plugin_Handled;
@@ -146,9 +146,9 @@ public Action Command_Mapvote(int client, int args)
 	CShowActivity2(client, "{green}[MCE]{olive} ", "{default}%t", "Vote Map Initiated");
 	LogAction(client, -1, "[MCE] \"%L\" Initiated a map vote.", client);
 
-	SetupWarningTimer(WarningType_Vote, MapChange_MapEnd, INVALID_HANDLE, true);
+	SetupWarningTimer(WarningType_Vote, MapChange_MapEnd, null, true);
 
-	//InitiateVote(MapChange_MapEnd, INVALID_HANDLE);
+	//InitiateVote(MapChange_MapEnd, null);
 
 	return Plugin_Handled;
 }

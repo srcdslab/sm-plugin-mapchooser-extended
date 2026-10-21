@@ -41,7 +41,7 @@
 #include <mapchooser_extended>
 #include <sdktools>
 
-#define VERSION "1.10.7"
+#define VERSION "1.10.8"
 
 #define CONFIG_DIRECTORY "configs/mapchooser_extended/sounds"
 #define DEFAULT_SOUND_SET "tf2"
@@ -56,16 +56,16 @@
 #define NUM_TYPES 5
 
 // CVar Handles
-Handle g_Cvar_EnableSounds = INVALID_HANDLE;
-Handle g_Cvar_EnableCounterSounds = INVALID_HANDLE;
-Handle g_Cvar_SoundSet = INVALID_HANDLE;
-Handle g_Cvar_DownloadAllSounds = INVALID_HANDLE;
+ConVar g_Cvar_EnableSounds = null;
+ConVar g_Cvar_EnableCounterSounds = null;
+ConVar g_Cvar_SoundSet = null;
+ConVar g_Cvar_DownloadAllSounds = null;
 
 // Data Handles
-Handle g_TypeNames = INVALID_HANDLE; // Maps SoundEvent enumeration values to KeyValue section names
-Handle g_SetNames = INVALID_HANDLE;
-Handle g_SoundFiles = INVALID_HANDLE;
-Handle g_CurrentSoundSet = INVALID_HANDLE; // Lazy "pointer" to the current sound set.  Updated on cvar change or map change.
+ArrayList g_TypeNames = null; // Maps SoundEvent enumeration values to KeyValue section names
+ArrayList g_SetNames = null;
+StringMap g_SoundFiles = null;
+StringMap g_CurrentSoundSet = null; // Lazy "pointer" to the current sound set.  Updated on cvar change or map change.
 
 //Global variables
 bool g_DownloadAllSounds;
@@ -107,14 +107,14 @@ public Plugin myinfo =
 // This is used for searching later.
 stock void PopulateTypeNamesArray()
 {
-	if (g_TypeNames == INVALID_HANDLE)
+	if (g_TypeNames == null)
 	{
-		g_TypeNames = CreateArray(ByteCountToCells(SET_NAME_MAX_LENGTH), NUM_TYPES);
-		SetArrayString(g_TypeNames, view_as<int>(SoundEvent_Counter), "counter");
-		SetArrayString(g_TypeNames, view_as<int>(SoundEvent_VoteStart), "vote start");
-		SetArrayString(g_TypeNames, view_as<int>(SoundEvent_VoteEnd), "vote end");
-		SetArrayString(g_TypeNames, view_as<int>(SoundEvent_VoteWarning), "vote warning");
-		SetArrayString(g_TypeNames, view_as<int>(SoundEvent_RunoffWarning), "runoff warning");
+		g_TypeNames = new ArrayList(ByteCountToCells(SET_NAME_MAX_LENGTH), NUM_TYPES);
+		g_TypeNames.SetString(view_as<int>(SoundEvent_Counter), "counter");
+		g_TypeNames.SetString(view_as<int>(SoundEvent_VoteStart), "vote start");
+		g_TypeNames.SetString(view_as<int>(SoundEvent_VoteEnd), "vote end");
+		g_TypeNames.SetString(view_as<int>(SoundEvent_VoteWarning), "vote warning");
+		g_TypeNames.SetString(view_as<int>(SoundEvent_RunoffWarning), "runoff warning");
 	}
 }
 
@@ -143,10 +143,10 @@ public void OnPluginStart()
 	PopulateTypeNamesArray();
 	// LoadSounds needs to be  executed even if the plugin is "disabled" via the sm_mapvote_enablesounds cvar.
 
-	g_SetNames = CreateArray(ByteCountToCells(PLATFORM_MAX_PATH));
-	g_SoundFiles = CreateTrie();
+	g_SetNames = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
+	g_SoundFiles = new StringMap();
 	LoadSounds();
-	HookConVarChange(g_Cvar_SoundSet, SoundSetChanged);
+	g_Cvar_SoundSet.AddChangeHook(SoundSetChanged);
 
 	if (g_bLate)
 		OnConfigsExecuted();
@@ -154,7 +154,7 @@ public void OnPluginStart()
 
 public void OnConfigsExecuted()
 {
-	g_DownloadAllSounds = GetConVarBool(g_Cvar_DownloadAllSounds);
+	g_DownloadAllSounds = g_Cvar_DownloadAllSounds.BoolValue;
 
 	SetSoundSetFromCVar();
 	
@@ -173,24 +173,24 @@ stock void SetSoundSetFromCVar()
 	char soundSet[SET_NAME_MAX_LENGTH];
 	
 	// Store which sound set is in use
-	GetConVarString(g_Cvar_SoundSet, soundSet, sizeof(soundSet));
+	g_Cvar_SoundSet.GetString(soundSet, sizeof(soundSet));
 	
 	// Unknown sound set from config file, reset to default
-	if (FindStringInArray(g_SetNames, soundSet) == -1 && !StrEqual(soundSet, DEFAULT_SOUND_SET, true))
+	if (g_SetNames.FindString(soundSet) == -1 && !StrEqual(soundSet, DEFAULT_SOUND_SET, true))
 	{
-		ResetConVar(g_Cvar_SoundSet);
-		GetConVarString(g_Cvar_SoundSet, soundSet, sizeof(soundSet));
+		g_Cvar_SoundSet.RestoreDefault();
+		g_Cvar_SoundSet.GetString(soundSet, sizeof(soundSet));
 	}
 	
 	SetCurrentSoundSet(soundSet);
 }
 
-public void SoundSetChanged(Handle cvar, char[] oldValue, char[] newValue)
+public void SoundSetChanged(ConVar cvar, char[] oldValue, char[] newValue)
 {
-	if (FindStringInArray(g_SetNames, newValue) == -1)
+	if (g_SetNames.FindString(newValue) == -1)
 	{
 		LogError("New sound set not found: %s", newValue);
-		SetConVarString(cvar, oldValue);
+		cvar.SetString(oldValue);
 	}
 	else if (g_DownloadAllSounds)
 	{
@@ -220,36 +220,36 @@ public void OnMapVoteRunnoffWarningStart()
 
 public void OnMapVoteWarningTick(int time)
 {
-	if (GetConVarBool(g_Cvar_EnableSounds) && GetConVarBool(g_Cvar_EnableCounterSounds)) {
+	if (g_Cvar_EnableSounds.BoolValue && g_Cvar_EnableCounterSounds.BoolValue) {
 		char currentType[SET_NAME_MAX_LENGTH];
-		Handle counterTrie;
+		StringMap counterTrie;
 		
-		if (g_CurrentSoundSet != INVALID_HANDLE)
+		if (g_CurrentSoundSet != null)
 		{
-			if (GetArrayString(g_TypeNames, view_as<int>(SoundEvent_Counter), currentType, sizeof(currentType)) > 0 && GetTrieValue(g_CurrentSoundSet, currentType, counterTrie))
+			if (g_TypeNames.GetString(view_as<int>(SoundEvent_Counter), currentType, sizeof(currentType)) > 0 && g_CurrentSoundSet.GetValue(currentType, counterTrie))
 			{
 				char key[5];
 				IntToString(time, key, sizeof(key));
 
 				SoundStore soundData;
-				if (!GetTrieArray(counterTrie, key, soundData, sizeof(soundData)))
+				if (!counterTrie.GetArray(key, soundData, sizeof(soundData)))
 				{
 					return;
 				}
 
 				if (soundData.SoundStore_Type == SoundType_Event)
 				{
-					Handle broadcastEvent = CreateEvent("teamplay_broadcast_audio");
-					if (broadcastEvent == INVALID_HANDLE)
+					Event broadcastEvent = CreateEvent("teamplay_broadcast_audio");
+					if (broadcastEvent == null)
 					{
 						#if defined DEBUG
 						LogError("Could not create teamplay_broadcast_event. This may be because there are no players connected.");
 						#endif
 						return;
 					}
-					SetEventInt(broadcastEvent, "team", -1);
-					SetEventString(broadcastEvent, "sound", soundData.SoundStore_Value);
-					FireEvent(broadcastEvent);
+					broadcastEvent.SetInt("team", -1);
+					broadcastEvent.SetString("sound", soundData.SoundStore_Value);
+					broadcastEvent.Fire();
 				}
 				else
 				{
@@ -270,12 +270,12 @@ public Action Command_Reload(int client, int args)
 
 public Action Command_List_Soundsets(int client, int args)
 {
-	int setCount = GetArraySize(g_SetNames);
+	int setCount = g_SetNames.Length;
 	ReplyToCommand(client, "[SM] The following %d sound sets are installed:", setCount);
 	for (int i = 0; i < setCount; i++)
 	{
 		char setName[SET_NAME_MAX_LENGTH];
-		GetArrayString(g_SetNames, i, setName, sizeof(setName));
+		g_SetNames.GetString(i, setName, sizeof(setName));
 		ReplyToCommand(client, "[SM] %s", setName);
 	}
 	return Plugin_Handled;
@@ -283,31 +283,31 @@ public Action Command_List_Soundsets(int client, int args)
 
 stock void PlaySound(SoundEvent event)
 {
-	if (GetConVarBool(g_Cvar_EnableSounds))
+	if (g_Cvar_EnableSounds.BoolValue)
 	{
-		if (g_CurrentSoundSet != INVALID_HANDLE)
+		if (g_CurrentSoundSet != null)
 		{
 			char currentType[SET_NAME_MAX_LENGTH];
 			
-			if (GetArrayString(g_TypeNames, view_as<int>(event), currentType, sizeof(currentType)) > 0)
+			if (g_TypeNames.GetString(view_as<int>(event), currentType, sizeof(currentType)) > 0)
 			{
 				SoundStore soundData;
-				if (!GetTrieArray(g_CurrentSoundSet, currentType, soundData, sizeof(soundData)))
+				if (!g_CurrentSoundSet.GetArray(currentType, soundData, sizeof(soundData)))
 					return;
 
 				if (soundData.SoundStore_Type == SoundType_Event)
 				{
-					Handle broadcastEvent = CreateEvent("teamplay_broadcast_audio");
-					if (broadcastEvent == INVALID_HANDLE)
+					Event broadcastEvent = CreateEvent("teamplay_broadcast_audio");
+					if (broadcastEvent == null)
 					{
 						#if defined DEBUG
 						LogError("Could not create teamplay_broadcast_event. This may be because there are no players connected.");
 						#endif
 						return;
 					}
-					SetEventInt(broadcastEvent, "team", -1);
-					SetEventString(broadcastEvent, "sound", soundData.SoundStore_Value);
-					FireEvent(broadcastEvent);
+					broadcastEvent.SetInt("team", -1);
+					broadcastEvent.SetString("sound", soundData.SoundStore_Value);
+					broadcastEvent.Fire();
 				}
 				else
 				{
@@ -323,7 +323,7 @@ stock void SetCurrentSoundSet(char[] soundSet)
 {
 	// Save a reference to the Trie for the current sound set, for use in the forwards below.
 	// Also do error checking to make sure the set exists.
-	if (!GetTrieValue(g_SoundFiles, soundSet, g_CurrentSoundSet))
+	if (!g_SoundFiles.GetValue(soundSet, g_CurrentSoundSet))
 	{
 		SetFailState("Could not load sound set");
 	}
@@ -343,36 +343,36 @@ stock void LoadSounds()
 	
 	BuildPath(Path_SM, directoryPath, sizeof(directoryPath), CONFIG_DIRECTORY);
 
-	Handle directory = OpenDirectory(directoryPath);
-	if (directory != INVALID_HANDLE)
+	DirectoryListing directory = OpenDirectory(directoryPath);
+	if (directory != null)
 	{
 		char dirEntry[PLATFORM_MAX_PATH];
-		while (ReadDirEntry(directory, dirEntry, sizeof(dirEntry)))
+		while (directory.GetNext(dirEntry, sizeof(dirEntry)))
 		{
-			Handle soundsKV = CreateKeyValues("MapchooserSoundsList");
+			KeyValues soundsKV = new KeyValues("MapchooserSoundsList");
 			char filePath[PLATFORM_MAX_PATH];
 			
 			Format(filePath, sizeof(filePath), "%s/%s", directoryPath, dirEntry);
 			
 			if (!DirExists(filePath))
 			{
-				FileToKeyValues(soundsKV, filePath);
+				soundsKV.ImportFromFile(filePath);
 				
-				if (KvGotoFirstSubKey(soundsKV))
+				if (soundsKV.GotoFirstSubKey())
 				{
 					// Iterate through the sets
 					do
 					{
-						Handle setTrie = CreateTrie();
+						StringMap setTrie = new StringMap();
 						char currentSet[SET_NAME_MAX_LENGTH];
 						bool builtinSet = false;
 						
-						KvGetSectionName(soundsKV, currentSet, sizeof(currentSet));
+						soundsKV.GetSectionName(currentSet, sizeof(currentSet));
 						
-						if (FindStringInArray(g_SetNames, currentSet) == -1)
+						if (g_SetNames.FindString(currentSet) == -1)
 						{
 							// Add to the list of sound sets
-							PushArrayString(g_SetNames, currentSet);
+							g_SetNames.PushString(currentSet);
 						}
 						else
 						{
@@ -384,30 +384,30 @@ stock void LoadSounds()
 							builtinSet = true;
 						}
 						
-						if (KvGotoFirstSubKey(soundsKV)) {
+						if (soundsKV.GotoFirstSubKey()) {
 							// Iterate through each sound in the set
 							do
 							{
 								char currentType[SET_NAME_MAX_LENGTH];
-								KvGetSectionName(soundsKV, currentType, sizeof(currentType));
+								soundsKV.GetSectionName(currentType, sizeof(currentType));
 								// Type to enum mapping
-								SoundEvent typeKey = view_as<SoundEvent>(FindStringInArray(g_TypeNames, currentType));
+								SoundEvent typeKey = view_as<SoundEvent>(g_TypeNames.FindString(currentType));
 								
 								switch(typeKey)
 								{
 									case SoundEvent_Counter:
 									{
 										// Counter is special, as it has multiple values
-										Handle counterTrie = CreateTrie();
+										StringMap counterTrie = new StringMap();
 										
-										if (KvGotoFirstSubKey(soundsKV))
+										if (soundsKV.GotoFirstSubKey())
 										{
 											do
 											{
 												// Get the current key
 												char time[COUNTER_MAX_SIZE_DIGITS + 1];
 												
-												KvGetSectionName(soundsKV, time, sizeof(time));
+												soundsKV.GetSectionName(time, sizeof(time));
 												
 												SoundStore soundData;
 												
@@ -420,14 +420,14 @@ stock void LoadSounds()
 												}
 												
 												// This seems wrong, but this is documented on the forums here: https://forums.alliedmods.net/showthread.php?t=151942
-												SetTrieArray(counterTrie, time, soundData, sizeof(soundData));
+												counterTrie.SetArray(time, soundData, sizeof(soundData));
 												
 												//SetArrayString(counterArray, key, soundFile);
-											} while (KvGotoNextKey(soundsKV));
-											KvGoBack(soundsKV);
+											} while (soundsKV.GotoNextKey());
+											soundsKV.GoBack();
 										}
 										
-										SetTrieValue(setTrie, currentType, view_as<int>(counterTrie));
+										setTrie.SetValue(currentType, view_as<int>(counterTrie));
 									}
 									
 									// Set the sounds directly for other types
@@ -442,48 +442,48 @@ stock void LoadSounds()
 											continue;
 										}
 
-										SetTrieArray(setTrie, currentType, soundData, sizeof(soundData));
+										setTrie.SetArray(currentType, soundData, sizeof(soundData));
 									}
 								}
-							} while (KvGotoNextKey(soundsKV));
-							KvGoBack(soundsKV);
+							} while (soundsKV.GotoNextKey());
+							soundsKV.GoBack();
 						}
-						SetTrieValue(g_SoundFiles, currentSet, setTrie);
-					} while (KvGotoNextKey(soundsKV));
+						g_SoundFiles.SetValue(currentSet, setTrie);
+					} while (soundsKV.GotoNextKey());
 				}
 			}
-			CloseHandle(soundsKV);
+			delete soundsKV;
 		}
-		CloseHandle(directory);
+		delete directory;
 	}
 	
-	if (GetArraySize(g_SetNames) == 0)
+	if (g_SetNames.Length == 0)
 	{
 		SetFailState("Could not locate any sound sets.");
 	}
 }
 
 // Internal LoadSounds function to get sound and type 
-stock SoundType RetrieveSound(Handle soundsKV, bool isBuiltin, char[] soundFile, int soundFileSize)
+stock SoundType RetrieveSound(KeyValues soundsKV, bool isBuiltin, char[] soundFile, int soundFileSize)
 {
 	if (isBuiltin)
 	{
 		// event is considered before builtin, as it has related game data and should always be used in preference to builtin
-		KvGetString(soundsKV, "event", soundFile,soundFileSize);
+		soundsKV.GetString("event", soundFile, soundFileSize);
 		
 		if (!StrEqual(soundFile, ""))
 		{
 			return SoundType_Event;
 		}
 		
-		KvGetString(soundsKV, "builtin", soundFile, soundFileSize);
+		soundsKV.GetString("builtin", soundFile, soundFileSize);
 		if (!StrEqual(soundFile, ""))
 		{
 			return SoundType_Builtin;
 		}
 	}
 	
-	KvGetString(soundsKV, "sound", soundFile, soundFileSize);
+	soundsKV.GetString("sound", soundFile, soundFileSize);
 
 	if (!StrEqual(soundFile, ""))
 	{
@@ -495,14 +495,14 @@ stock SoundType RetrieveSound(Handle soundsKV, bool isBuiltin, char[] soundFile,
 }
 
 // Preload all sounds in a set
-stock void BuildDownloadsTable(Handle currentSoundSet)
+stock void BuildDownloadsTable(StringMap currentSoundSet)
 {
-	if (currentSoundSet != INVALID_HANDLE)
+	if (currentSoundSet != null)
 	{
-		for (int i = 0; i < GetArraySize(g_TypeNames); i++)
+		for (int i = 0; i < g_TypeNames.Length; i++)
 		{
 			char currentType[SET_NAME_MAX_LENGTH];
-			GetArrayString(g_TypeNames, i, currentType, sizeof(currentType));
+			g_TypeNames.GetString(i, currentType, sizeof(currentType));
 
 			SoundEvent typeKey = view_as<SoundEvent>(i);
 
@@ -510,8 +510,8 @@ stock void BuildDownloadsTable(Handle currentSoundSet)
 			{
 				case SoundEvent_Counter:
 				{
-					Handle counterTrie;
-					if (GetTrieValue(currentSoundSet, currentType, counterTrie))
+					StringMap counterTrie;
+					if (currentSoundSet.GetValue(currentType, counterTrie))
 					{
 						// Skip value 0
 						for (int j = 1; j <= COUNTER_MAX_SIZE; ++j)
@@ -520,7 +520,7 @@ stock void BuildDownloadsTable(Handle currentSoundSet)
 							IntToString(j, key, sizeof(key));
 							
 							SoundStore soundData;
-							GetTrieArray(counterTrie, key, soundData, sizeof(soundData));
+							counterTrie.GetArray(key, soundData, sizeof(soundData));
 							if (soundData.SoundStore_Type != SoundType_Event)
 							{
 								CacheSound(soundData);
@@ -532,7 +532,7 @@ stock void BuildDownloadsTable(Handle currentSoundSet)
 				default:
 				{
 					SoundStore soundData;
-					GetTrieArray(currentSoundSet, currentType, soundData, sizeof(soundData));
+					currentSoundSet.GetArray(currentType, soundData, sizeof(soundData));
 					
 					if (soundData.SoundStore_Type != SoundType_Event)
 					{
@@ -547,13 +547,13 @@ stock void BuildDownloadsTable(Handle currentSoundSet)
 // Load each set and build its download table
 stock void BuildDownloadsTableAll()
 {
-	for (int i = 0; i < GetArraySize(g_SetNames); i++)
+	for (int i = 0; i < g_SetNames.Length; i++)
 	{
 		char currentSet[SET_NAME_MAX_LENGTH];
-		Handle currentSoundSet;
-		GetArrayString(g_SetNames, i, currentSet, sizeof(currentSet));
+		StringMap currentSoundSet;
+		g_SetNames.GetString(i, currentSet, sizeof(currentSet));
 		
-		if (GetTrieValue(g_SoundFiles, currentSet, currentSoundSet))
+		if (g_SoundFiles.GetValue(currentSet, currentSoundSet))
 		{
 			BuildDownloadsTable(currentSoundSet);
 		}
@@ -584,24 +584,24 @@ stock void CacheSound(SoundStore soundData)
 stock void CloseSoundArrayHandles()
 {
 	// Close all open handles in the sound set
-	for (int i = 0; i < GetArraySize(g_SetNames); i++)
+	for (int i = 0; i < g_SetNames.Length; i++)
 	{
 		char currentSet[SET_NAME_MAX_LENGTH];
-		Handle trieHandle;
+		StringMap trieHandle;
 		Handle arrayHandle;
 		
-		GetArrayString(g_SetNames, i, currentSet, sizeof(currentSet));
-		if (!GetTrieValue(g_SoundFiles, currentSet, trieHandle) || trieHandle == INVALID_HANDLE)
+		g_SetNames.GetString(i, currentSet, sizeof(currentSet));
+		if (!g_SoundFiles.GetValue(currentSet, trieHandle) || trieHandle == null)
 			continue;
 
 		// "counter" is an adt_trie, close that too
-		if (GetTrieValue(trieHandle, "counter", arrayHandle) && arrayHandle != INVALID_HANDLE)
-			CloseHandle(arrayHandle);
+		if (trieHandle.GetValue("counter", arrayHandle) && arrayHandle != null)
+			delete arrayHandle;
 
-		CloseHandle(trieHandle);
+		delete trieHandle;
 	}
-	ClearTrie(g_SoundFiles);
-	ClearArray(g_SetNames);
+	g_SoundFiles.Clear();
+	g_SetNames.Clear();
 	
-	g_CurrentSoundSet = INVALID_HANDLE;
+	g_CurrentSoundSet = null;
 }

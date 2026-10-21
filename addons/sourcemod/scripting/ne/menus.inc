@@ -21,7 +21,7 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 		case MenuAction_Select:
 		{
 			char sMap[PLATFORM_MAX_PATH], sParam[PLATFORM_MAX_PATH];
-			GetMenuItem(menu, param2, sParam, sizeof(sParam));
+			menu.GetItem(param2, sParam, sizeof(sParam));
 
 			// Nominations are locked, so we block the unnomination
 			if (!g_bNEAllowed)
@@ -75,9 +75,9 @@ Action AttemptNominate(int client, const char[] filter = "")
 
 	Menu menu = BuildMapMenu(filter[0] ? filter : "", filter[0] ? -1 : client);
 
-	SetMenuTitle(menu, "%T", "NE Nominate Title", client);
+	menu.SetTitle("%T", "NE Nominate Title", client);
 
-	DisplayMenu(menu, client, MENU_TIME_FOREVER);
+	menu.Display(client, MENU_TIME_FOREVER);
 	return Plugin_Handled;
 }
 
@@ -100,8 +100,8 @@ Action AttemptAdminNominate(int client, const char[] filter = "")
 
 	Menu menu = BuildAdminMapMenu(filter[0] ? filter : "");
 
-	SetMenuTitle(menu, "%T", "NE Nominate Title", client);
-	DisplayMenu(menu, client, MENU_TIME_FOREVER);
+	menu.SetTitle("%T", "NE Nominate Title", client);
+	menu.Display(client, MENU_TIME_FOREVER);
 	return Plugin_Handled;
 }
 
@@ -110,7 +110,7 @@ void AttemptAdminRemoveMap(int client, const char[] filter = "")
 	if (!client)
 		return;
 
-	Menu AdminRemoveMapMenu = CreateMenu(Handler_AdminRemoveMapMenu, MENU_ACTIONS_DEFAULT|MenuAction_DisplayItem);
+	Menu AdminRemoveMapMenu = new Menu(Handler_AdminRemoveMapMenu, MENU_ACTIONS_DEFAULT|MenuAction_DisplayItem);
 
 	if (!PopulateNominateListMenu(AdminRemoveMapMenu, client, filter))
 	{
@@ -118,19 +118,19 @@ void AttemptAdminRemoveMap(int client, const char[] filter = "")
 		return;
 	}
 
-	SetMenuTitle(AdminRemoveMapMenu, "Remove nomination", client);
-	DisplayMenu(AdminRemoveMapMenu, client, MENU_TIME_FOREVER);
+	AdminRemoveMapMenu.SetTitle("Remove nomination", client);
+	AdminRemoveMapMenu.Display(client, MENU_TIME_FOREVER);
 
 }
 
 bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 {
 	int arraySize = ByteCountToCells(PLATFORM_MAX_PATH);
-	ArrayList MapList = CreateArray(arraySize);
-	ArrayList OwnerList = CreateArray();
+	ArrayList MapList = new ArrayList(arraySize);
+	ArrayList OwnerList = new ArrayList();
 
 	GetNominatedMapList(MapList, OwnerList);
-	if (!GetArraySize(MapList))
+	if (!MapList.Length)
 	{
 		delete MapList;
 		delete OwnerList;
@@ -140,9 +140,9 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 	static char map[PLATFORM_MAX_PATH];
 	static char display[PLATFORM_MAX_PATH];
 	static char description[PLATFORM_MAX_PATH];
-	for (int i = 0; i < GetArraySize(MapList); i++)
+	for (int i = 0; i < MapList.Length; i++)
 	{
-		GetArrayString(MapList, i, map, sizeof(map));
+		MapList.GetString(i, map, sizeof(map));
 
 		if (!filter[0] || StrContains(map, filter, false) != -1)
 		{
@@ -166,7 +166,7 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 					Format(display, sizeof(display), "%s - [%s]", map, tierName);
 			}
 
-			int owner = GetArrayCell(OwnerList, i);
+			int owner = OwnerList.Get(i);
 
 			char sBuffer[64];
 			if (owner == client)
@@ -179,7 +179,7 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 			else
 				Format(display, sizeof(display), "%s (%s)", display, sBuffer);
 
-			AddMenuItem(menu, map, display);
+			menu.AddItem(map, display);
 		}
 	}
 
@@ -191,7 +191,7 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 Menu BuildMapMenu(const char[] filter, int client = -1)
 {
 	// Always create a new menu - no more global menu reuse
-	Menu menu = CreateMenu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
+	Menu menu = new Menu(Handler_MapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
 
 	static char map[PLATFORM_MAX_PATH];
 	bool bValid = client > 0 && client <= MaxClients && IsClientInGame(client);
@@ -223,12 +223,12 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 	StringMap displayCache = new StringMap();
 
 	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
-	for (int i = 0; i < GetArraySize(g_MapList); i++)
+	for (int i = 0; i < g_MapList.Length; i++)
 	{
 		char display[PLATFORM_MAX_PATH];
 		char description[PLATFORM_MAX_PATH];
 
-		GetArrayString(g_MapList, i, map, sizeof(map));
+		g_MapList.GetString(i, map, sizeof(map));
 
 		// If client has cookies cached and doesnt want to show unavailable maps,
 		// hide the ones that are currently not nominable. When restrictions are
@@ -266,19 +266,19 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 		if (!displayCache.GetString(map, display, sizeof(display)))
 			strcopy(display, sizeof(display), map);
 
-		AddMenuItem(menu, map, display);
+		menu.AddItem(map, display);
 	}
 
 	delete tempMapList;
 	delete displayCache;
 
-	SetMenuExitButton(menu, true);
+	menu.ExitButton = true;
 	return menu;
 }
 
 Menu BuildAdminMapMenu(const char[] filter)
 {
-	Menu menu = CreateMenu(Handler_AdminMapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
+	Menu menu = new Menu(Handler_AdminMapSelectMenu, MENU_ACTIONS_DEFAULT|MenuAction_DrawItem|MenuAction_DisplayItem);
 	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
 
 	StringMap displayCache = new StringMap();
@@ -286,12 +286,12 @@ Menu BuildAdminMapMenu(const char[] filter)
 	static char map[PLATFORM_MAX_PATH];
 
 	// Add the maps from the admin map list
-	for (int i = 0; i < GetArraySize(g_AdminMapList); i++)
+	for (int i = 0; i < g_AdminMapList.Length; i++)
 	{
 		char display[PLATFORM_MAX_PATH];
 		char description[PLATFORM_MAX_PATH];
 
-		GetArrayString(g_AdminMapList, i, map, sizeof(map));
+		g_AdminMapList.GetString(i, map, sizeof(map));
 
 		MCE_GetMapDisplayName(map, display, sizeof(display));
 		if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
@@ -309,12 +309,12 @@ Menu BuildAdminMapMenu(const char[] filter)
 	if (filter[0])
 	{
 		// Search normal maps aswell if filter is specified
-		for (int i = 0; i < GetArraySize(g_MapList); i++)
+		for (int i = 0; i < g_MapList.Length; i++)
 		{
 			char display[PLATFORM_MAX_PATH];
 			char description[PLATFORM_MAX_PATH];
 
-			GetArrayString(g_MapList, i, map, sizeof(map));
+			g_MapList.GetString(i, map, sizeof(map));
 
 			MCE_GetMapDisplayName(map, display, sizeof(display));
 			if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
@@ -341,7 +341,7 @@ Menu BuildAdminMapMenu(const char[] filter)
 		if (!displayCache.GetString(map, display, sizeof(display)))
 			strcopy(display, sizeof(display), map);
 
-		AddMenuItem(menu, map, display);
+		menu.AddItem(map, display);
 	}
 
 	delete tempMapList;
@@ -372,13 +372,13 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			if (g_Player_NominationDelay[param1] > iCurrentTime)
 			{
 				CPrintToChat(param1, "{green}[NE]{default} %t", "Wait to Nominate", g_Player_NominationDelay[param1] - iCurrentTime);
-				DisplayMenuAtItem(menu, param1, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
+				menu.DisplayAt(param1, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
 				return 0;
 			}
 
 			static char map[PLATFORM_MAX_PATH];
 			char name[MAX_NAME_LENGTH];
-			GetMenuItem(menu, param2, map, sizeof(map));
+			menu.GetItem(param2, map, sizeof(map));
 
 			if (strcmp(map, "show_unavailable", false) == 0)
 			{
@@ -436,8 +436,8 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			}
 
 			/* Map was nominated! - Disable the menu item and update the trie */
-			SetTrieValue(g_mapTrie, map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
-			g_Player_NominationDelay[param1] = iCurrentTime + GetConVarInt(g_Cvar_NominateDelay);
+			g_mapTrie.SetValue(map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+			g_Player_NominationDelay[param1] = iCurrentTime + g_Cvar_NominateDelay.IntValue;
 
 			char mapnameInChat[64];
 			strcopy(mapnameInChat, sizeof(mapnameInChat), map);
@@ -466,10 +466,10 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 		case MenuAction_DrawItem:
 		{
 			static char map[PLATFORM_MAX_PATH];
-			GetMenuItem(menu, param2, map, sizeof(map));
+			menu.GetItem(param2, map, sizeof(map));
 
 			int status;
-			if (GetTrieValue(g_mapTrie, map, status))
+			if (g_mapTrie.GetValue(map, status))
 			{
 				if ((status & MAPSTATUS_DISABLED) == MAPSTATUS_DISABLED)
 				{
@@ -501,9 +501,9 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 		case MenuAction_DisplayItem:
 		{
 			static char map[PLATFORM_MAX_PATH];
-			GetMenuItem(menu, param2, map, sizeof(map));
+			menu.GetItem(param2, map, sizeof(map));
 
-			int mark = GetConVarInt(g_Cvar_MarkCustomMaps);
+			int mark = g_Cvar_MarkCustomMaps.IntValue;
 			bool official;
 
 			static char buffer[100];
@@ -550,7 +550,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			}
 
 			int status;
-			if (GetTrieValue(g_mapTrie, map, status))
+			if (g_mapTrie.GetValue(map, status))
 			{
 				if ((status & MAPSTATUS_DISABLED) == MAPSTATUS_DISABLED)
 				{
@@ -620,7 +620,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 		case MenuAction_Select:
 		{
 			static char map[PLATFORM_MAX_PATH];
-			GetMenuItem(menu, param2, map, sizeof(map));
+			menu.GetItem(param2, map, sizeof(map));
 
 			if (!CheckCommandAccess(param1, "sm_nominate_ignore", ADMFLAG_CHEATS, true))
 			{
@@ -641,7 +641,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 			}
 
 			/* Map was nominated! - Disable the menu item and update the trie */
-			SetTrieValue(g_mapTrie, map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+			g_mapTrie.SetValue(map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
 
 			CPrintToChat(param1, "{green}[NE]{default} %t", "NE Map Inserted", map);
 			CPrintToChatAll("{green}[NE]{default} %t", "Client inserted Map", param1, map);
@@ -653,7 +653,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 		case MenuAction_DrawItem:
 		{
 			static char map[PLATFORM_MAX_PATH];
-			GetMenuItem(menu, param2, map, sizeof(map));
+			menu.GetItem(param2, map, sizeof(map));
 
 			char tierName[32];
 			if (GetMapTierName(map, tierName, sizeof(tierName)))
@@ -692,7 +692,7 @@ public int Handler_AdminRemoveMapMenu(Menu menu, MenuAction action, int param1, 
 		case MenuAction_Select:
 		{
 			static char map[PLATFORM_MAX_PATH];
-			GetMenuItem(menu, param2, map, sizeof(map));
+			menu.GetItem(param2, map, sizeof(map));
 
 			if (!RemoveNominationByMap(map))
 			{

@@ -32,8 +32,8 @@ public int Native_PushMapIntoNominationPool(Handle plugin, int numArgs)
 
 	GetNativeString(1, map, PLATFORM_MAX_PATH);
 
-	ShiftArrayUp(g_MapList, 0);
-	SetArrayString(g_MapList, 0, map);
+	g_MapList.ShiftUp(0);
+	g_MapList.SetString(0, map);
 
 	UpdateMapTrie();
 
@@ -49,10 +49,10 @@ public int Native_PushMapsIntoNominationPool(Handle plugin, int numArgs)
 		char map[PLATFORM_MAX_PATH];
 		maps.GetString(i, map, PLATFORM_MAX_PATH);
 
-		if (FindStringInArray(g_MapList, map) == -1)
+		if (g_MapList.FindString(map) == -1)
 		{
-			ShiftArrayUp(g_MapList, 0);
-			SetArrayString(g_MapList, 0, map);
+			g_MapList.ShiftUp(0);
+			g_MapList.SetString(0, map);
 		}
 	}
 
@@ -71,8 +71,8 @@ public int Native_RemoveMapFromNominationPool(Handle plugin, int numArgs)
 
 	int idx;
 
-	if ((idx = FindStringInArray(g_MapList, map)) != -1)
-		RemoveFromArray(g_MapList, idx);
+	if ((idx = g_MapList.FindString(map)) != -1)
+		g_MapList.Erase(idx);
 
 	UpdateMapTrie();
 
@@ -90,8 +90,8 @@ public int Native_RemoveMapsFromNominationPool(Handle plugin, int numArgs)
 
 		int idx = -1;
 
-		if ((idx = FindStringInArray(g_MapList, map)) != -1)
-			RemoveFromArray(g_MapList, idx);
+		if ((idx = g_MapList.FindString(map)) != -1)
+			g_MapList.Erase(idx);
 	}
 
 	delete maps;
