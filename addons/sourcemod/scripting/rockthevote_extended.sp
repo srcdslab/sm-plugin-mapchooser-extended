@@ -47,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.12.1"
+#define RTVE_VERSION "1.12.2"
 
 public Plugin myinfo =
 {
@@ -172,8 +172,7 @@ void KillDelayRTVTimer()
 {
 	if (g_hDelayRTVTimer != null)
 	{
-		KillTimer(g_hDelayRTVTimer);
-		g_hDelayRTVTimer = null;
+		delete g_hDelayRTVTimer;
 	}
 }
 
@@ -193,7 +192,7 @@ public void OnClientDisconnect(int client)
 	UpdateRTV();
 }
 
-public void OnPlayerChangedTeam(Handle event, const char[] name, bool dontBroadcast)
+public void OnPlayerChangedTeam(Event event, const char[] name, bool dontBroadcast)
 {
 	UpdateRTV();
 }
@@ -234,8 +233,8 @@ void UpdateRTV()
 	if (g_bPlugin_PM)
 	{
 		g_Voters = iVotersSteam + iVotersNoSteam;
-		int iVotesNeededSteam = RoundToFloor(float(iVotersSteam) * GetConVarFloat(g_Cvar_Needed));
-		int iVotesNeededNoSteam = RoundToFloor(float(iVotersNoSteam) * GetConVarFloat(g_Cvar_Needed_NoSteam));
+		int iVotesNeededSteam = RoundToFloor(float(iVotersSteam) * g_Cvar_Needed.FloatValue);
+		int iVotesNeededNoSteam = RoundToFloor(float(iVotersNoSteam) * g_Cvar_Needed_NoSteam.FloatValue);
 		g_VotesNeeded = iVotesNeededSteam + iVotesNeededNoSteam;
 	}
 	else
@@ -336,7 +335,7 @@ void AttemptRTV(int client)
 
 public Action Timer_DelayRTV(Handle timer)
 {
-	g_hDelayRTVTimer = INVALID_HANDLE;
+	g_hDelayRTVTimer = null;
 	g_RTVAllowed = true;
 	CPrintToChatAll("{green}[RTVE]{default} RockTheVote is available now!");
 	return Plugin_Continue;
@@ -510,8 +509,8 @@ public Action Command_DebugRTV(int client, int args)
 	if (g_bPlugin_PM)
 	{
 		g_Voters = iVotersSteam + iVotersNoSteam;
-		iVotesNeededSteam = RoundToFloor(float(iVotersSteam) * GetConVarFloat(g_Cvar_Needed));
-		iVotesNeededNoSteam = RoundToFloor(float(iVotersNoSteam) * GetConVarFloat(g_Cvar_Needed_NoSteam));
+		iVotesNeededSteam = RoundToFloor(float(iVotersSteam) * g_Cvar_Needed.FloatValue);
+		iVotesNeededNoSteam = RoundToFloor(float(iVotersNoSteam) * g_Cvar_Needed_NoSteam.FloatValue);
 		g_VotesNeeded = iVotesNeededSteam + iVotesNeededNoSteam;
 		iVotesNeededTotal = iVotesNeededSteam + iVotesNeededNoSteam;
 	}
@@ -525,8 +524,8 @@ public Action Command_DebugRTV(int client, int args)
 	CReplyToCommand(client, "{green}[RTVE]{default} Currently %d Players needed to start a RTV vote.", iVotesNeededTotal);
 	if (g_bPlugin_PM)
 	{
-		CReplyToCommand(client, "{green}[RTVE]{default} Calculated on %d Active Steam Players * %.2f Ratio = %d", iVotersSteam, GetConVarFloat(g_Cvar_Needed), iVotesNeededSteam);
-		CReplyToCommand(client, "{green}[RTVE]{default} + on %d Active No Steam Players * %.2f Ratio = %d.", iVotersNoSteam, GetConVarFloat(g_Cvar_Needed_NoSteam), iVotesNeededNoSteam);
+		CReplyToCommand(client, "{green}[RTVE]{default} Calculated on %d Active Steam Players * %.2f Ratio = %d", iVotersSteam, g_Cvar_Needed.FloatValue, iVotesNeededSteam);
+		CReplyToCommand(client, "{green}[RTVE]{default} + on %d Active No Steam Players * %.2f Ratio = %d.", iVotersNoSteam, g_Cvar_Needed_NoSteam.FloatValue, iVotesNeededNoSteam);
 	}
 
 	return Plugin_Handled;

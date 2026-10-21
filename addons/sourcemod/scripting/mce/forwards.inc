@@ -9,31 +9,31 @@
 * ============================================================================
 */
 
-Handle g_NominationsResetForward = INVALID_HANDLE;
-Handle g_NominationDisconnect = INVALID_HANDLE;
-Handle g_MapVoteStartedForward = INVALID_HANDLE;
-Handle g_SetNextMapForward = INVALID_HANDLE;
+GlobalForward g_NominationsResetForward = null;
+GlobalForward g_NominationDisconnect = null;
+GlobalForward g_MapVoteStartedForward = null;
+GlobalForward g_SetNextMapForward = null;
 
 /* Mapchooser Extended Forwards */
-Handle g_MapVoteWarningStartForward = INVALID_HANDLE;
-Handle g_MapVoteWarningTickForward = INVALID_HANDLE;
-Handle g_MapVoteStartForward = INVALID_HANDLE;
-Handle g_MapVoteEndForward = INVALID_HANDLE;
-Handle g_MapVoteRunoffStartForward = INVALID_HANDLE;
+GlobalForward g_MapVoteWarningStartForward = null;
+GlobalForward g_MapVoteWarningTickForward = null;
+GlobalForward g_MapVoteStartForward = null;
+GlobalForward g_MapVoteEndForward = null;
+GlobalForward g_MapVoteRunoffStartForward = null;
 
 stock void API_ForwardsInit()
 {
-	g_NominationsResetForward = CreateGlobalForward("OnNominationRemoved", ET_Ignore, Param_String, Param_Cell);
-	g_NominationDisconnect= CreateGlobalForward("OnNominationDisconnect", ET_Ignore, Param_String, Param_Cell);
-	g_MapVoteStartedForward = CreateGlobalForward("OnMapVoteStarted", ET_Ignore);
-	g_SetNextMapForward = CreateGlobalForward("OnSetNextMap", ET_Ignore, Param_String);
+	g_NominationsResetForward = new GlobalForward("OnNominationRemoved", ET_Ignore, Param_String, Param_Cell);
+	g_NominationDisconnect= new GlobalForward("OnNominationDisconnect", ET_Ignore, Param_String, Param_Cell);
+	g_MapVoteStartedForward = new GlobalForward("OnMapVoteStarted", ET_Ignore);
+	g_SetNextMapForward = new GlobalForward("OnSetNextMap", ET_Ignore, Param_String);
 
 	//MapChooser Extended Forwards
-	g_MapVoteStartForward = CreateGlobalForward("OnMapVoteStart", ET_Ignore); // Deprecated
-	g_MapVoteEndForward = CreateGlobalForward("OnMapVoteEnd", ET_Ignore, Param_String);
-	g_MapVoteWarningStartForward = CreateGlobalForward("OnMapVoteWarningStart", ET_Ignore);
-	g_MapVoteWarningTickForward = CreateGlobalForward("OnMapVoteWarningTick", ET_Ignore, Param_Cell);
-	g_MapVoteRunoffStartForward = CreateGlobalForward("OnMapVoteRunnoffWarningStart", ET_Ignore);
+	g_MapVoteStartForward = new GlobalForward("OnMapVoteStart", ET_Ignore); // Deprecated
+	g_MapVoteEndForward = new GlobalForward("OnMapVoteEnd", ET_Ignore, Param_String);
+	g_MapVoteWarningStartForward = new GlobalForward("OnMapVoteWarningStart", ET_Ignore);
+	g_MapVoteWarningTickForward = new GlobalForward("OnMapVoteWarningTick", ET_Ignore, Param_Cell);
+	g_MapVoteRunoffStartForward = new GlobalForward("OnMapVoteRunnoffWarningStart", ET_Ignore);
 }
 
 stock void Forward_OnNominationRemoved(char[] oldmap, int owner)

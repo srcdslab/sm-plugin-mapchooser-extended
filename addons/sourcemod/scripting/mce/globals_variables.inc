@@ -32,18 +32,18 @@ enum
 	GunGameMode_DeathMatch	= 2,
 }
 
-Handle g_VoteTimer = INVALID_HANDLE;
-Handle g_RetryTimer = INVALID_HANDLE;
-Handle g_WarningTimer = INVALID_HANDLE;
+Handle g_VoteTimer = null;
+Handle g_RetryTimer = null;
+Handle g_WarningTimer = null;
 
 /* Data Handles */
-Handle g_MapList = INVALID_HANDLE;
-Handle g_NominateList = INVALID_HANDLE;
-Handle g_NominateOwners = INVALID_HANDLE;
+ArrayList g_MapList = null;
+ArrayList g_NominateList = null;
+ArrayList g_NominateOwners = null;
 StringMap g_OldMapList;
 StringMap g_TimeMapList;
-Handle g_NextMapList = INVALID_HANDLE;
-Handle g_VoteMenu = INVALID_HANDLE;
+ArrayList g_NextMapList = null;
+Menu g_VoteMenu = null;
 KeyValues g_Config;
 
 int g_Extends;
@@ -63,7 +63,7 @@ int g_NominateReservedCount = 0;
 MapChange g_ChangeTime;
 
 /* Mapchooser Extended Data Handles */
-Handle g_OfficialList = INVALID_HANDLE;
+ArrayList g_OfficialList = null;
 
 /* Mapchooser Extended Globals */
 int g_RunoffCount = 0;
@@ -122,4 +122,4 @@ CooldownMode g_CooldownMode = CooldownMode_Both;
 char g_sExcludeMapsTime[32];
 
 /* Map Tiers Global Variables */
-Handle g_MapTiers;
+ArrayList g_MapTiers;

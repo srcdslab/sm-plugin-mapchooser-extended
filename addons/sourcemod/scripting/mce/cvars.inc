@@ -262,146 +262,146 @@ stock void CvarsInit()
 	g_Cvar_ShowMapTierInChat.AddChangeHook(OnConVarChanged);
 
 	// Cache cvars values
-	g_bForceLowerCase = GetConVarBool(g_Cvar_ForceLowerCase);
-	g_bEndOfMapVote = GetConVarBool(g_Cvar_EndOfMapVote);
-	g_bEndOfMapInfo = GetConVarBool(g_Cvar_EndOfMapInfo);
-	g_bNoVoteMode = GetConVarBool(g_Cvar_NoVoteMode);
-	g_bDontChange = GetConVarBool(g_Cvar_DontChange);
-	g_bHideTimer = GetConVarBool(g_Cvar_HideTimer);
-	g_bNoVoteOption = GetConVarBool(g_Cvar_NoVoteOption);
-	g_bShufflePerClient = GetConVarBool(g_Cvar_ShufflePerClient);
-	g_bNoRestrictionTimeframeEnable = GetConVarBool(g_Cvar_NoRestrictionTimeframeEnable);
-	g_bLockNominationsAtWarning = GetConVarBool(g_Cvar_LockNominationsAtWarning);
-	g_bShowNominator = GetConVarBool(g_Cvar_ShowNominator);
-	g_bCountBots = GetConVarBool(g_Cvar_CountBots);
-	g_bRunOff = GetConVarBool(g_Cvar_RunOff);
-	g_bBlockSlots = GetConVarBool(g_Cvar_BlockSlots);
-	g_bEnableStartPercent = GetConVarBool(g_Cvar_EnableStartTimePercent);
-	g_bRandomizeNominations = GetConVarBool(g_Cvar_RandomizeNominations);
-	g_bExtendPositionTop = GetConVarBool(g_Cvar_ExtendPosition);
-	g_bShowMapTierInChat = GetConVarBool(g_Cvar_ShowMapTierInChat);
+	g_bForceLowerCase = g_Cvar_ForceLowerCase.BoolValue;
+	g_bEndOfMapVote = g_Cvar_EndOfMapVote.BoolValue;
+	g_bEndOfMapInfo = g_Cvar_EndOfMapInfo.BoolValue;
+	g_bNoVoteMode = g_Cvar_NoVoteMode.BoolValue;
+	g_bDontChange = g_Cvar_DontChange.BoolValue;
+	g_bHideTimer = g_Cvar_HideTimer.BoolValue;
+	g_bNoVoteOption = g_Cvar_NoVoteOption.BoolValue;
+	g_bShufflePerClient = g_Cvar_ShufflePerClient.BoolValue;
+	g_bNoRestrictionTimeframeEnable = g_Cvar_NoRestrictionTimeframeEnable.BoolValue;
+	g_bLockNominationsAtWarning = g_Cvar_LockNominationsAtWarning.BoolValue;
+	g_bShowNominator = g_Cvar_ShowNominator.BoolValue;
+	g_bCountBots = g_Cvar_CountBots.BoolValue;
+	g_bRunOff = g_Cvar_RunOff.BoolValue;
+	g_bBlockSlots = g_Cvar_BlockSlots.BoolValue;
+	g_bEnableStartPercent = g_Cvar_EnableStartTimePercent.BoolValue;
+	g_bRandomizeNominations = g_Cvar_RandomizeNominations.BoolValue;
+	g_bExtendPositionTop = g_Cvar_ExtendPosition.BoolValue;
+	g_bShowMapTierInChat = g_Cvar_ShowMapTierInChat.BoolValue;
 
-	GetConVarString(g_Cvar_ExcludeMapsTime, g_sExcludeMapsTime, sizeof(g_sExcludeMapsTime));
+	g_Cvar_ExcludeMapsTime.GetString(g_sExcludeMapsTime, sizeof(g_sExcludeMapsTime));
 
-	g_iStartRounds = GetConVarInt(g_Cvar_StartRounds);
-	g_iStartFrags = GetConVarInt(g_Cvar_StartFrags);
-	g_iHUDChannel = GetConVarInt(g_cvHUDChannel);
-	g_iExtendTimeStep = GetConVarInt(g_Cvar_ExtendTimeStep);
-	g_iExtendRoundStep = GetConVarInt(g_Cvar_ExtendRoundStep);
-	g_iExtendFragStep = GetConVarInt(g_Cvar_ExtendFragStep);
-	g_iExcludeMaps = GetConVarInt(g_Cvar_ExcludeMaps);
-	g_iIncludeMaps = GetConVarInt(g_Cvar_IncludeMaps);
-	g_iIncludeMapsReserved = GetConVarInt(g_Cvar_IncludeMapsReserved);
-	g_iMaxExtends = GetConVarInt(g_Cvar_Extends);
-	g_iVoteDuration = GetConVarInt(g_Cvar_VoteDuration);
-	g_iPercentRunOff = GetConVarInt(g_Cvar_RunOffPercent);
-	g_iMaxRunOffs = GetConVarInt(g_Cvar_MaxRunOffs);
-	g_iStartTimePercent = GetConVarInt(g_Cvar_StartTimePercent);
-	g_iWarningTime = GetConVarInt(g_Cvar_WarningTime);
-	g_iRunOffWarningTime = GetConVarInt(g_Cvar_RunOffWarningTime);
-	g_iStartTime = GetConVarInt(g_Cvar_StartTime);
-	g_iMenuStyle = GetConVarInt(g_Cvar_MenuStyle);
-	g_iTimerLocation = GetConVarInt(g_Cvar_TimerLocation);
-	g_iMarkCustomMaps = GetConVarInt(g_Cvar_MarkCustomMaps);
-	g_iTimeFrameMin = GetConVarInt(g_Cvar_NoRestrictionTimeframeMinTime);
-	g_iTimeFrameMax = GetConVarInt(g_Cvar_NoRestrictionTimeframeMaxTime);
-	g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
-	g_CooldownMode = view_as<CooldownMode>(GetConVarInt(g_Cvar_CooldownMode));
+	g_iStartRounds = g_Cvar_StartRounds.IntValue;
+	g_iStartFrags = g_Cvar_StartFrags.IntValue;
+	g_iHUDChannel = g_cvHUDChannel.IntValue;
+	g_iExtendTimeStep = g_Cvar_ExtendTimeStep.IntValue;
+	g_iExtendRoundStep = g_Cvar_ExtendRoundStep.IntValue;
+	g_iExtendFragStep = g_Cvar_ExtendFragStep.IntValue;
+	g_iExcludeMaps = g_Cvar_ExcludeMaps.IntValue;
+	g_iIncludeMaps = g_Cvar_IncludeMaps.IntValue;
+	g_iIncludeMapsReserved = g_Cvar_IncludeMapsReserved.IntValue;
+	g_iMaxExtends = g_Cvar_Extends.IntValue;
+	g_iVoteDuration = g_Cvar_VoteDuration.IntValue;
+	g_iPercentRunOff = g_Cvar_RunOffPercent.IntValue;
+	g_iMaxRunOffs = g_Cvar_MaxRunOffs.IntValue;
+	g_iStartTimePercent = g_Cvar_StartTimePercent.IntValue;
+	g_iWarningTime = g_Cvar_WarningTime.IntValue;
+	g_iRunOffWarningTime = g_Cvar_RunOffWarningTime.IntValue;
+	g_iStartTime = g_Cvar_StartTime.IntValue;
+	g_iMenuStyle = g_Cvar_MenuStyle.IntValue;
+	g_iTimerLocation = g_Cvar_TimerLocation.IntValue;
+	g_iMarkCustomMaps = g_Cvar_MarkCustomMaps.IntValue;
+	g_iTimeFrameMin = g_Cvar_NoRestrictionTimeframeMinTime.IntValue;
+	g_iTimeFrameMax = g_Cvar_NoRestrictionTimeframeMaxTime.IntValue;
+	g_iSharedCDMode = g_Cvar_SharedCDMode.IntValue;
+	g_CooldownMode = view_as<CooldownMode>(g_Cvar_CooldownMode.IntValue);
 
-	g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
-	g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
+	g_fRandomStartTime = g_Cvar_RandomStartTime.FloatValue;
+	g_fTimerUnlockNoms = g_Cvar_TimerUnlockNoms.FloatValue;
 }
 
 public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 {
 	if (convar == g_Cvar_ForceLowerCase)
-		g_bForceLowerCase = GetConVarBool(g_Cvar_ForceLowerCase);
+		g_bForceLowerCase = g_Cvar_ForceLowerCase.BoolValue;
 	else if (convar == g_Cvar_EndOfMapVote)
-		g_bEndOfMapVote = GetConVarBool(g_Cvar_EndOfMapVote);
+		g_bEndOfMapVote = g_Cvar_EndOfMapVote.BoolValue;
 	else if (convar == g_Cvar_EndOfMapInfo)
-		g_bEndOfMapInfo = GetConVarBool(g_Cvar_EndOfMapInfo);
+		g_bEndOfMapInfo = g_Cvar_EndOfMapInfo.BoolValue;
 	else if (convar == g_cvHUDChannel)
-		g_iHUDChannel = GetConVarInt(g_cvHUDChannel);
+		g_iHUDChannel = g_cvHUDChannel.IntValue;
 	else if (convar == g_Cvar_StartTime)
-		g_iStartTime = GetConVarInt(g_Cvar_StartTime);
+		g_iStartTime = g_Cvar_StartTime.IntValue;
 	else if (convar == g_Cvar_RandomStartTime)
-		g_fRandomStartTime = GetConVarFloat(g_Cvar_RandomStartTime);
+		g_fRandomStartTime = g_Cvar_RandomStartTime.FloatValue;
 	else if (convar == g_Cvar_StartRounds)
-		g_iStartRounds = GetConVarInt(g_Cvar_StartRounds);
+		g_iStartRounds = g_Cvar_StartRounds.IntValue;
 	else if (convar == g_Cvar_StartFrags)
-		g_iStartFrags = GetConVarInt(g_Cvar_StartFrags);
+		g_iStartFrags = g_Cvar_StartFrags.IntValue;
 	else if (convar == g_Cvar_ExtendTimeStep)
-		g_iExtendTimeStep = GetConVarInt(g_Cvar_ExtendTimeStep);
+		g_iExtendTimeStep = g_Cvar_ExtendTimeStep.IntValue;
 	else if (convar == g_Cvar_ExtendRoundStep)
-		g_iExtendRoundStep = GetConVarInt(g_Cvar_ExtendRoundStep);
+		g_iExtendRoundStep = g_Cvar_ExtendRoundStep.IntValue;
 	else if (convar == g_Cvar_ExtendFragStep)
-		g_iExtendFragStep = GetConVarInt(g_Cvar_ExtendFragStep);
+		g_iExtendFragStep = g_Cvar_ExtendFragStep.IntValue;
 	else if (convar == g_Cvar_ExcludeMaps)
-		g_iExcludeMaps = GetConVarInt(g_Cvar_ExcludeMaps);
+		g_iExcludeMaps = g_Cvar_ExcludeMaps.IntValue;
 	else if (convar == g_Cvar_ExcludeMapsTime)
-		GetConVarString(g_Cvar_ExcludeMapsTime, g_sExcludeMapsTime, sizeof(g_sExcludeMapsTime));
+		g_Cvar_ExcludeMapsTime.GetString(g_sExcludeMapsTime, sizeof(g_sExcludeMapsTime));
 	else if (convar == g_Cvar_IncludeMaps)
-		g_iIncludeMaps = GetConVarInt(g_Cvar_IncludeMaps);
+		g_iIncludeMaps = g_Cvar_IncludeMaps.IntValue;
 	else if (convar == g_Cvar_IncludeMapsReserved)
-		g_iIncludeMapsReserved = GetConVarInt(g_Cvar_IncludeMapsReserved);
+		g_iIncludeMapsReserved = g_Cvar_IncludeMapsReserved.IntValue;
 	else if (convar == g_Cvar_NoVoteMode)
-		g_bNoVoteMode = GetConVarBool(g_Cvar_NoVoteMode);
+		g_bNoVoteMode = g_Cvar_NoVoteMode.BoolValue;
 	else if (convar == g_Cvar_Extends)
-		g_iMaxExtends = GetConVarInt(g_Cvar_Extends);
+		g_iMaxExtends = g_Cvar_Extends.IntValue;
 	else if (convar == g_Cvar_DontChange)
-		g_bDontChange = GetConVarBool(g_Cvar_DontChange);
+		g_bDontChange = g_Cvar_DontChange.BoolValue;
 	else if (convar == g_Cvar_VoteDuration)
-		g_iVoteDuration = GetConVarInt(g_Cvar_VoteDuration);
+		g_iVoteDuration = g_Cvar_VoteDuration.IntValue;
 	else if (convar == g_Cvar_CountBots)
-		g_bCountBots = GetConVarBool(g_Cvar_CountBots);
+		g_bCountBots = g_Cvar_CountBots.BoolValue;
 	else if (convar == g_Cvar_RunOff)
-		g_bRunOff = GetConVarBool(g_Cvar_RunOff);
+		g_bRunOff = g_Cvar_RunOff.BoolValue;
 	else if (convar == g_Cvar_RunOffPercent)
-		g_iPercentRunOff = GetConVarInt(g_Cvar_RunOffPercent);
+		g_iPercentRunOff = g_Cvar_RunOffPercent.IntValue;
 	else if (convar == g_Cvar_BlockSlots)
-		g_bBlockSlots = GetConVarBool(g_Cvar_BlockSlots);
+		g_bBlockSlots = g_Cvar_BlockSlots.BoolValue;
 	else if (convar == g_Cvar_MaxRunOffs)
-		g_iMaxRunOffs = GetConVarInt(g_Cvar_MaxRunOffs);
+		g_iMaxRunOffs = g_Cvar_MaxRunOffs.IntValue;
 	else if (convar == g_Cvar_StartTimePercent)
-		g_iStartTimePercent = GetConVarInt(g_Cvar_StartTimePercent);
+		g_iStartTimePercent = g_Cvar_StartTimePercent.IntValue;
 	else if (convar == g_Cvar_EnableStartTimePercent)
-		g_bEnableStartPercent = GetConVarBool(g_Cvar_EnableStartTimePercent);
+		g_bEnableStartPercent = g_Cvar_EnableStartTimePercent.BoolValue;
 	else if (convar == g_Cvar_WarningTime)
-		g_iWarningTime = GetConVarInt(g_Cvar_WarningTime);
+		g_iWarningTime = g_Cvar_WarningTime.IntValue;
 	else if (convar == g_Cvar_RunOffWarningTime)
-		g_iRunOffWarningTime = GetConVarInt(g_Cvar_RunOffWarningTime);
+		g_iRunOffWarningTime = g_Cvar_RunOffWarningTime.IntValue;
 	else if (convar == g_Cvar_MenuStyle)
-		g_iMenuStyle = GetConVarInt(g_Cvar_MenuStyle);
+		g_iMenuStyle = g_Cvar_MenuStyle.IntValue;
 	else if (convar == g_Cvar_TimerLocation)
-		g_iTimerLocation = GetConVarInt(g_Cvar_TimerLocation);
+		g_iTimerLocation = g_Cvar_TimerLocation.IntValue;
 	else if (convar == g_Cvar_ExtendPosition)
-		g_bExtendPositionTop = GetConVarBool(g_Cvar_ExtendPosition);
+		g_bExtendPositionTop = g_Cvar_ExtendPosition.BoolValue;
 	else if (convar == g_Cvar_MarkCustomMaps)
-		g_iMarkCustomMaps = GetConVarInt(g_Cvar_MarkCustomMaps);
+		g_iMarkCustomMaps = g_Cvar_MarkCustomMaps.IntValue;
 	else if (convar == g_Cvar_RandomizeNominations)
-		g_bRandomizeNominations = GetConVarBool(g_Cvar_RandomizeNominations);
+		g_bRandomizeNominations = g_Cvar_RandomizeNominations.BoolValue;
 	else if (convar == g_Cvar_HideTimer)
-		g_bHideTimer = GetConVarBool(g_Cvar_HideTimer);
+		g_bHideTimer = g_Cvar_HideTimer.BoolValue;
 	else if (convar == g_Cvar_NoVoteOption)
-		g_bNoVoteOption = GetConVarBool(g_Cvar_NoVoteOption);
+		g_bNoVoteOption = g_Cvar_NoVoteOption.BoolValue;
 	else if (convar == g_Cvar_ShufflePerClient)
-		g_bShufflePerClient = GetConVarBool(g_Cvar_ShufflePerClient);
+		g_bShufflePerClient = g_Cvar_ShufflePerClient.BoolValue;
 	else if (convar == g_Cvar_NoRestrictionTimeframeEnable)
-		g_bNoRestrictionTimeframeEnable = GetConVarBool(g_Cvar_NoRestrictionTimeframeEnable);
+		g_bNoRestrictionTimeframeEnable = g_Cvar_NoRestrictionTimeframeEnable.BoolValue;
 	else if (convar == g_Cvar_NoRestrictionTimeframeMinTime)
-		g_iTimeFrameMin = GetConVarInt(g_Cvar_NoRestrictionTimeframeMinTime);
+		g_iTimeFrameMin = g_Cvar_NoRestrictionTimeframeMinTime.IntValue;
 	else if (convar == g_Cvar_NoRestrictionTimeframeMaxTime)
-		g_iTimeFrameMax = GetConVarInt(g_Cvar_NoRestrictionTimeframeMaxTime);
+		g_iTimeFrameMax = g_Cvar_NoRestrictionTimeframeMaxTime.IntValue;
 	else if (convar == g_Cvar_TimerUnlockNoms)
-		g_fTimerUnlockNoms = GetConVarFloat(g_Cvar_TimerUnlockNoms);
+		g_fTimerUnlockNoms = g_Cvar_TimerUnlockNoms.FloatValue;
 	else if (convar == g_Cvar_LockNominationsAtWarning)
-		g_bLockNominationsAtWarning = GetConVarBool(g_Cvar_LockNominationsAtWarning);
+		g_bLockNominationsAtWarning = g_Cvar_LockNominationsAtWarning.BoolValue;
 	else if (convar == g_Cvar_ShowNominator)
-		g_bShowNominator = GetConVarBool(g_Cvar_ShowNominator);
+		g_bShowNominator = g_Cvar_ShowNominator.BoolValue;
 	else if (convar == g_Cvar_SharedCDMode)
-		g_iSharedCDMode = GetConVarInt(g_Cvar_SharedCDMode);
+		g_iSharedCDMode = g_Cvar_SharedCDMode.IntValue;
 	else if (convar == g_Cvar_CooldownMode)
-		g_CooldownMode = view_as<CooldownMode>(GetConVarInt(g_Cvar_CooldownMode));
+		g_CooldownMode = view_as<CooldownMode>(g_Cvar_CooldownMode.IntValue);
 	else if (convar == g_Cvar_ShowMapTierInChat)
-		g_bShowMapTierInChat = GetConVarBool(g_Cvar_ShowMapTierInChat);
+		g_bShowMapTierInChat = g_Cvar_ShowMapTierInChat.BoolValue;
 }

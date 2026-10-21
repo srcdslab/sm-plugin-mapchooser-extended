@@ -61,7 +61,7 @@ public Action Command_Addmap(int client, int args)
 	GetCmdArg(1, mapname, sizeof(mapname));
 
 	int status;
-	if (!GetTrieValue(g_mapTrie, mapname, status))
+	if (!g_mapTrie.GetValue(mapname, status))
 	{
 		CReplyToCommand(client, "{green}[NE]{default} %t", "NE Map Not In Pool", mapname);
 		AttemptAdminNominate(client, mapname);
@@ -72,7 +72,7 @@ public Action Command_Addmap(int client, int args)
 	{
 		bool restrictionsActive = AreRestrictionsActive();
 
-		if (GetTrieValue(g_mapTrie, mapname, status))
+		if (g_mapTrie.GetValue(mapname, status))
 		{
 			if ((status & MAPSTATUS_DISABLED) == MAPSTATUS_DISABLED)
 			{
@@ -146,7 +146,7 @@ public Action Command_Addmap(int client, int args)
 	}
 
 	/* Map was nominated! - Disable the menu item and update the trie */
-	SetTrieValue(g_mapTrie, mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+	g_mapTrie.SetValue(mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
 
 	CReplyToCommand(client, "{green}[NE]{default} %t", "NE Map Inserted", mapname);
 	CPrintToChatAll("{green}[NE]{default} %t", "Client inserted Map", client, mapname);
@@ -174,7 +174,7 @@ public Action Command_Removemap(int client, int args)
 	GetCmdArg(1, mapname, sizeof(mapname));
 
 	int status;
-	if (!GetTrieValue(g_mapTrie, mapname, status))
+	if (!g_mapTrie.GetValue(mapname, status))
 	{
 		CReplyToCommand(client, "{green}[NE]{default} %t", "Map was not found", mapname);
 		AttemptAdminRemoveMap(client, mapname);
@@ -223,7 +223,7 @@ public Action Command_AddExclude(int client, int args)
 	}
 
 	int status;
-	if (!GetTrieValue(g_mapTrie, mapname, status))
+	if (!g_mapTrie.GetValue(mapname, status))
 	{
 		CReplyToCommand(client, "{green}[NE]{default} %t", "Map was not found", mapname);
 		return Plugin_Handled;
@@ -232,7 +232,7 @@ public Action Command_AddExclude(int client, int args)
 	CShowActivity(client, "Excluded map \"%s\" from nomination", mapname);
 	LogAction(client, -1, "\"%L\" excluded map \"%s\" from nomination", client, mapname);
 
-	SetTrieValue(g_mapTrie, mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_PREVIOUS);
+	g_mapTrie.SetValue(mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_PREVIOUS);
 
 	// native call to mapchooser_extended
 	ExcludeMap(mapname, cooldown, mode);
@@ -267,7 +267,7 @@ public Action Command_AddExcludeTime(int client, int args)
 	}
 
 	int status;
-	if (!GetTrieValue(g_mapTrie, mapname, status))
+	if (!g_mapTrie.GetValue(mapname, status))
 	{
 		CReplyToCommand(client, "{green}[NE]{default} %t", "Map was not found", mapname);
 		return Plugin_Handled;
@@ -497,7 +497,7 @@ public Action Command_Nominate(int client, int args)
 
 
 	int status;
-	if (!GetTrieValue(g_mapTrie, mapname, status))
+	if (!g_mapTrie.GetValue(mapname, status))
 	{
 		CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Not In Pool", mapname);
 		AttemptNominate(client, mapname);
@@ -607,8 +607,8 @@ public Action Command_Nominate(int client, int args)
 	}
 
 	/* Map was nominated! - Disable the menu item and update the trie */
-	SetTrieValue(g_mapTrie, mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
-	g_Player_NominationDelay[client] = iCurrentTime + GetConVarInt(g_Cvar_NominateDelay);
+	g_mapTrie.SetValue(mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+	g_Player_NominationDelay[client] = iCurrentTime + g_Cvar_NominateDelay.IntValue;
 
 	static char name[MAX_NAME_LENGTH];
 	GetClientName(client, name, sizeof(name));
@@ -690,16 +690,16 @@ public Action Command_NominateList(int client, int args)
 	if (client == 0)
 	{
 		int arraySize = ByteCountToCells(PLATFORM_MAX_PATH);
-		ArrayList MapList = CreateArray(arraySize);
+		ArrayList MapList = new ArrayList(arraySize);
 		GetNominatedMapList(MapList);
 
 		char aBuf[2048];
 		StrCat(aBuf, sizeof(aBuf), "{green}[NE]{default} Nominated Maps:");
 		static char map[PLATFORM_MAX_PATH];
-		for (int i = 0; i < GetArraySize(MapList); i++)
+		for (int i = 0; i < MapList.Length; i++)
 		{
 			StrCat(aBuf, sizeof(aBuf), "\n");
-			GetArrayString(MapList, i, map, sizeof(map));
+			MapList.GetString(i, map, sizeof(map));
 			StrCat(aBuf, sizeof(aBuf), map);
 		}
 
@@ -708,7 +708,7 @@ public Action Command_NominateList(int client, int args)
 		return Plugin_Handled;
 	}
 
-	Menu NominateListMenu = CreateMenu(Handler_NominateListMenu, MENU_ACTIONS_DEFAULT|MenuAction_DisplayItem);
+	Menu NominateListMenu = new Menu(Handler_NominateListMenu, MENU_ACTIONS_DEFAULT|MenuAction_DisplayItem);
 
 	if (!PopulateNominateListMenu(NominateListMenu, client))
 	{
@@ -716,8 +716,8 @@ public Action Command_NominateList(int client, int args)
 		return Plugin_Handled;
 	}
 
-	SetMenuTitle(NominateListMenu, "Nominated Maps", client);
-	DisplayMenu(NominateListMenu, client, MENU_TIME_FOREVER);
+	NominateListMenu.SetTitle("Nominated Maps", client);
+	NominateListMenu.Display(client, MENU_TIME_FOREVER);
 
 	return Plugin_Handled;
 }

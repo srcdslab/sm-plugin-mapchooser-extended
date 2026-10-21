@@ -174,6 +174,6 @@ public void OnClientDisconnect(int client)
 
 public void OnMapTimeLeftChanged()
 {
-	if (GetArraySize(g_MapList))
+	if (g_MapList.Length)
 		SetupTimeleftTimer();
 }

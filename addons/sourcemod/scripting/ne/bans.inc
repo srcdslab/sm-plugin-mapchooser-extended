@@ -12,8 +12,8 @@
 #define NOMBAN_NOTBANNED -1
 #define NOMBAN_PERMANENT 0
 
-Handle g_hNomBanStatus = INVALID_HANDLE; // Format("length:timeIssued")
-Handle g_hAdminNomBan = INVALID_HANDLE; // Admin who gave the nomban
+Cookie g_hNomBanStatus = null; // Format("length:timeIssued")
+Cookie g_hAdminNomBan = null; // Admin who gave the nomban
 
 int g_iNomBanLength[MAXPLAYERS+1];
 int g_iNomBanStart[MAXPLAYERS+1];
@@ -22,14 +22,14 @@ char g_sNomBanAdmin[MAXPLAYERS+1][PLATFORM_MAX_PATH];
 
 stock void InitNomBanCookies()
 {
-	g_hNomBanStatus = RegClientCookie("NE_nomban_status", "Client's nomban info (Ban lenght : Date Issued)", CookieAccess_Protected);
-	g_hAdminNomBan = RegClientCookie("NE_nomban_admin", "Admin who nombanned", CookieAccess_Protected);
+	g_hNomBanStatus = new Cookie("NE_nomban_status", "Client's nomban info (Ban lenght : Date Issued)", CookieAccess_Protected);
+	g_hAdminNomBan = new Cookie("NE_nomban_admin", "Admin who nombanned", CookieAccess_Protected);
 }
 
 stock void ReadClientNombanCookies(int client)
 {
 	char buffer[128];
-	GetClientCookie(client, g_hNomBanStatus, buffer, sizeof(buffer));
+	g_hNomBanStatus.Get(client, buffer, sizeof(buffer));
 	if (strcmp(buffer, "") == 0)
 	{
 		g_iNomBanStart[client] = NOMBAN_NOTBANNED;
@@ -48,7 +48,7 @@ stock void ReadClientNombanCookies(int client)
 
 public void PrepareNomStatusMenu(int client, int target)
 {
-	Menu menu = CreateMenu(NomStatusMenu_Handler);
+	Menu menu = new Menu(NomStatusMenu_Handler);
 	menu.SetTitle("%T", "NomStatus Menu Title", client, target);
 
 	char buffer[PLATFORM_MAX_PATH];
@@ -131,7 +131,7 @@ public int NomStatusMenu_Handler(Menu menu, MenuAction action, int param1, int p
 
 public void PrepareNombanListMenu(int client)
 {
-	Menu menu = CreateMenu(Nombanlist_Handler);
+	Menu menu = new Menu(Nombanlist_Handler);
 
 	char info[64], display[64];
 	int total = 0;
@@ -166,7 +166,7 @@ public int Nombanlist_Handler(Menu menu, MenuAction action, int param1, int para
 		case MenuAction_Select:
 		{
 			char buffer[64];
-			GetMenuItem(menu, param2, buffer, sizeof(buffer));
+			menu.GetItem(param2, buffer, sizeof(buffer));
 			
 			int uid = StringToInt(buffer);
 			int client = GetClientOfUserId(uid);
@@ -234,7 +234,7 @@ public void UnNomBanClient(int client, int admin)
 	CShowActivity2(admin, "{green}[NE] {olive}", "%t", "UnNombanned", client);
 	LogAction(admin, client, "%L unnombanned %L", admin, client);
 
-	Menu menu = CreateMenu(NomStatusMenu_Handler);
+	Menu menu = new Menu(NomStatusMenu_Handler);
 	menu.SetTitle("%T", "NomStatus Menu Title", client, client);
 	menu.AddItem("s", " ", ITEMDRAW_SPACER);
 
@@ -251,14 +251,14 @@ stock void SaveClientNombanStatus(int client)
 	{
 		char buffer[128];
 		Format(buffer, sizeof(buffer), "%d:%d", g_iNomBanLength[client], g_iNomBanStart[client]);
-		SetClientCookie(client, g_hNomBanStatus, buffer);
+		g_hNomBanStatus.Set(client, buffer);
 	}
 	else
 	{
-		SetClientCookie(client, g_hNomBanStatus, "");
+		g_hNomBanStatus.Set(client, "");
 	}
 
-	SetClientCookie(client, g_hAdminNomBan, g_sNomBanAdmin[client]);
+	g_hAdminNomBan.Set(client, g_sNomBanAdmin[client]);
 }
 
 stock bool IsClientNomBanned(int client)

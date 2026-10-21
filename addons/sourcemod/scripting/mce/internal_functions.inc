@@ -17,7 +17,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	}
 
 	/* Map already in the vote */
-	if (FindStringInArray(g_NominateList, map) != -1)
+	if (g_NominateList.FindString(map) != -1)
 	{
 		return Nominate_AlreadyInVote;
 	}
@@ -25,14 +25,14 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	int index;
 
 	/* Look to replace an existing nomination by this client - Nominations made with owner = 0 aren't replaced */
-	if (owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
+	if (owner && ((index = g_NominateOwners.FindValue(owner)) != -1))
 	{
 		char oldmap[PLATFORM_MAX_PATH];
-		GetArrayString(g_NominateList, index, oldmap, PLATFORM_MAX_PATH);
+		g_NominateList.GetString(index, oldmap, PLATFORM_MAX_PATH);
 		Forward_OnNominationRemoved(oldmap, owner);
 
 		strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
-		SetArrayString(g_NominateList, index, map);
+		g_NominateList.SetString(index, map);
 		AlphabeticSortMapLists(g_NominateList, g_NominateOwners);
 		return Nominate_Replaced;
 	}
@@ -43,23 +43,23 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 		return Nominate_VoteFull;
 	}
 
-	PushArrayString(g_NominateList, map);
-	PushArrayCell(g_NominateOwners, owner);
+	g_NominateList.PushString(map);
+	g_NominateOwners.Push(owner);
 	if (owner == 0 && g_NominateReservedCount < GetVoteSize(1))
 		g_NominateReservedCount++;
 	else
 		g_NominateCount++;
 
-	while(GetArraySize(g_NominateList) > GetVoteSize(2))
+	while(g_NominateList.Length > GetVoteSize(2))
 	{
 		char oldmap[PLATFORM_MAX_PATH];
-		GetArrayString(g_NominateList, 0, oldmap, PLATFORM_MAX_PATH);
-		int owner_ = GetArrayCell(g_NominateOwners, 0);
+		g_NominateList.GetString(0, oldmap, PLATFORM_MAX_PATH);
+		int owner_ = g_NominateOwners.Get(0);
 
 		Forward_OnNominationRemoved(oldmap, owner_);
 
-		RemoveFromArray(g_NominateList, 0);
-		RemoveFromArray(g_NominateOwners, 0);
+		g_NominateList.Erase(0);
+		g_NominateOwners.Erase(0);
 		ClearStoredNomination(owner_);
 
 		if (owner_ == 0)
@@ -77,31 +77,31 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 void InternalGetNominationByOwner(int owner, char[] buffer)
 {
 	int index;
-	if (owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
+	if (owner && ((index = g_NominateOwners.FindValue(owner)) != -1))
 	{
-		GetArrayString(g_NominateList, index, buffer, PLATFORM_MAX_PATH);
+		g_NominateList.GetString(index, buffer, PLATFORM_MAX_PATH);
 	}
 }
 
 bool InternalRemoveNominationByMap(char[] map)
 {
-	for (int i = 0; i < GetArraySize(g_NominateList); i++)
+	for (int i = 0; i < g_NominateList.Length; i++)
 	{
 		char oldmap[PLATFORM_MAX_PATH];
-		GetArrayString(g_NominateList, i, oldmap, PLATFORM_MAX_PATH);
+		g_NominateList.GetString(i, oldmap, PLATFORM_MAX_PATH);
 
 		if (strcmp(map, oldmap, false) == 0)
 		{
-			Forward_OnNominationRemoved(oldmap, GetArrayCell(g_NominateOwners, i));
+			Forward_OnNominationRemoved(oldmap, g_NominateOwners.Get(i));
 
-			int owner = GetArrayCell(g_NominateOwners, i);
+			int owner = g_NominateOwners.Get(i);
 			if (owner)
 				g_NominateCount--;
 			else
 				g_NominateReservedCount--;
 
-			RemoveFromArray(g_NominateList, i);
-			RemoveFromArray(g_NominateOwners, i);
+			g_NominateList.Erase(i);
+			g_NominateOwners.Erase(i);
 			ClearStoredNomination(owner);
 			return true;
 		}
@@ -114,15 +114,15 @@ bool InternalRemoveNominationByOwner(int owner)
 {
 	int index;
 
-	if (owner && ((index = FindValueInArray(g_NominateOwners, owner)) != -1))
+	if (owner && ((index = g_NominateOwners.FindValue(owner)) != -1))
 	{
 		char oldmap[PLATFORM_MAX_PATH];
-		GetArrayString(g_NominateList, index, oldmap, PLATFORM_MAX_PATH);
+		g_NominateList.GetString(index, oldmap, PLATFORM_MAX_PATH);
 
 		Forward_OnNominationRemoved(oldmap, owner);
 
-		RemoveFromArray(g_NominateList, index);
-		RemoveFromArray(g_NominateOwners, index);
+		g_NominateList.Erase(index);
+		g_NominateOwners.Erase(index);
 		ClearStoredNomination(owner);
 		g_NominateCount--;
 
@@ -134,7 +134,7 @@ bool InternalRemoveNominationByOwner(int owner)
 
 bool InternalIsMapOfficial(const char[] mapname)
 {
-	int officialMapIndex = FindStringInArray(g_OfficialList, mapname);
+	int officialMapIndex = g_OfficialList.FindString(mapname);
 	return (officialMapIndex > -1);
 }
 
@@ -933,11 +933,11 @@ stock bool InternalGetTierNameFromInt(int tier, char[] tierName, int maxlen)
 	if (!g_MapTiers)
 		return false;
 
-	int arrayLength = GetArraySize(g_MapTiers);
+	int arrayLength = g_MapTiers.Length;
 	if (!arrayLength || tier <= 0 || tier > arrayLength)
 		return false;
 
-	GetArrayString(g_MapTiers, tier - 1, tierName, maxlen);
+	g_MapTiers.GetString(tier - 1, tierName, maxlen);
 	return true;
 }
 
@@ -946,7 +946,7 @@ stock int InternalGetTiersCount()
 	if (!g_MapTiers)
 		return 0;
 
-	return GetArraySize(g_MapTiers);
+	return g_MapTiers.Length;
 }
 
 stock bool InternalShowMapTierInChat()

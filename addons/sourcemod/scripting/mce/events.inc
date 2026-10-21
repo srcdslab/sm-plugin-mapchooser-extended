@@ -11,7 +11,7 @@
 
 stock void EventsInit(EngineVersion version)
 {
-	if (g_Cvar_Winlimit != INVALID_HANDLE || g_Cvar_Maxrounds != INVALID_HANDLE)
+	if (g_Cvar_Winlimit != null || g_Cvar_Maxrounds != null)
 	{
 		switch (version)
 		{
@@ -50,38 +50,38 @@ stock void EventsInit(EngineVersion version)
 		}
 	}
 
-	if (g_Cvar_Fraglimit != INVALID_HANDLE)
+	if (g_Cvar_Fraglimit != null)
 		HookEvent("player_death", Event_PlayerDeath);
 }
 
-public void Event_TFRestartRound(Handle event, const char[] name, bool dontBroadcast)
+public void Event_TFRestartRound(Event event, const char[] name, bool dontBroadcast)
 {
 	/* Game got restarted - reset our round count tracking */
 	g_TotalRounds = 0;
 }
 
-public void Event_TeamPlayWinPanel(Handle event, const char[] name, bool dontBroadcast)
+public void Event_TeamPlayWinPanel(Event event, const char[] name, bool dontBroadcast)
 {
 	if (g_ChangeMapAtRoundEnd)
 	{
 		g_ChangeMapAtRoundEnd = false;
-		CreateTimer(2.0, Timer_ChangeMap, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(2.0, Timer_ChangeMap, _, TIMER_FLAG_NO_MAPCHANGE);
 		g_ChangeMapInProgress = true;
 	}
 
-	int bluescore = GetEventInt(event, "blue_score");
-	int redscore = GetEventInt(event, "red_score");
+	int bluescore = event.GetInt("blue_score");
+	int redscore = event.GetInt("red_score");
 
-	if (GetEventInt(event, "round_complete") == 1 || strcmp(name, "arena_win_panel") == 0)
+	if (event.GetInt("round_complete") == 1 || strcmp(name, "arena_win_panel") == 0)
 	{
 		g_TotalRounds++;
 
-		if (!GetArraySize(g_MapList) || g_HasVoteStarted || g_MapVoteCompleted || !g_bEndOfMapVote)
+		if (!g_MapList.Length || g_HasVoteStarted || g_MapVoteCompleted || !g_bEndOfMapVote)
 			return;
 
 		CheckMaxRounds(g_TotalRounds);
 
-		switch (GetEventInt(event, "winning_team"))
+		switch (event.GetInt("winning_team"))
 		{
 			case 3:
 			{
@@ -100,9 +100,9 @@ public void Event_TeamPlayWinPanel(Handle event, const char[] name, bool dontBro
 	}
 }
 
-public void Event_MvMWinPanel(Handle event, const char[] name, bool dontBroadcast)
+public void Event_MvMWinPanel(Event event, const char[] name, bool dontBroadcast)
 {
-	if (GetEventInt(event, "winning_team") == 2)
+	if (event.GetInt("winning_team") == 2)
 	{
 		int objectiveEnt = EntRefToEntIndex(g_ObjectiveEnt);
 		if (objectiveEnt != INVALID_ENT_REFERENCE)
@@ -113,12 +113,12 @@ public void Event_MvMWinPanel(Handle event, const char[] name, bool dontBroadcas
 	}
 }
 
-public void Event_Intermission(Handle event, const char[] name, bool dontBroadcast)
+public void Event_Intermission(Event event, const char[] name, bool dontBroadcast)
 {
 	g_HasIntermissionStarted = true;
 }
 
-public void Event_PhaseEnd(Handle event, const char[] name, bool dontBroadcast)
+public void Event_PhaseEnd(Event event, const char[] name, bool dontBroadcast)
 {
 	/* announce_phase_end fires for both half time and the end of the map, but intermission fires first for end of the map. */
 	if (g_HasIntermissionStarted)
@@ -130,9 +130,9 @@ public void Event_PhaseEnd(Handle event, const char[] name, bool dontBroadcast)
 	g_winCount[3] = t_score;
 }
 
-public void Event_WeaponRank(Handle event, const char[] name, bool dontBroadcast)
+public void Event_WeaponRank(Event event, const char[] name, bool dontBroadcast)
 {
-	int rank = GetEventInt(event, "weaponrank");
+	int rank = event.GetInt("weaponrank");
 	if (rank > g_TotalRounds)
 	{
 		g_TotalRounds = rank;
@@ -140,7 +140,7 @@ public void Event_WeaponRank(Handle event, const char[] name, bool dontBroadcast
 	}
 }
 
-public void Event_WinPanel(Handle event, const char[] name, bool dontBroadcast)
+public void Event_WinPanel(Event event, const char[] name, bool dontBroadcast)
 {
 	if (!g_bEndOfMapInfo)
 		return;
@@ -167,7 +167,7 @@ public void Event_WinPanel(Handle event, const char[] name, bool dontBroadcast)
 	Handle g_hHud = CreateHudSynchronizer();
 	SetHudTextParams(-1.0, 0.89, 7.0, 255, 71, 1, 1, 1, 4.0, 0.6, 0.6);
 
-	if (!bDynamicAvailable && g_hHud != INVALID_HANDLE || bDynamicAvailable)
+	if (!bDynamicAvailable && g_hHud != null || bDynamicAvailable)
 	{
 		for (int i = 1; i <= MaxClients; i++)
 		{
@@ -192,7 +192,7 @@ public void Event_WinPanel(Handle event, const char[] name, bool dontBroadcast)
 }
 
 /* You ask, why don't you just use team_score event? And I answer... Because CSS doesn't. */
-public void Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast)
+public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 {
 	if (g_RoundCounting == RoundCounting_ArmsRace)
 		return;
@@ -200,15 +200,15 @@ public void Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast)
 	if (g_ChangeMapAtRoundEnd)
 	{
 		g_ChangeMapAtRoundEnd = false;
-		CreateTimer(2.0, Timer_ChangeMap, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(2.0, Timer_ChangeMap, _, TIMER_FLAG_NO_MAPCHANGE);
 		g_ChangeMapInProgress = true;
 	}
 
 	int winner;
 	if (strcmp(name, "round_win") == 0 || strcmp(name, "dod_round_win") == 0)
-		winner = GetEventInt(event, "team"); // Nuclear Dawn & DoD:S
+		winner = event.GetInt("team"); // Nuclear Dawn & DoD:S
 	else
-		winner = GetEventInt(event, "winner");
+		winner = event.GetInt("winner");
 
 	if (winner == 0 || winner == 1 || !g_bEndOfMapVote)
 		return;
@@ -220,7 +220,7 @@ public void Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast)
 
 	g_winCount[winner]++;
 
-	if (!GetArraySize(g_MapList) || g_HasVoteStarted || g_MapVoteCompleted)
+	if (!g_MapList.Length || g_HasVoteStarted || g_MapVoteCompleted)
 	{
 		return;
 	}
@@ -229,28 +229,28 @@ public void Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast)
 	CheckMaxRounds(g_TotalRounds);
 }
 
-public void Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast)
+public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-	if (!GetArraySize(g_MapList) || g_Cvar_Fraglimit == INVALID_HANDLE || g_HasVoteStarted)
+	if (!g_MapList.Length || g_Cvar_Fraglimit == null || g_HasVoteStarted)
 		return;
 
-	if (!GetConVarInt(g_Cvar_Fraglimit) || !g_bEndOfMapVote)
+	if (!g_Cvar_Fraglimit.IntValue || !g_bEndOfMapVote)
 		return;
 
 	if (g_MapVoteCompleted)
 		return;
 
-	int fragger = GetClientOfUserId(GetEventInt(event, "attacker"));
+	int fragger = GetClientOfUserId(event.GetInt("attacker"));
 
 	if (!fragger)
 		return;
 
-	if (GetClientFrags(fragger) >= (GetConVarInt(g_Cvar_Fraglimit) - g_iStartFrags))
+	if (GetClientFrags(fragger) >= (g_Cvar_Fraglimit.IntValue - g_iStartFrags))
 	{
-		if (!g_WarningInProgress || g_WarningTimer == INVALID_HANDLE)
+		if (!g_WarningInProgress || g_WarningTimer == null)
 		{
 			SetupWarningTimer(WarningType_Vote, MapChange_MapEnd);
-			//InitiateVote(MapChange_MapEnd, INVALID_HANDLE);
+			//InitiateVote(MapChange_MapEnd, null);
 		}
 	}
 }

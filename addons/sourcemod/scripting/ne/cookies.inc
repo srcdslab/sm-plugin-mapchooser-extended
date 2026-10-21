@@ -9,8 +9,8 @@
 * ============================================================================
 */
 
-Handle g_hShowUnavailableMaps = INVALID_HANDLE;
-Handle g_hHideMapsTiers = INVALID_HANDLE;
+Cookie g_hShowUnavailableMaps = null;
+Cookie g_hHideMapsTiers = null;
 
 bool g_bShowUnavailableMaps[MAXPLAYERS + 1] = { false, ... };
 bool g_bHideMapsTiers[MAXPLAYERS + 1] = { false, ... };
@@ -18,8 +18,8 @@ bool g_bHideMapsTiers[MAXPLAYERS + 1] = { false, ... };
 stock void CookiesInit()
 {
 	SetCookieMenuItem(NE_CookieHandler, 0, "Nominations Extended Settings");
-	g_hShowUnavailableMaps = RegClientCookie("NE_hide_unavailable", "Hide unavailable maps from the nominations list", CookieAccess_Protected);
-	g_hHideMapsTiers = RegClientCookie("NE_hide_maps_tiers", "Hide Maps Tiers names from the nominations list", CookieAccess_Protected);
+	g_hShowUnavailableMaps = new Cookie("NE_hide_unavailable", "Hide unavailable maps from the nominations list", CookieAccess_Protected);
+	g_hHideMapsTiers = new Cookie("NE_hide_maps_tiers", "Hide Maps Tiers names from the nominations list", CookieAccess_Protected);
 
 	InitNomBanCookies();
 
@@ -46,13 +46,13 @@ public void OnClientCookiesCached(int client)
 
 public void ReadClientCookies(int client) {
 	char buffer[128];
-	GetClientCookie(client, g_hShowUnavailableMaps, buffer, sizeof(buffer));
+	g_hShowUnavailableMaps.Get(client, buffer, sizeof(buffer));
 	// If no cookies was found (null), set the value to false as initial value
 	// Client can choose to enable the settings from the settings or nominate menu
 	// Otherwise, apply the value from the cookie
 	g_bShowUnavailableMaps[client] = (buffer[0] != '\0') ? view_as<bool>(StringToInt(buffer)) : false;
 
-	GetClientCookie(client, g_hHideMapsTiers, buffer, sizeof(buffer));
+	g_hHideMapsTiers.Get(client, buffer, sizeof(buffer));
 	g_bHideMapsTiers[client] = (buffer[0] != '\0') ? view_as<bool>(StringToInt(buffer)) : false;
 
 	ReadClientNombanCookies(client);
@@ -65,10 +65,10 @@ public void SetClientCookies(int client)
 
 	char sValue[8];
 	Format(sValue, sizeof(sValue), "%i", g_bShowUnavailableMaps[client]);
-	SetClientCookie(client, g_hShowUnavailableMaps, sValue);
+	g_hShowUnavailableMaps.Set(client, sValue);
 
 	Format(sValue, sizeof(sValue), "%i", g_bHideMapsTiers[client]);
-	SetClientCookie(client, g_hHideMapsTiers, sValue);
+	g_hHideMapsTiers.Set(client, sValue);
 
 	SaveClientNombanStatus(client);
 }

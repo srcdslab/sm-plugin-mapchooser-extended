@@ -9,9 +9,9 @@
 * ============================================================================
 */
 
-Handle g_mapTrie;
-Handle g_MapList = INVALID_HANDLE;
-Handle g_AdminMapList = INVALID_HANDLE;
+StringMap g_mapTrie;
+ArrayList g_MapList = null;
+ArrayList g_AdminMapList = null;
 
 #define MAPSTATUS_ENABLED (1<<0)
 #define MAPSTATUS_DISABLED (1<<1)
@@ -31,34 +31,34 @@ bool g_bNEAllowed = false;		// True if Nominations is available to players.
 stock void InitializeMapLists()
 {
 	int arraySize = ByteCountToCells(PLATFORM_MAX_PATH);
-	g_MapList = CreateArray(arraySize);
-	g_AdminMapList = CreateArray(arraySize);
-	g_mapTrie = CreateTrie();
+	g_MapList = new ArrayList(arraySize);
+	g_AdminMapList = new ArrayList(arraySize);
+	g_mapTrie = new StringMap();
 }
 
 stock void VerifyMapLists()
 {
-	if (ReadMapList(g_MapList, g_mapFileSerial, "nominations", MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_MAPSFOLDER) == INVALID_HANDLE)
+	if (ReadMapList(g_MapList, g_mapFileSerial, "nominations", MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_MAPSFOLDER) == null)
 	{
 		if (g_mapFileSerial == -1)
 			SetFailState("Unable to create a valid map list.");
 	}
 
-	if (ReadMapList(g_AdminMapList, g_AdminMapFileSerial, "sm_nominate_addmap menu", MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_NO_DEFAULT|MAPLIST_FLAG_MAPSFOLDER) == INVALID_HANDLE)
+	if (ReadMapList(g_AdminMapList, g_AdminMapFileSerial, "sm_nominate_addmap menu", MAPLIST_FLAG_CLEARARRAY|MAPLIST_FLAG_NO_DEFAULT|MAPLIST_FLAG_MAPSFOLDER) == null)
 	{
 		if (g_AdminMapFileSerial == -1)
 			SetFailState("Unable to create a valid admin map list.");
 	}
 	else
 	{
-		for (int i = 0; i < GetArraySize(g_MapList); i++)
+		for (int i = 0; i < g_MapList.Length; i++)
 		{
 			static char map[PLATFORM_MAX_PATH];
-			GetArrayString(g_MapList, i, map, sizeof(map));
+			g_MapList.GetString(i, map, sizeof(map));
 
-			int Index = FindStringInArray(g_AdminMapList, map);
+			int Index = g_AdminMapList.FindString(map);
 			if (Index != -1)
-				RemoveFromArray(g_AdminMapList, Index);
+				g_AdminMapList.Erase(Index);
 		}
 	}
 }
@@ -70,8 +70,8 @@ stock void InitTimerDelayNominate()
 
 stock void UpdateMapTrie()
 {
-	bool bExcludeOld = GetConVarBool(g_Cvar_ExcludeOld);
-	bool bExcludeCurrent = GetConVarBool(g_Cvar_ExcludeCurrent);
+	bool bExcludeOld = g_Cvar_ExcludeOld.BoolValue;
+	bool bExcludeCurrent = g_Cvar_ExcludeCurrent.BoolValue;
 
 	static char map[PLATFORM_MAX_PATH];
 	static char currentMap[PLATFORM_MAX_PATH];
@@ -79,20 +79,20 @@ stock void UpdateMapTrie()
 
 	if (bExcludeOld)
 	{
-		excludeMaps = CreateArray(ByteCountToCells(PLATFORM_MAX_PATH));
+		excludeMaps = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
 		GetExcludeMapList(excludeMaps);
 	}
 
 	if (bExcludeCurrent)
 		GetCurrentMap(currentMap, sizeof(currentMap));
 
-	ClearTrie(g_mapTrie);
+	g_mapTrie.Clear();
 
-	for (int i = 0; i < GetArraySize(g_MapList); i++)
+	for (int i = 0; i < g_MapList.Length; i++)
 	{
 		int status = MAPSTATUS_ENABLED;
 
-		GetArrayString(g_MapList, i, map, sizeof(map));
+		g_MapList.GetString(i, map, sizeof(map));
 
 		if (bExcludeCurrent)
 		{
@@ -103,11 +103,11 @@ stock void UpdateMapTrie()
 		/* Dont bother with this check if the current map check passed */
 		if (bExcludeOld && status == MAPSTATUS_ENABLED)
 		{
-			if (FindStringInArray(excludeMaps, map) != -1)
+			if (excludeMaps.FindString(map) != -1)
 				status = MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_PREVIOUS;
 		}
 
-		SetTrieValue(g_mapTrie, map, status);
+		g_mapTrie.SetValue(map, status);
 	}
 
 	if (excludeMaps)
@@ -140,14 +140,14 @@ public void OnNominationRemoved(const char[] map, int owner)
 	int status;
 
 	/* Is the map in our list? */
-	if (!GetTrieValue(g_mapTrie, map, status))
+	if (!g_mapTrie.GetValue(map, status))
 		return;
 
 	/* Was the map disabled due to being nominated */
 	if ((status & MAPSTATUS_EXCLUDE_NOMINATED) != MAPSTATUS_EXCLUDE_NOMINATED)
 		return;
 
-	SetTrieValue(g_mapTrie, map, MAPSTATUS_ENABLED);
+	g_mapTrie.SetValue(map, MAPSTATUS_ENABLED);
 }
 
 stock bool IsNominateAllowed(int client)
@@ -199,15 +199,15 @@ stock bool IsNominateAllowed(int client)
 
 stock int GetVIPTimeRestriction()
 {
-	if (!GetConVarBool(g_Cvar_VIPTimeframe))
+	if (!g_Cvar_VIPTimeframe.BoolValue)
 		return 0;
 
 	char sTime[8];
 	FormatTime(sTime, sizeof(sTime), "%H%M");
 
 	int CurTime = StringToInt(sTime);
-	int MinTime = GetConVarInt(g_Cvar_VIPTimeframeMinTime);
-	int MaxTime = GetConVarInt(g_Cvar_VIPTimeframeMaxTime);
+	int MinTime = g_Cvar_VIPTimeframeMinTime.IntValue;
+	int MaxTime = g_Cvar_VIPTimeframeMaxTime.IntValue;
 
 	//Wrap around.
 	CurTime = (CurTime <= MinTime) ? CurTime + 2400 : CurTime;
@@ -279,11 +279,11 @@ stock bool IsMapRestricted(int client, char[] map)
 	GetMapGroupRestriction(map, client) >= 0 || IsClientMapAdminRestricted(map, client) || IsClientMapVIPRestricted(map, client) || IsClientMapLeaderRestricted(map, client));
 }
 
-public int AlphabeticSortCallback(int index1, int index2, Handle array, Handle hndl)
+public int AlphabeticSortCallback(int index1, int index2, ArrayList array, ArrayList hndl)
 {
 	char map1[PLATFORM_MAX_PATH], map2[PLATFORM_MAX_PATH];
-	GetArrayString(view_as<ArrayList>(array), index1, map1, sizeof(map1));
-	GetArrayString(view_as<ArrayList>(array), index2, map2, sizeof(map2));
+	view_as<ArrayList>(array).GetString(index1, map1, sizeof(map1));
+	view_as<ArrayList>(array).GetString(index2, map2, sizeof(map2));
 
 	return strcmp(map1, map2, false);
 }
