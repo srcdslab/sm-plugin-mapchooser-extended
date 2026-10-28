@@ -220,20 +220,20 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 		}
 	}
 
-	StringMap displayCache = new StringMap();
+	// When restrictions are not active nothing is unavailable, so every map stays visible.
+	bool bHideUnavailable = bCached && !g_bShowUnavailableMaps[client] && AreRestrictionsActive();
 
-	ArrayList tempMapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
-	for (int i = 0; i < g_MapList.Length; i++)
+	// The pool is sorted and its display names are resolved once, not on every menu build
+	UpdateSortedMapList();
+
+	char display[PLATFORM_MAX_PATH];
+	for (int i = 0; i < g_SortedMapList.Length; i++)
 	{
-		char display[PLATFORM_MAX_PATH];
-		char description[PLATFORM_MAX_PATH];
-
-		g_MapList.GetString(i, map, sizeof(map));
+		g_SortedMapList.GetString(i, map, sizeof(map));
 
 		// If client has cookies cached and doesnt want to show unavailable maps,
-		// hide the ones that are currently not nominable. When restrictions are
-		// not active nothing is unavailable, so every map stays visible.
-		if (bCached && !g_bShowUnavailableMaps[client] && AreRestrictionsActive() &&
+		// hide the ones that are currently not nominable.
+		if (bHideUnavailable &&
 			!(GetMapCooldown(map) == 0 &&
 			GetMapCooldownTime(map) < GetTime() &&
 			GetMapTimeRestriction(map) == 0 &&
@@ -243,34 +243,13 @@ Menu BuildMapMenu(const char[] filter, int client = -1)
 			continue;
 		}
 
-		MCE_GetMapDisplayName(map, display, sizeof(display));
-		if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
-			FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description);
+		g_SortedMapDisplay.GetString(i, display, sizeof(display));
 
 		if (filter[0] && StrContains(map, filter, false) == -1 && StrContains(display, filter, false) == -1)
 			continue;
 
-		if (display[0])
-			displayCache.SetString(map, display);
-
-		tempMapList.PushString(map);
-	}
-
-	tempMapList.SortCustom(AlphabeticSortCallback);
-
-	for (int i = 0; i < tempMapList.Length; i++)
-	{
-		tempMapList.GetString(i, map, sizeof(map));
-		
-		char display[PLATFORM_MAX_PATH];
-		if (!displayCache.GetString(map, display, sizeof(display)))
-			strcopy(display, sizeof(display), map);
-
 		menu.AddItem(map, display);
 	}
-
-	delete tempMapList;
-	delete displayCache;
 
 	menu.ExitButton = true;
 	return menu;

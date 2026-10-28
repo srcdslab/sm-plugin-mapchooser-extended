@@ -12,6 +12,9 @@
 StringMap g_mapTrie;
 ArrayList g_MapList = null;
 ArrayList g_AdminMapList = null;
+ArrayList g_SortedMapList = null;		// g_MapList sorted alphabetically, rebuilt when g_bSortedMapListDirty is set
+ArrayList g_SortedMapDisplay = null;	// Menu display text of each g_SortedMapList entry
+bool g_bSortedMapListDirty = true;
 
 #define MAPSTATUS_ENABLED (1<<0)
 #define MAPSTATUS_DISABLED (1<<1)
@@ -33,6 +36,8 @@ stock void InitializeMapLists()
 	int arraySize = ByteCountToCells(PLATFORM_MAX_PATH);
 	g_MapList = new ArrayList(arraySize);
 	g_AdminMapList = new ArrayList(arraySize);
+	g_SortedMapList = new ArrayList(arraySize);
+	g_SortedMapDisplay = new ArrayList(arraySize);
 	g_mapTrie = new StringMap();
 }
 
@@ -112,6 +117,39 @@ stock void UpdateMapTrie()
 
 	if (excludeMaps)
 		delete excludeMaps;
+
+	// The nomination pool may have changed, rebuild the sorted menu list on next use
+	g_bSortedMapListDirty = true;
+}
+
+stock void UpdateSortedMapList()
+{
+	if (!g_bSortedMapListDirty && g_SortedMapList.Length == g_MapList.Length)
+		return;
+
+	delete g_SortedMapList;
+	g_SortedMapList = g_MapList.Clone();
+	g_SortedMapList.SortCustom(AlphabeticSortCallback);
+	g_SortedMapDisplay.Clear();
+
+	static char map[PLATFORM_MAX_PATH];
+	char display[PLATFORM_MAX_PATH];
+	char description[PLATFORM_MAX_PATH];
+	for (int i = 0; i < g_SortedMapList.Length; i++)
+	{
+		g_SortedMapList.GetString(i, map, sizeof(map));
+
+		MCE_GetMapDisplayName(map, display, sizeof(display));
+		if (MCE_GetMapDescription(map, description, sizeof(description)) && description[0])
+			FormatEx(display, sizeof(display), "%s | %s", display[0] ? display : map, description);
+
+		if (!display[0])
+			strcopy(display, sizeof(display), map);
+
+		g_SortedMapDisplay.PushString(display);
+	}
+
+	g_bSortedMapListDirty = false;
 }
 
 stock void MapEndCleanUp()

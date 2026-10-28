@@ -95,6 +95,13 @@ public void OnAllPluginsLoaded()
 	FindMCECvars();
 }
 
+public void OnLibraryAdded(const char[] name)
+{
+	// mapchooser_extended (re)loaded its config, display names may have changed
+	if (strcmp(name, "mapchooser") == 0)
+		g_bSortedMapListDirty = true;
+}
+
 public void OnMapEnd()
 {
 	MapEndCleanUp();
