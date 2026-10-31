@@ -121,7 +121,8 @@ public int Native_InitiateVote(Handle plugin, int numParams)
 
 	LogAction(-1, -1, "[MCE] Starting map vote countdown because players RTV.");
 
-	SetupWarningTimer(WarningType_Vote, when, inputarray);
+	// The caller keeps its list: we can't delete a handle owned by another plugin, work on our own copy
+	SetupWarningTimer(WarningType_Vote, when, inputarray != null ? inputarray.Clone() : null);
 	//InitiateVote(when, inputarray);
 	return 0;
 }
