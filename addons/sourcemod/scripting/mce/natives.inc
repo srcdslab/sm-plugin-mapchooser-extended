@@ -272,6 +272,8 @@ public int Native_GetMapCooldown(Handle plugin, int numParams)
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
 
+	NormalizeMapName(map);
+
 	int Cooldown = 0;
 	g_OldMapList.GetValue(map, Cooldown);
 
@@ -291,6 +293,8 @@ public int Native_GetMapCooldownTime(Handle plugin, int numParams)
 
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
+
+	NormalizeMapName(map);
 
 	int Cooldown = 0;
 	g_TimeMapList.GetValue(map, Cooldown);
