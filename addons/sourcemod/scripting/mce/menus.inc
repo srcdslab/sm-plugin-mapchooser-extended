@@ -640,7 +640,7 @@ public int Handler_MapVoteMenu(Menu menu, MenuAction action, int param1, int par
 				}
 			}
 
-			char mapDisplay[32]
+			char mapDisplay[32];
 			if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
 				Format(buffer, sizeof(buffer), "%s [%s]", buffer, mapDisplay);
 

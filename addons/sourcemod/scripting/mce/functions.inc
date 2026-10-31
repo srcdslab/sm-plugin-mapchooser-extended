@@ -294,7 +294,7 @@ stock void CleanOnMapEnd()
 	delete TimeMapListSnapshot;
 }
 
-stock void NominationsOnClientDisconnect(client)
+stock void NominationsOnClientDisconnect(int client)
 {
 	int index = g_NominateOwners.FindValue(client);
 
@@ -983,7 +983,7 @@ stock int TimeStrToSeconds(const char[] str)
 	return seconds;
 }
 
-stock ClearStoredNomination(int client)
+stock void ClearStoredNomination(int client)
 {
 	g_sNominations[client][0] = '\0';
 }
