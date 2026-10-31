@@ -43,6 +43,7 @@ ArrayList g_NominateOwners = null;
 StringMap g_OldMapList;
 StringMap g_TimeMapList;
 ArrayList g_NextMapList = null;
+ArrayList g_WarningMapList = null;	// Map list of the pending warning/retry countdown, owned until the vote starts
 Menu g_VoteMenu = null;
 KeyValues g_Config;
 

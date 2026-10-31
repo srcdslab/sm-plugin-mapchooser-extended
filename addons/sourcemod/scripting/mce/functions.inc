@@ -210,9 +210,13 @@ stock void CleanOnMapEnd()
 	g_ChangeMapInProgress = false;
 	g_HasIntermissionStarted = false;
 
+	// TIMER_FLAG_NO_MAPCHANGE timers are killed by SourceMod, only forget them
 	g_VoteTimer = null;
 	g_RetryTimer = null;
 	g_WarningTimer = null;
+	g_WarningInProgress = false;
+	g_WarningTimePassed = 0;
+	delete g_WarningMapList;
 	g_RunoffCount = 0;
 
 	static char map[PLATFORM_MAX_PATH];
@@ -389,6 +393,7 @@ public Action Timer_StartMapVote(Handle timer, DataPack data)
 	{
 		ClearWarningCountdown(timer);
 		g_WarningInProgress = false;
+		delete g_WarningMapList;
 
 		if (g_bLockNominationsAtWarning)
 			UnlockNominations(null);
@@ -438,8 +443,10 @@ public Action Timer_StartMapVote(Handle timer, DataPack data)
 	{
 		ClearWarningCountdown(timer);
 
-		ArrayList hndl = view_as<ArrayList>(data.ReadCell());
-		InitiateVote(mapChange, hndl, force);
+		// InitiateVote() takes ownership of the list
+		ArrayList mapList = g_WarningMapList;
+		g_WarningMapList = null;
+		InitiateVote(mapChange, mapList, force);
 
 		return Plugin_Stop;
 	}
@@ -691,7 +698,11 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 {
 	// g_WaitingForVote: the retry countdown of InitiateVote() is running and will start the vote itself
 	if (!g_MapList.Length || g_ChangeMapInProgress || g_HasVoteStarted || g_WaitingForVote || (!force && ((when == MapChange_MapEnd && !g_bEndOfMapVote) || g_MapVoteCompleted)))
+	{
+		// We own mapList
+		delete mapList;
 		return;
+	}
 
 	bool interrupted = false;
 	if (g_WarningInProgress && g_WarningTimer != null)
@@ -699,6 +710,11 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 		interrupted = true;
 		delete g_WarningTimer;
 	}
+
+	// Replaces the list of an interrupted countdown
+	if (g_WarningMapList != mapList)
+		delete g_WarningMapList;
+	g_WarningMapList = mapList;
 
 	g_WarningInProgress = true;
 
@@ -737,7 +753,6 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 	data.WriteString(translationKey);
 	data.WriteCell(view_as<int>(when));
 	data.WriteCell(view_as<int>(force));
-	data.WriteCell(view_as<int>(mapList));
 	data.Reset();
 }
 
