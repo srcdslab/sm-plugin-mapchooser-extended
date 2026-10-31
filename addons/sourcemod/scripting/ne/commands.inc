@@ -675,6 +675,7 @@ public Action Command_UnNominate(int client, int args)
 
 	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", name, mapnameInChat);
 	LogAction(client, -1, "\"%L\" has removed his nomination \"%s\".", client, map);
+	Forward_OnMapNominationRemove(client, map);
 
 	return Plugin_Handled;
 }
