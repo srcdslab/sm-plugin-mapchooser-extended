@@ -75,6 +75,7 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 	}
 
 	g_ChangeTime = when;
+	g_VoteForced = force;
 
 	g_WaitingForVote = false;
 
@@ -531,7 +532,7 @@ public void Handler_MapVoteFinished(Menu menu,
 			LogAction(-1, -1, "[MCE] The top maps had the same number of votes. A revote is needed!");
 			CPrintToChatAll("{green}[MCE]{default} %t", "Tie Vote", mapList.Length);
 
-			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
+			SetupWarningTimer(WarningType_Revote, g_ChangeTime, mapList, g_VoteForced);
 			return;
 		}
 		else if (highest_votes < required_votes)
@@ -565,7 +566,7 @@ public void Handler_MapVoteFinished(Menu menu,
 			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed", required_percent);
 			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed New Vote");
 
-			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
+			SetupWarningTimer(WarningType_Revote, g_ChangeTime, mapList, g_VoteForced);
 			return;
 		}
 	}
