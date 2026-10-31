@@ -45,8 +45,10 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 
 		data.WriteCell(view_as<int>(when));
 		data.WriteCell(view_as<int>(force));
-		data.WriteCell(view_as<int>(inputlist));
 		data.Reset();
+
+		// Kept for the retry, Timer_StartMapVote() hands it back to us
+		g_WarningMapList = inputlist;
 		return;
 	}
 
@@ -54,11 +56,23 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 	if (g_MapVoteCompleted && g_ChangeMapInProgress)
 	{
 		g_WaitingForVote = false;
+		delete inputlist;
 		return;
 	}
 
 	CheckMapRestrictions(true, true);
 	CreateNextVote();
+
+	if (inputlist == null && !g_NominateList.Length && !g_NextMapList.Length)
+	{
+		// Checked before creating the menu, there is nothing to free or reset afterwards
+		LogError("No maps available for vote.");
+		g_WaitingForVote = false;
+
+		if (g_bLockNominationsAtWarning)
+			UnlockNominations(null);
+		return;
+	}
 
 	g_ChangeTime = when;
 	g_VoteForced = force;
@@ -173,18 +187,11 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 		int count = 0;
 		int availableMaps = g_NextMapList.Length;
 
+		// i > 0 here: a vote without nominations nor random maps is refused before the menu is created
 		if (i < voteSize && availableMaps == 0)
 		{
-			if (i == 0)
-			{
-				LogError("No maps available for vote.");
-				return;
-			}
-			else
-			{
-				LogMessage("Not enough maps to fill map list, reducing map count. Adjust mce_include and mce_exclude to avoid this warning.");
-				voteSize = i;
-			}
+			LogMessage("Not enough maps to fill map list, reducing map count. Adjust mce_include and mce_exclude to avoid this warning.");
+			voteSize = i;
 		}
 
 		while(i < voteSize)
@@ -687,6 +694,12 @@ public int Handler_MapVoteMenu(Menu menu, MenuAction action, int param1, int par
 				LogAction(-1, -1, "[MCE] No votes has been receive.");
 
 			g_HasVoteStarted = false;
+			// A cancelled revote must not keep blocking CanMapChooserStartVote()
+			g_PendingRevoteActive = false;
+
+			// Same as after an extend: nominations were locked by the warning
+			if (!g_MapVoteCompleted && g_bLockNominationsAtWarning)
+				CreateTimer(g_fTimerUnlockNoms, UnlockNominations, _, TIMER_FLAG_NO_MAPCHANGE);
 		}
 	}
 
