@@ -712,6 +712,7 @@ public Action Command_NominateList(int client, int args)
 
 	if (!PopulateNominateListMenu(NominateListMenu, client))
 	{
+		delete NominateListMenu;
 		CPrintToChat(client, "{green}[NE]{default} %t", "No Maps Nominated");
 		return Plugin_Handled;
 	}
