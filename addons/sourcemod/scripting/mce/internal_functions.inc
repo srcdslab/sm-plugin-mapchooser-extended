@@ -344,10 +344,21 @@ stock int InternalGetMapMaxPlayers(const char[] map)
 	return MaxPlayers;
 }
 
+// Every group helper starts from the root: the other getters leave the cursor inside a map section,
+// and JumpToKey() only searches the children of the current key.
+stock bool InternalJumpToGroups()
+{
+	if (!g_Config)
+		return false;
+
+	g_Config.Rewind();
+	return g_Config.JumpToKey("_groups");
+}
+
 stock int InternalGetMapGroupID(const char[] map)
 {
 	int group = 0;
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	if (InternalJumpToGroups())
 	{
 		if (!g_Config.GotoFirstSubKey(false))
 		{
@@ -377,7 +388,7 @@ stock int InternalGetMapGroupID(const char[] map)
 stock int InternalGetMapGroups(const char[] map, int[] groups, int size)
 {
 	int found = 0;
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	if (InternalJumpToGroups())
 	{
 		if (!g_Config.GotoFirstSubKey(false))
 		{
@@ -412,7 +423,7 @@ stock int InternalGetGroupMax(int group)
 {
 	char groupstr[8];
 	IntToString(group, groupstr, sizeof(groupstr));
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	if (InternalJumpToGroups())
 	{
 		if (g_Config.JumpToKey(groupstr, false))
 		{
@@ -431,7 +442,7 @@ stock int InternalGetGroupCooldown(int group)
 {
 	char groupstr[8];
 	IntToString(group, groupstr, sizeof(groupstr));
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	if (InternalJumpToGroups())
 	{
 		if (g_Config.JumpToKey(groupstr, false))
 		{
@@ -450,80 +461,66 @@ stock int InternalGetGroupCooldownTime(int group)
 {
 	char groupstr[8];
 	IntToString(group, groupstr, sizeof(groupstr));
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	int cooldown = 0;
+	if (InternalJumpToGroups())
 	{
 		if (g_Config.JumpToKey(groupstr, false))
 		{
 			char time[16];
 			g_Config.GetString("_cooldown_time", time, sizeof(time), "");
 			if (time[0])
-			{
-				g_Config.Rewind();
-				return TimeStrToSeconds(time);
-			}
-			g_Config.Rewind();
-		}
-	}
-	return 0;
-}
-
-stock void InternalSetGroupCooldownToMaps(int group, int cooldown)
-{
-	if (g_Config && g_Config.JumpToKey("_groups"))
-	{
-		char groupstr[8];
-		IntToString(group, groupstr, sizeof(groupstr));
-		if (g_Config.JumpToKey(groupstr, false))
-		{
-			if (!g_Config.GotoFirstSubKey(false))
-			{
-				g_Config.Rewind();
-				return;
-			}
-
-			do
-			{
-				char map[PLATFORM_MAX_PATH];
-				g_Config.GetSectionName(map, sizeof(map));
-				if (strncmp(map, "_", 1) == 0) // Skip: All groups settings, always starting with "_"
-					continue;
-
-				// Use time-based cooldown instead of counter-based
-				int cooldownTime = InternalGetGroupCooldownTime(group);
-				if (cooldownTime > 0)
-				{
-					ExcludeMapTime(map, cooldownTime, g_iSharedCDMode);
-				}
-				else
-				{
-					ExcludeMap(map, cooldown, g_iSharedCDMode);
-				}
-			}
-			while (g_Config.GotoNextKey());
-
-			g_Config.Rewind();
-		}
-	}
-}
-
-stock void InternalGetGroupName(int group)
-{
-	char groupstr[8];
-	IntToString(group, groupstr, sizeof(groupstr));
-	if (g_Config && g_Config.JumpToKey("_groups"))
-	{
-		if (g_Config.JumpToKey(groupstr, false))
-		{
-			char sGrpName[PLATFORM_MAX_PATH];
-			g_Config.GetString("_name", sGrpName, sizeof(sGrpName), "This group has no name configured.");
-			g_Config.Rewind();
-			return;
+				cooldown = TimeStrToSeconds(time);
 		}
 
 		g_Config.Rewind();
 	}
 
-	return;
+	return cooldown;
+}
+
+// Applies the group cooldowns to every map of the group, following mce_cooldown_mode like per-map cooldowns do.
+// Returns true if a cooldown was set (the caller then stores the cooldowns file once).
+stock bool InternalSetGroupCooldownToMaps(int group, int cooldown, int cooldownTime)
+{
+	bool applyTime = cooldownTime > 0 && ShouldApplyTimeCooldown();
+	bool applyCounter = cooldown > 0 && ShouldApplyCounterCooldown() && !(applyTime && g_CooldownMode == CooldownMode_Priority);
+
+	if ((!applyTime && !applyCounter) || !InternalJumpToGroups())
+		return false;
+
+	// Collect the maps first: excluding a map may read the config and move the cursor
+	ArrayList maps = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
+
+	char groupstr[8];
+	IntToString(group, groupstr, sizeof(groupstr));
+	if (g_Config.JumpToKey(groupstr, false) && g_Config.GotoFirstSubKey(false))
+	{
+		char map[PLATFORM_MAX_PATH];
+		do
+		{
+			g_Config.GetSectionName(map, sizeof(map));
+			if (map[0] != '_') // Skip: All groups settings, always starting with "_"
+				maps.PushString(map);
+		}
+		while (g_Config.GotoNextKey(false));
+	}
+	g_Config.Rewind();
+
+	bool changed = false;
+	char map[PLATFORM_MAX_PATH];
+	for (int i = 0; i < maps.Length; i++)
+	{
+		maps.GetString(i, map, sizeof(map));
+
+		if (applyCounter && InternalExcludeMap(map, cooldown, g_iSharedCDMode))
+			changed = true;
+
+		if (applyTime && InternalExcludeMapTime(map, cooldownTime, g_iSharedCDMode))
+			changed = true;
+	}
+
+	delete maps;
+	return changed;
 }
 
 // 0 = Okay
