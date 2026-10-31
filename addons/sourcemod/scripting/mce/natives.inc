@@ -215,7 +215,7 @@ public int Native_CanNominate(Handle plugin, int numParams)
 		return view_as<int>(CanNominate_No_VoteComplete);
 	}
 
-	if (g_NominateCount >= GetVoteSize())
+	if (GetNominateCount() >= GetVoteSize())
 	{
 		return view_as<int>(CanNominate_No_VoteFull);
 	}
