@@ -59,8 +59,6 @@ bool g_HasIntermissionStarted = false;
 int g_WarningTimePassed = 0;	// Seconds elapsed in the current warning or retry countdown
 int g_mapFileSerial = -1;
 
-int g_NominateCount = 0;
-int g_NominateReservedCount = 0;
 MapChange g_ChangeTime;
 bool g_VoteForced;	// The running vote was forced by sm_mapvote, its runoff is too
 

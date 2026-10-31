@@ -38,17 +38,13 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	}
 
 	/* Too many nominated maps. */
-	if (g_NominateCount >= GetVoteSize(0) && !force)
+	if (!force && GetNominateCount() >= GetVoteSize(0))
 	{
 		return Nominate_VoteFull;
 	}
 
 	g_NominateList.PushString(map);
 	g_NominateOwners.Push(owner);
-	if (owner == 0 && g_NominateReservedCount < GetVoteSize(1))
-		g_NominateReservedCount++;
-	else
-		g_NominateCount++;
 
 	while(g_NominateList.Length > GetVoteSize(2))
 	{
@@ -61,11 +57,6 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 		g_NominateList.Erase(0);
 		g_NominateOwners.Erase(0);
 		ClearStoredNomination(owner_);
-
-		if (owner_ == 0)
-			g_NominateReservedCount--;
-		else
-			g_NominateCount--;
 	}
 
 	strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
@@ -95,10 +86,6 @@ bool InternalRemoveNominationByMap(char[] map)
 			Forward_OnNominationRemoved(oldmap, g_NominateOwners.Get(i));
 
 			int owner = g_NominateOwners.Get(i);
-			if (owner)
-				g_NominateCount--;
-			else
-				g_NominateReservedCount--;
 
 			g_NominateList.Erase(i);
 			g_NominateOwners.Erase(i);
@@ -124,7 +111,6 @@ bool InternalRemoveNominationByOwner(int owner)
 		g_NominateList.Erase(index);
 		g_NominateOwners.Erase(index);
 		ClearStoredNomination(owner);
-		g_NominateCount--;
 
 		return true;
 	}

@@ -195,8 +195,6 @@ stock void ConfigureBonusRoundTime()
 stock void ClearNominationsLists()
 {
 	// Wipe out our nominations list
-	g_NominateCount = 0;
-	g_NominateReservedCount = 0;
 	g_NominateOwners.Clear();
 	g_NominateList.Clear();
 }
@@ -311,7 +309,20 @@ stock void NominationsOnClientDisconnect(client)
 	g_NominateOwners.Erase(index);
 	g_NominateList.Erase(index);
 	ClearStoredNomination(client);
-	g_NominateCount--;
+}
+
+// Player nominations, plus the admin (owner 0) nominations that don't fit in the reserved slots (mce_include_reserved)
+stock int GetNominateCount()
+{
+	int admins = 0;
+	for (int i = 0; i < g_NominateOwners.Length; i++)
+	{
+		if (!g_NominateOwners.Get(i))
+			admins++;
+	}
+
+	int overflow = admins - GetVoteSize(1);
+	return g_NominateOwners.Length - admins + (overflow > 0 ? overflow : 0);
 }
 
 void SetupTimeleftTimer()
@@ -851,7 +862,8 @@ void CheckMapRestrictions(bool time = false, bool players = false)
 		return;
 
 	static char map[PLATFORM_MAX_PATH];
-	for (int i = 0; i < g_NominateList.Length; i++)
+	// Backwards: removing an entry must not skip the next one
+	for (int i = g_NominateList.Length - 1; i >= 0; i--)
 	{
 		int client = g_NominateOwners.Get(i);
 		if (!client)
@@ -895,7 +907,6 @@ void CheckMapRestrictions(bool time = false, bool players = false)
 			g_NominateList.Erase(i);
 			g_NominateOwners.Erase(i);
 			ClearStoredNomination(client);
-			g_NominateCount--;
 		}
 	}
 }
