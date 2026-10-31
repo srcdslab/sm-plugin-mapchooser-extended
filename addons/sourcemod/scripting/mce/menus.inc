@@ -99,7 +99,6 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 
 		if (g_VoteMenu.Style == radioStyle)
 		{
-			g_BlockedSlots = true;
 			g_VoteMenu.AddItem(LINE_ONE, "Choose something...", ITEMDRAW_DISABLED);
 			g_VoteMenu.AddItem(LINE_TWO, "...will ya?", ITEMDRAW_DISABLED);
 			MenuRandomShuffleStart += 2;
@@ -109,8 +108,6 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 				MenuRandomShuffleStart++;
 			}
 		}
-		else
-			g_BlockedSlots = false;
 	}
 
 	if (g_bNoVoteOption)
@@ -661,34 +658,30 @@ public int Handler_MapVoteMenu(Menu menu, MenuAction action, int param1, int par
 			// If we receive 0 votes, pick at random.
 			if (param1 == VoteCancel_NoVotes && g_bNoVoteMode)
 			{
-				int count = menu.ItemCount;
-
-				int item;
 				static char map[PLATFORM_MAX_PATH];
 
-				do
+				// Only real maps: skip the blocked slots lines, "Extend" and "Don't Change"
+				ArrayList maps = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
+				for (int item = 0; item < menu.ItemCount; item++)
 				{
-					int startInt = 0;
-					if (g_BlockedSlots)
-					{
-						if (g_AddNoVote)
-						{
-							startInt = 2;
-						}
-						else
-						{
-							startInt = 3;
-						}
-					}
-					item = GetRandomInt(startInt, count - 1);
-					menu.GetItem(item, map, PLATFORM_MAX_PATH, _, _, _, param1);
+					GetMapItem(menu, item, map, PLATFORM_MAX_PATH);
+					if (IsMapValidEx(map))
+						maps.PushString(map);
 				}
-				while(strcmp(map, VOTE_EXTEND, false) == 0);
 
-				SetNextMap(map);
-				Forward_OnSetNextMap(map);
-				LogAction(-1, -1, "[MCE] No votes has been receive. Pickup a random map. Nextmap is : %s", map);
-				g_MapVoteCompleted = true;
+				if (maps.Length)
+				{
+					maps.GetString(GetRandomInt(0, maps.Length - 1), map, PLATFORM_MAX_PATH);
+
+					SetNextMap(map);
+					Forward_OnSetNextMap(map);
+					LogAction(-1, -1, "[MCE] No votes has been receive. Pickup a random map. Nextmap is : %s", map);
+					g_MapVoteCompleted = true;
+				}
+				else
+					LogAction(-1, -1, "[MCE] No votes has been receive. No map to pick from the vote.");
+
+				delete maps;
 			}
 			else
 				LogAction(-1, -1, "[MCE] No votes has been receive.");
