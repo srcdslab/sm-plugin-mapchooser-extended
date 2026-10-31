@@ -909,6 +909,7 @@ stock int FindIntInArray(int[] array, int size, int value)
 	return -1;
 }
 
+// Parses "60" (minutes), "30m", "2h", "1h30m", "2h15m30s"... A number without unit is read as minutes.
 stock int TimeStrToSeconds(const char[] str)
 {
 	int seconds = 0;
@@ -916,13 +917,34 @@ stock int TimeStrToSeconds(const char[] str)
 	for (int i = 0; i < maxlen;)
 	{
 		int val = 0;
-		i += StringToIntEx(str[i], val);
-		if (str[i] == 'h')
+		int read = StringToIntEx(str[i], val);
+		i += read;
+
+		switch (CharToLower(str[i]))
 		{
-			val *= 60;
-			i++;
+			case 'h':
+			{
+				seconds += val * 3600;
+				i++;
+			}
+			case 'm':
+			{
+				seconds += val * 60;
+				i++;
+			}
+			case 's':
+			{
+				seconds += val;
+				i++;
+			}
+			default:
+			{
+				seconds += val * 60;
+				// Skip unknown characters, otherwise the loop never advances
+				if (!read)
+					i++;
+			}
 		}
-		seconds += val * 60;
 	}
 	return seconds;
 }
