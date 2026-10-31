@@ -212,6 +212,7 @@ stock void CleanOnMapEnd()
 	g_VoteTimer = null;
 	g_RetryTimer = null;
 	g_WarningTimer = null;
+	g_ChangeMapTimer = null;
 	g_WarningInProgress = false;
 	g_WarningTimePassed = 0;
 	delete g_WarningMapList;
@@ -532,6 +533,7 @@ public void CheckMaxRounds(int roundcount)
 
 public Action Timer_ChangeMap(Handle hTimer, DataPack dp)
 {
+	g_ChangeMapTimer = null;
 	g_ChangeMapInProgress = false;
 
 	char map[PLATFORM_MAX_PATH];

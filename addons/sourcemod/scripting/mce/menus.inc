@@ -400,7 +400,7 @@ public void Handler_VoteFinishedGeneric(Menu menu,
 		{
 			// Blocks new votes until Timer_ChangeMap() runs, a map change before that kills the timer
 			DataPack data;
-			CreateDataTimer(4.0, Timer_ChangeMap, data, TIMER_FLAG_NO_MAPCHANGE);
+			g_ChangeMapTimer = CreateDataTimer(4.0, Timer_ChangeMap, data, TIMER_FLAG_NO_MAPCHANGE);
 			data.WriteString(map);
 			g_ChangeMapInProgress = true;
 		}

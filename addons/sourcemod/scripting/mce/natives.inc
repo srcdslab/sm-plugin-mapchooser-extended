@@ -664,6 +664,7 @@ public int Native_SimulateMapEnd(Handle plugin, int numParams)
 	delete g_VoteTimer;
 	delete g_RetryTimer;
 	delete g_WarningTimer;
+	delete g_ChangeMapTimer;
 
 	OnMapEnd();
 	return 0;

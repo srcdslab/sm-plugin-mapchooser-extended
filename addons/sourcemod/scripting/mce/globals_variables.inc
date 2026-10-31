@@ -35,6 +35,7 @@ enum
 Handle g_VoteTimer = null;
 Handle g_RetryTimer = null;
 Handle g_WarningTimer = null;
+Handle g_ChangeMapTimer = null;	// Pending Timer_ChangeMap()
 
 /* Data Handles */
 ArrayList g_MapList = null;
