@@ -222,8 +222,7 @@ stock void CleanOnMapEnd()
 	if (g_SaveCDOnMapEnd)
 	{
 		GetCurrentMap(map, PLATFORM_MAX_PATH);
-		if (g_bForceLowerCase)
-			StringToLowerCase(map);
+		NormalizeMapName(map);
 
 		// Apply cooldown mode based on cvar
 		switch (g_CooldownMode)
@@ -565,42 +564,39 @@ void CreateNextVote()
 	g_NextMapList.Clear();
 
 	static char map[PLATFORM_MAX_PATH];
+	static char currentMap[PLATFORM_MAX_PATH];
 	ArrayList tempMaps = g_MapList.Clone();
 
-	GetCurrentMap(map, PLATFORM_MAX_PATH);
-	if (g_bForceLowerCase)
-		StringToLowerCase(map);
-
-	RemoveStringFromArray(tempMaps, map);
-
-	if (ShouldApplyCounterCooldown() && tempMaps.Length > g_iExcludeMaps && InternalAreRestrictionsActive())
+	GetCurrentMap(currentMap, PLATFORM_MAX_PATH);
+	for (int i = tempMaps.Length - 1; i >= 0; i--)
 	{
-		StringMapSnapshot OldMapListSnapshot = g_OldMapList.Snapshot();
-		for (int i = 0; i < OldMapListSnapshot.Length; i++)
-		{
-			OldMapListSnapshot.GetKey(i, map, sizeof(map));
-			RemoveStringFromArray(tempMaps, map);
-		}
-		delete OldMapListSnapshot;
-	}
-
-	if (ShouldApplyTimeCooldown() && InternalAreRestrictionsActive())
-	{
-		int iCurrentTime = GetTime();
-		StringMapSnapshot TimeMapListSnapshot = g_TimeMapList.Snapshot();
-		for (int i = 0; i < TimeMapListSnapshot.Length; i++)
-		{
-			TimeMapListSnapshot.GetKey(i, map, sizeof(map));
-			int Cooldown;
-			g_TimeMapList.GetValue(map, Cooldown);
-
-			if (Cooldown > iCurrentTime)
-				RemoveStringFromArray(tempMaps, map);
-		}
-		delete TimeMapListSnapshot;
+		tempMaps.GetString(i, map, PLATFORM_MAX_PATH);
+		if (strcmp(map, currentMap, false) == 0)
+			tempMaps.Erase(i);
 	}
 
 	bool restrictionsActive = InternalAreRestrictionsActive();
+	bool applyCounter = ShouldApplyCounterCooldown() && tempMaps.Length > g_iExcludeMaps && restrictionsActive;
+	bool applyTime = ShouldApplyTimeCooldown() && restrictionsActive;
+
+	if (applyCounter || applyTime)
+	{
+		int iCurrentTime = GetTime();
+		for (int i = tempMaps.Length - 1; i >= 0; i--)
+		{
+			// The cooldown lists are keyed by normalized name (mce_force_lowercase), the map list is not
+			tempMaps.GetString(i, map, PLATFORM_MAX_PATH);
+			NormalizeMapName(map);
+
+			int Cooldown;
+			if ((applyCounter && g_OldMapList.ContainsKey(map)) ||
+				(applyTime && g_TimeMapList.GetValue(map, Cooldown) && Cooldown > iCurrentTime))
+			{
+				tempMaps.Erase(i);
+			}
+		}
+	}
+
 	int voteSize = GetVoteSize(2);
 
 	// group id -> number of maps of this group already in the vote
@@ -939,6 +935,13 @@ stock int TimeStrToSeconds(const char[] str)
 stock ClearStoredNomination(int client)
 {
 	g_sNominations[client][0] = '\0';
+}
+
+// Cooldown lists (g_OldMapList, g_TimeMapList, cooldowns.cfg) are keyed by this form of the map name
+stock void NormalizeMapName(char[] map)
+{
+	if (g_bForceLowerCase)
+		StringToLowerCase(map);
 }
 
 stock void StringToLowerCase(char[] input)
