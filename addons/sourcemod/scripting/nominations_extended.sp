@@ -107,6 +107,12 @@ public void OnMapEnd()
 	MapEndCleanUp();
 }
 
+public void OnClientConnected(int client)
+{
+	ResetClientCookies(client);
+	g_Player_NominationDelay[client] = 0;
+}
+
 public void OnClientDisconnect(int client)
 {
 	SetClientCookies(client);

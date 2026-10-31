@@ -26,16 +26,25 @@ stock void InitNomBanCookies()
 	g_hAdminNomBan = new Cookie("NE_nomban_admin", "Admin who nombanned", CookieAccess_Protected);
 }
 
+// A new client can take the slot of a previous one, it must not inherit its nomban
+stock void ResetClientNombanState(int client)
+{
+	g_iNomBanStart[client] = NOMBAN_NOTBANNED;
+	g_iNomBanLength[client] = NOMBAN_NOTBANNED;
+	g_sNomBanAdmin[client][0] = '\0';
+}
+
 stock void ReadClientNombanCookies(int client)
 {
 	char buffer[128];
 	g_hNomBanStatus.Get(client, buffer, sizeof(buffer));
 	if (strcmp(buffer, "") == 0)
 	{
-		g_iNomBanStart[client] = NOMBAN_NOTBANNED;
-		g_iNomBanLength[client] = NOMBAN_NOTBANNED;
+		ResetClientNombanState(client);
 		return;
 	}
+
+	g_hAdminNomBan.Get(client, g_sNomBanAdmin[client], sizeof(g_sNomBanAdmin[]));
 
 	char sBuffer[2][64];
 	ExplodeString(buffer, ":", sBuffer, sizeof(sBuffer), sizeof(sBuffer[]), true);
@@ -83,7 +92,7 @@ public void PrepareNomStatusMenu(int client, int target)
 		else
 			Format(time, sizeof(time), "%d seconds", seconds);
 
-		Format(buffer, sizeof(buffer), "%t", "Menu - Nomban Duration", time);
+		Format(buffer, sizeof(buffer), "%T", "Menu - Nomban Duration", client, time);
 		menu.AddItem(buffer, buffer, ITEMDRAW_DISABLED);
 
 		menu.AddItem(" ", " ", ITEMDRAW_SPACER);
@@ -113,7 +122,7 @@ public void PrepareNomStatusMenu(int client, int target)
 		menu.AddItem(" ", " ", ITEMDRAW_SPACER);
 	}
 
-	Format(buffer, sizeof(buffer), "%T", "Menu - Nomban Admin", client, g_sNomBanAdmin[client]);
+	Format(buffer, sizeof(buffer), "%T", "Menu - Nomban Admin", client, g_sNomBanAdmin[target]);
 	menu.AddItem(buffer, buffer, ITEMDRAW_DISABLED);
 
 	menu.Display(client, MENU_TIME_FOREVER);
@@ -277,7 +286,7 @@ Action Timer_NomBansChecker(Handle timer)
 	int iCurrentTime = GetTime();
 	for (int i=1; i<MaxClients+1; i++)
 	{
-		if (!IsClientInGame(i) || IsFakeClient(i))
+		if (!IsClientInGame(i) || IsFakeClient(i) || !AreClientCookiesCached(i))
 			continue;
 		if (g_iNomBanLength[i] == NOMBAN_PERMANENT)
 			continue;
