@@ -112,8 +112,6 @@ public void NE_ClientSettings_Menu(int client)
 		Format(buffer, sizeof(buffer), "%T", "Can not Load Cookies", client);
 		menu.AddItem(NULL_STRING, buffer, ITEMDRAW_DISABLED);
 	}
-	
-	menu.AddItem("ShowMap", buffer, bCached ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
 
 	menu.ExitBackButton = true;
 	menu.ExitButton = true;
@@ -135,7 +133,8 @@ public int NE_ClientSettingsHandler(Menu menu, MenuAction action, int param1, in
 		}
 		case MenuAction_Cancel:
 		{
-			ShowCookieMenu(param1);
+			if (param2 == MenuCancel_ExitBack)
+				ShowCookieMenu(param1);
 		}
 		case MenuAction_End:
 		{
