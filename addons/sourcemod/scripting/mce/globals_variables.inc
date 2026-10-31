@@ -55,7 +55,7 @@ bool g_PendingRevoteActive;
 bool g_ChangeMapAtRoundEnd;
 bool g_ChangeMapInProgress;
 bool g_HasIntermissionStarted = false;
-bool g_bRevoteWarning = false;
+int g_WarningTimePassed = 0;	// Seconds elapsed in the current warning or retry countdown
 int g_mapFileSerial = -1;
 
 int g_NominateCount = 0;

@@ -14,8 +14,9 @@
  *
  * @param when			When the resulting map change should occur.
  * @param inputlist		Optional list of maps to use for the vote, otherwise an internal list of nominations + random maps will be used.
+ * @param force			Vote forced by sm_mapvote, ignores mce_endvote and a completed vote.
  */
-void InitiateVote(MapChange when, ArrayList inputlist=null)
+void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 {
 	g_WaitingForVote = true;
 	g_WarningInProgress = false;
@@ -26,9 +27,10 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 	if (IsVoteInProgress())
 	{
 		// Can't start a vote, try again in 5 seconds.
-		//g_RetryTimer = CreateTimer(5.0, Timer_StartMapVote, _, TIMER_FLAG_NO_MAPCHANGE);
-
 		CPrintToChatAll("{green}[MCE]{default} %t", "Cannot Start Vote", FAILURE_TIMER_LENGTH);
+
+		g_WarningTimePassed = 0;
+
 		DataPack data;
 		g_RetryTimer = CreateDataTimer(1.0, Timer_StartMapVote, data, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
 
@@ -42,6 +44,7 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 		/* End Mapchooser Extended */
 
 		data.WriteCell(view_as<int>(when));
+		data.WriteCell(view_as<int>(force));
 		data.WriteCell(view_as<int>(inputlist));
 		data.Reset();
 		return;
@@ -49,7 +52,10 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 
 	/* If the main map vote has completed (and chosen result) and its currently changing (not a delayed change) we block further attempts */
 	if (g_MapVoteCompleted && g_ChangeMapInProgress)
+	{
+		g_WaitingForVote = false;
 		return;
+	}
 
 	CheckMapRestrictions(true, true);
 	CreateNextVote();

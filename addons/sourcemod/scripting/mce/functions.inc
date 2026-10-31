@@ -359,34 +359,51 @@ public Action Timer_StartWarningTimer(Handle timer)
 	return Plugin_Continue;
 }
 
+// Forget the countdown timer that is about to stop
+void ClearWarningCountdown(Handle timer)
+{
+	if (timer == g_RetryTimer)
+	{
+		g_RetryTimer = null;
+		g_WaitingForVote = false;
+	}
+	else
+		g_WarningTimer = null;
+
+	g_WarningTimePassed = 0;
+}
+
 public Action Timer_StartMapVote(Handle timer, DataPack data)
 {
-	static int timePassed;
-
-	// This is still necessary because InitiateVote still calls this directly via the retry timer
-	if (!g_MapList.Length || !g_bEndOfMapVote || g_MapVoteCompleted || g_HasVoteStarted)
-	{
-		g_WarningTimer = null;
-		return Plugin_Stop;
-	}
-
 	data.Reset();
 	int warningMaxTime = data.ReadCell();
-	int warningTimeRemaining = warningMaxTime - timePassed;
 
 	char warningPhrase[32];
 	data.ReadString(warningPhrase, sizeof(warningPhrase));
 
-	g_bRevoteWarning = warningTimeRemaining == 0 && strcmp(warningPhrase, "Revote Warning") == 0;
+	MapChange mapChange = view_as<MapChange>(data.ReadCell());
+	bool force = view_as<bool>(data.ReadCell());
+
+	// Same conditions as SetupWarningTimer(): mce_endvote only applies to end of map votes, not to RTV or sm_mapvote
+	if (!g_MapList.Length || g_HasVoteStarted || (!force && ((mapChange == MapChange_MapEnd && !g_bEndOfMapVote) || g_MapVoteCompleted)))
+	{
+		ClearWarningCountdown(timer);
+		g_WarningInProgress = false;
+
+		if (g_bLockNominationsAtWarning)
+			UnlockNominations(null);
+
+		return Plugin_Stop;
+	}
+
+	int warningTimeRemaining = warningMaxTime - g_WarningTimePassed;
 
 	if (warningTimeRemaining <= 0)
 	{
-		if (g_bRevoteWarning)
+		if (strcmp(warningPhrase, "Revote Warning") == 0)
 			LogAction(-1, -1, "[MCE] Revote for next map has started.");
 		else
 			LogAction(-1, -1, "[MCE] Voting for next map has started.");
-
-		g_bRevoteWarning = false;
 	}
 
 	// Tick timer for external plugins
@@ -394,7 +411,7 @@ public Action Timer_StartMapVote(Handle timer, DataPack data)
 	Call_PushCell(warningTimeRemaining);
 	Call_Finish();
 
-	if (timePassed == 0 || !g_bHideTimer)
+	if (g_WarningTimePassed == 0 || !g_bHideTimer)
 	{
 		TimerLocation timerLocation = view_as<TimerLocation>(g_iTimerLocation);
 
@@ -417,21 +434,12 @@ public Action Timer_StartMapVote(Handle timer, DataPack data)
 		}
 	}
 
-	if (timePassed++ >= warningMaxTime)
+	if (g_WarningTimePassed++ >= warningMaxTime)
 	{
-		if (timer == g_RetryTimer)
-		{
-			g_WaitingForVote = false;
-			g_RetryTimer = null;
-		}
-		else
-			g_WarningTimer = null;
+		ClearWarningCountdown(timer);
 
-		timePassed = 0;
-		MapChange mapChange = view_as<MapChange>(data.ReadCell());
 		ArrayList hndl = view_as<ArrayList>(data.ReadCell());
-
-		InitiateVote(mapChange, hndl);
+		InitiateVote(mapChange, hndl, force);
 
 		return Plugin_Stop;
 	}
@@ -681,7 +689,8 @@ bool CanVoteStart()
 // Functions new to Mapchooser Extended
 stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, ArrayList mapList=null, bool force=false)
 {
-	if (!g_MapList.Length || g_ChangeMapInProgress || g_HasVoteStarted || (!force && ((when == MapChange_MapEnd && !g_bEndOfMapVote) || g_MapVoteCompleted)))
+	// g_WaitingForVote: the retry countdown of InitiateVote() is running and will start the vote itself
+	if (!g_MapList.Length || g_ChangeMapInProgress || g_HasVoteStarted || g_WaitingForVote || (!force && ((when == MapChange_MapEnd && !g_bEndOfMapVote) || g_MapVoteCompleted)))
 		return;
 
 	bool interrupted = false;
@@ -720,11 +729,14 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 		Call_Finish();
 	}
 
+	g_WarningTimePassed = 0;
+
 	DataPack data;
 	g_WarningTimer = CreateDataTimer(1.0, Timer_StartMapVote, data, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
 	data.WriteCell(view_as<int>(cvarTime));
 	data.WriteString(translationKey);
 	data.WriteCell(view_as<int>(when));
+	data.WriteCell(view_as<int>(force));
 	data.WriteCell(view_as<int>(mapList));
 	data.Reset();
 }
