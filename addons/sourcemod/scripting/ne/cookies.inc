@@ -39,6 +39,14 @@ stock void CookiesInit()
 	}
 }
 
+// A new client can take the slot of a previous one, don't let it inherit its settings
+stock void ResetClientCookies(int client)
+{
+	g_bShowUnavailableMaps[client] = false;
+	g_bHideMapsTiers[client] = false;
+	ResetClientNombanState(client);
+}
+
 public void OnClientCookiesCached(int client)
 {
 	ReadClientCookies(client);
