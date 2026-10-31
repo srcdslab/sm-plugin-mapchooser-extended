@@ -224,9 +224,6 @@ public int Native_CanNominate(Handle plugin, int numParams)
 
 public int Native_ExcludeMap(Handle plugin, int numParams)
 {
-	if (!InternalAreRestrictionsActive())
-		return 0;
-
 	int len;
 	GetNativeStringLength(1, len);
 
@@ -236,40 +233,15 @@ public int Native_ExcludeMap(Handle plugin, int numParams)
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
 
-	int Cooldown;
-	int Mode = GetNativeCell(3);
+	if (!InternalExcludeMap(map, GetNativeCell(2), GetNativeCell(3)))
+		return 0;
 
-	if (Mode == 0)
-	{
-		// In TimeOnly mode, don't exclude via counter
-		if (g_CooldownMode == CooldownMode_TimeOnly)
-			return 0;
-
-		Cooldown = InternalGetMapCooldown(map);
-	}
-	else if (Mode == 1)
-	{
-		Cooldown = GetNativeCell(2);
-	}
-	else if (Mode == 2)
-	{
-		g_OldMapList.GetValue(map, Cooldown);
-		int NewCooldown = GetNativeCell(2);
-		if (NewCooldown > Cooldown)
-			Cooldown = NewCooldown;
-	}
-
-	g_OldMapList.SetValue(map, Cooldown, true);
 	InternalStoreMapCooldowns();
-
 	return 1;
 }
 
 public int Native_ExcludeMapTime(Handle plugin, int numParams)
 {
-	if (!InternalAreRestrictionsActive())
-		return 0;
-
 	int len;
 	GetNativeStringLength(1, len);
 
@@ -279,34 +251,10 @@ public int Native_ExcludeMapTime(Handle plugin, int numParams)
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
 
-	int Cooldown;
-	int Mode = GetNativeCell(3);
-	int iCurrentTime = GetTime();
+	if (!InternalExcludeMapTime(map, GetNativeCell(2), GetNativeCell(3)))
+		return 0;
 
-	if (Mode == 0)
-	{
-		// In CounterOnly mode, don't exclude via time
-		if (g_CooldownMode == CooldownMode_CounterOnly)
-			return 0;
-
-		Cooldown = InternalGetMapCooldownTime(map);
-	}
-	else if (Mode == 1)
-	{
-		Cooldown = GetNativeCell(2);
-	}
-	else if (Mode == 2)
-	{
-		g_TimeMapList.GetValue(map, Cooldown);
-		int NewCooldown = iCurrentTime + GetNativeCell(2);
-		if (NewCooldown > Cooldown)
-			Cooldown = GetNativeCell(2);
-	}
-
-	Cooldown += iCurrentTime;
-	g_TimeMapList.SetValue(map, Cooldown, true);
 	InternalStoreMapCooldowns();
-
 	return 1;
 }
 
