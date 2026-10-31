@@ -725,7 +725,12 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 	{
 		interrupted = true;
 		delete g_WarningTimer;
+
+		// Keep the most urgent change time: sm_mapvote during an RTV countdown must not turn it into a next map only vote
+		if (g_WarningWhen < when)
+			when = g_WarningWhen;
 	}
+	g_WarningWhen = when;
 
 	// Replaces the list of an interrupted countdown
 	if (g_WarningMapList != mapList)
