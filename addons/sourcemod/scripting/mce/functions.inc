@@ -803,7 +803,8 @@ stock void GetMapItem(Menu menu, int position, char[] map, int mapLen)
 	menu.GetItem(position, map, mapLen, _, _, _, -1);
 }
 
-stock void AddExtendToMenu(Menu menu, MapChange when)
+// Adds "Don't Change" or "Extend Map" when available, returns false if neither was added
+stock bool AddExtendToMenu(Menu menu, MapChange when, char[] added, int maxlen)
 {
 	/* Do we add any special items? */
 	// Moved for Mapchooser Extended
@@ -814,11 +815,20 @@ stock void AddExtendToMenu(Menu menu, MapChange when)
 	if ((when == MapChange_Instant || when == MapChange_RoundEnd) && g_bDontChange)
 	{
 		menu.AddItem(VOTE_DONTCHANGE, "Don't Change");
+		strcopy(added, maxlen, "Don't Change");
+		return true;
 	}
-	else if (view_as<bool>(g_iMaxExtends) && g_Extends < InternalGetMapMaxExtends(map))
+
+	// InternalGetMapMaxExtends() falls back to mce_extend when the map has no "Extends" key
+	if (g_Extends < InternalGetMapMaxExtends(map))
 	{
 		menu.AddItem(VOTE_EXTEND, "Extend Map");
+		strcopy(added, maxlen, "Extend");
+		return true;
 	}
+
+	added[0] = '\0';
+	return false;
 }
 
 // 0 = IncludeMaps, 1 = Reserved, 2 = IncludeMaps+Reserved
