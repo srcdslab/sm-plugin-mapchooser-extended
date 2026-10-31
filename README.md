@@ -114,7 +114,12 @@ Advanced Automated Map Voting with Extensions
 - mce_locknominationswarning (default: 1) - Lock nominations when vote warning starts.
 - mce_locknominations_timer (default: 15.0) - Unlock nominations delay after vote (seconds).
 - mce_shownominator (default: 1) - Show who nominated winning map.
-- mce_sharedcd_mode (default: 1) - Shared cooldown mode for grouped maps.
+- mce_sharedcd_mode (default: 2) - How the `_cooldown` / `_cooldown_time` of a group are applied to the maps of the group when one of them starts:
+  - 0: each map gets its own `Cooldown` / `CooldownTime`.
+  - 1: set or replace. A group cooldown can shorten a longer cooldown that a map already has (for example the 24h `CooldownTime` of a map played recently).
+  - 2: only if it is longer than the cooldown the map already has.
+
+  The default was 1 before 1.14.5. `cfg/sourcemod/mapchooser_extended.cfg` keeps the value it was created with, so existing servers stay on 1 until it is changed there.
 - mce_cooldown_mode (default: 0) - Cooldown evaluation mode.
 - mce_showmaptier_in_chat (default: 1) - Show map tier name in chat.
 ### Commands

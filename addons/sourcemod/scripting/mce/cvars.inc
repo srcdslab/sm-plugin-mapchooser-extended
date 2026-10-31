@@ -208,7 +208,7 @@ stock void CvarsInit()
 	g_Cvar_LockNominationsAtWarning = CreateConVar("mce_locknominationswarning", "1", "Lock nominations when the warning start for vote", _, true, 0.0, true, 1.0);
 	g_Cvar_TimerUnlockNoms = CreateConVar("mce_locknominations_timer", "15.0", "Unlock nominations after a vote. Time in seconds.", _, true, 0.0, true, 60.0);
 	g_Cvar_ShowNominator = CreateConVar("mce_shownominator", "1", "See who nominated the map which won the vote", _, true, 0.0, true, 1.0);
-	g_Cvar_SharedCDMode = CreateConVar("mce_sharedcd_mode", "1", "Group maps with shared cooldowns mode (See ExcludeMap native docs for mode)", _, true, 0.0, true, 2.0);
+	g_Cvar_SharedCDMode = CreateConVar("mce_sharedcd_mode", "2", "How the cooldowns of a group are applied to its maps when one of them starts: 0 = each map gets its own cooldown, 1 = set or replace, 2 = only if longer than the current cooldown (See ExcludeMap native docs for mode)", _, true, 0.0, true, 2.0);
 	g_Cvar_CooldownMode = CreateConVar("mce_cooldown_mode", "0", "Cooldown mode: 0 = Both (Cooldown + CooldownTime), 1 = Counter only (Cooldown), 2 = Time only (CooldownTime), 3 = Priority (CooldownTime first, then Cooldown)", _, true, 0.0, true, 3.0);
 	g_Cvar_ShowMapTierInChat = CreateConVar("mce_showmaptier_in_chat", "1", "See the map tier name in chat", _, true, 0.0, true, 1.0);
 
