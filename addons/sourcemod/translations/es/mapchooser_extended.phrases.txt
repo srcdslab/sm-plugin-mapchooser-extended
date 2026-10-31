@@ -48,7 +48,7 @@
 
 	"Runoff Vote Nextmap"
 	{
-		"es"		"Hacer votacion para el siguiente mapa!"
+		"es"		"Segunda votacion para el siguiente mapa!"
 	}
 
 	"Custom"
@@ -58,7 +58,7 @@
 
 	"Revote Is Needed"
 	{
-		"es"		"No hay ningun mapa que haya recibido el {1}%% de votaciones."
+		"es"		"Ningun mapa ha recibido mas del {1}%% de los votos."
 	}
 
 	"Revote Is Needed New Vote"
@@ -68,7 +68,7 @@
 
 	"Revote Warning"
 	{
-		"es"		"La votacion empezara en: {1}s"
+		"es"		"La segunda votacion empezara en: {1}s"
 	}
 
 	"Vote Warning"
@@ -83,7 +83,7 @@
 
 	"Line Two"
 	{
-		"es"		"...y no pulse los botones sin pensar ;-)"
+		"es"		"...y no pulses los botones sin pensar ;-)"
 	}
 
 	"Cannot Start Vote"
@@ -138,7 +138,7 @@
 
 	"Map Nominate MaxPlayers Error"
 	{
-		"es"		"El mmapa requiere {1} jugadores menos."
+		"es"		"El mapa requiere {1} jugadores menos."
 	}
 
 	"Map Nominate Group Error"

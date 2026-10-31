@@ -2,17 +2,17 @@
 {
 	"Vote Nextmap"
 	{
-		"chi"		"下一幅地图投票了!"
+		"chi"		"投票选择下一张地图!"
 	}
 
 	"Nextmap Voting Started"
 	{
-		"chi"		"下一幅地图投选已开始."
+		"chi"		"下一张地图的投票已开始."
 	}
 
 	"Nextmap Voting Finished"
 	{
-		"chi"		" 地图投票已结束. 下一幅地图将为 {1}. ( 得票{2}%% , {3}票 )"
+		"chi"		"地图投票已结束. 下一张地图将为 {1}. ( 得票{2}%% , {3}票 )"
 	}
 
 	"Current Map Extended"
@@ -27,12 +27,12 @@
 
 	"Dont Change"
 	{
-		"chi"		"请勿更换"
+		"chi"		"不更换"
 	}
 
 	"Current Map Stays"
 	{
-		"chi"		"当前地图已被延长! 投票显示! (得票 {1}%% 共 {2} 票)"
+		"chi"		"当前地图将继续! 投票已经决定! (得票 {1}%% 共 {2} 票)"
 	}
 
 	"MCE No Votes Cast"
@@ -42,7 +42,7 @@
 
 	"Changed Next Map"
 	{
-		"chi"		"更换下一幅地图为 \"{1}\"."
+		"chi"		"下一张地图已更换为 \"{1}\"."
 	}
 
 	"Runoff Vote Nextmap"
@@ -52,7 +52,7 @@
 
 	"Custom"
 	{
-		"chi"		"{1} (风俗)"
+		"chi"		"{1} (自定义)"
 	}
 
 	"Revote Is Needed"
@@ -107,12 +107,12 @@
 
 	"Nominated by Admin"
 	{
-		"chi"		"行政提名"
+		"chi"		"管理员提名"
 	}
 
 	"Map Nominate Admin Error"
 	{
-		"chi"		"只有管​​理员可以提名此地图."
+		"chi"		"只有管理员可以提名此地图."
 	}
 
 	"Map Nominate VIP Error"
@@ -127,17 +127,17 @@
 
 	"Map Nominate Time Error"
 	{
-		"chi"		"您可以在 {1} 小时 {2} 分钟内提名此地图."
+		"chi"		"您可以在 {1} 小时 {2} 分钟后提名此地图."
 	}
 
 	"Map Nominate MinPlayers Error"
 	{
-		"chi"		"地图需要 {1} 名玩家."
+		"chi"		"地图还需要 {1} 名玩家."
 	}
 
 	"Map Nominate MaxPlayers Error"
 	{
-		"chi"		"地图需要的玩家数量少于 {1} 名."
+		"chi"		"地图需要再减少 {1} 名玩家."
 	}
 
 	"Map Nominate Group Error"
@@ -167,7 +167,7 @@
 
 	"VIP Restriction"
 	{
-		"chi"		"贵宾 仅有的"
+		"chi"		"仅限 VIP"
 	}
     
     "Leader Restriction"
@@ -212,12 +212,12 @@
 
 	"Unnominate"
 	{
-		"chi"		"未提名"
+		"chi"		"取消提名"
 	}
 
 	"Map Unnominated"
 	{
-		"chi"		"{1} 未提名 {2}."
+		"chi"		"{1} 取消了对 {2} 的提名."
 	}
 
 	"Unable To Unnominate"
@@ -262,7 +262,7 @@
 
 	"Nombanned"
 	{
-		"chi"		"禁止{1} {2} 分钟."
+		"chi"		"禁止 {1} 提名地图 {2} 分钟."
 	}
 
 	"Nomination removed on nomban"
@@ -292,12 +292,12 @@
 
 	"Nombanned permanent"
 	{
-		"chi"		"永久禁止{1}."
+		"chi"		"永久禁止 {1} 提名地图."
 	}
 
 	"UnNombanned"
 	{
-		"chi"		"未受阻拦 {1}"
+		"chi"		"解除了 {1} 的提名禁令"
 	}
 
 	"Menu Got UnNombanned"
@@ -347,12 +347,12 @@
 
 	"Nominations already enabled"
 	{
-		"chi"		"提名已开始."
+		"chi"		"提名已经启用."
 	}
 
 	"Nominations unlock countdown"
 	{
-		"chi"		"提名将在{1}秒内解锁."
+		"chi"		"提名将在{1}秒后解锁."
 	}
 
 	"Wait to Nominate"
@@ -372,7 +372,7 @@
 
 	"Available Extends"
 	{
-		"chi"		"可用扩展：{green}{1}"
+		"chi"		"剩余延长次数：{green}{1}"
 	}
 
 	"Nextmap"

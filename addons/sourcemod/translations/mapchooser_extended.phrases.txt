@@ -152,7 +152,7 @@
 	"Map Nominate MaxPlayers Error"
 	{
 		"#format"	"{1:d}"
-		"en"		"Map requires {1} less players."
+		"en"		"Map requires {1} fewer players."
 	}
 
 	"Map Nominate Group Error"

@@ -48,7 +48,7 @@
 
 	"Runoff Vote Nextmap"
 	{
-		"fr"        "Votez à nouveau pour la prochaine Map!"
+		"fr"        "Votez à nouveau pour la prochaine map!"
 	}
 
 	"Custom"
@@ -83,17 +83,17 @@
 
 	"Line Two"
 	{
-		"fr"		"...et n'appuyez pas sur une touche comme un con ;-)"
+		"fr"		"...et n'appuyez pas sur une touche sans réfléchir ;-)"
 	}
 
 	"Cannot Start Vote"
 	{
-		"fr"        "Vote déjà en cours.  Reassayez dans {1}s."
+		"fr"        "Vote déjà en cours.  Réessayez dans {1}s."
 	}
 	
 	"Tie Vote"
 	{
-		"fr"		"{1} maps ont eu un même nombre de voix.\nUn nouveau vote est nécessaire!"
+		"fr"		"Les {1} premières maps ont eu le même nombre de voix.\n{green}[MCE] {default}Un nouveau vote est nécessaire!"
 	}
 
 	"Custom Marked"
@@ -133,17 +133,17 @@
 
 	"Map Nominate MinPlayers Error"
 	{
-		"fr"		"La carte nécessite {1} plus de joueurs."
+		"fr"		"La carte nécessite {1} joueurs de plus."
 	}
 
 	"Map Nominate MaxPlayers Error"
 	{
-		"fr"		"La carte nécessite {1} moins de joueurs."
+		"fr"		"La carte nécessite {1} joueurs de moins."
 	}
 
 	"Map Nominate Group Error"
 	{
-		"fr"		"Le nombre maximal ({1}) de cartes de ce groupe a déjà été sélectionner."
+		"fr"		"Le nombre maximal ({1}) de cartes de ce groupe a déjà été sélectionné."
 	}
 
 	"Map Time Restriction"
@@ -218,17 +218,17 @@
 
 	"Map Unnominated"
 	{
-		"fr"		"{1} a désélectionner {2}."
+		"fr"		"{1} a désélectionné {2}."
 	}
 
 	"Unable To Unnominate"
 	{
-		"fr"		"Vous n'avez pas sélectionner de carte."
+		"fr"		"Vous n'avez pas sélectionné de carte."
 	}
 
 	"NomStatus Menu Title"
 	{
-		"fr"		"Status de la restrictiion de nomination pour: {1}"
+		"fr"		"Statut de la restriction de nomination pour: {1}"
 	}
 
 	"Menu - Not Nombanned"
@@ -258,17 +258,17 @@
 
 	"Cannot nominate - Nombanned"
 	{
-		"fr"		"Vous ne pouvez pas sélectionner une carte parce que vous avez été restrient. Utilisez {green}!nomstatus{default} pour plus d'informations."
+		"fr"		"Vous ne pouvez pas sélectionner une carte parce que vous avez été restreint. Utilisez {green}!nomstatus{default} pour plus d'informations."
 	}
 
 	"Nombanned"
 	{
-		"fr"		"restrient les nominations de {1} pendant {2} minutes."
+		"fr"		"a restreint les nominations de {1} pendant {2} minutes."
 	}
 
 	"Nomination removed on nomban"
 	{
-		"fr"		"Votre sélection a été retirée parce que vous avez été restrient."
+		"fr"		"Votre sélection a été retirée parce que vous avez été restreint."
 	}
 
 	"UnNomban usage"
@@ -283,7 +283,7 @@
 
 	"Already not nombanned"
 	{
-		"fr"		"{1} n'est pas encore restrient pour les nominations!"
+		"fr"		"{1} n'est pas restreint pour les nominations!"
 	}
 
 	"Already nombanned"
@@ -293,22 +293,22 @@
 
 	"Nombanned permanent"
 	{
-		"fr"		"restreint les nominations de {1} pour toujours."
+		"fr"		"a restreint les nominations de {1} pour toujours."
 	}
 
 	"UnNombanned"
 	{
-		"fr"		"dérestreint {1}"
+		"fr"		"a levé la restriction de nomination de {1}"
 	}
 
 	"Menu Got UnNombanned"
 	{
-		"fr"		"Votre resitrction pour la nommination a été levée."
+		"fr"		"Votre restriction de nomination a été levée."
 	}
 
 	"Nominated by"
 	{
-		"fr"		"Séléctionné par:"
+		"fr"		"Sélectionnée par:"
 	}
 
 	"Disconnected Player"
@@ -373,7 +373,7 @@
 
 	"Available Extends"
 	{
-		"fr"		"Extends disponnible: {green}{1}"
+		"fr"		"Extends disponibles: {green}{1}"
 	}
 
 	"Nextmap"
