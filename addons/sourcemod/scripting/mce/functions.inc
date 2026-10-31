@@ -130,6 +130,7 @@ stock void InitializeGroupSettings()
 
 	int groups[32];
 	int iTotalGrpFound = InternalGetMapGroups(sCurrentMap, groups, sizeof(groups));
+	bool changed = false;
 
 	for (int i = 0; i < iTotalGrpFound; ++i)
 	{
@@ -137,17 +138,16 @@ stock void InitializeGroupSettings()
 		int iGrpCooldown = InternalGetGroupCooldown(groupID);
 		int iGrpCooldownTime = InternalGetGroupCooldownTime(groupID);
 
-		if (iGrpCooldownTime > 0)
-		{
-			LogMessage("Map %s is in group %d with time-based cooldown of %d seconds", sCurrentMap, groupID, iGrpCooldownTime);
-			InternalSetGroupCooldownToMaps(groupID, iGrpCooldown);
-		}
-		else if (iGrpCooldown >= 0)
-		{
-			LogMessage("Map %s is in group %d with counter-based cooldown of %d", sCurrentMap, groupID, iGrpCooldown);
-			InternalSetGroupCooldownToMaps(groupID, iGrpCooldown);
-		}
+		if (iGrpCooldown <= 0 && iGrpCooldownTime <= 0)
+			continue;
+
+		LogMessage("Map %s is in group %d with a shared cooldown of %d maps / %d seconds", sCurrentMap, groupID, iGrpCooldown, iGrpCooldownTime);
+		if (InternalSetGroupCooldownToMaps(groupID, iGrpCooldown, iGrpCooldownTime))
+			changed = true;
 	}
+
+	if (changed)
+		InternalStoreMapCooldowns();
 }
 
 stock void InitializeMapVoteSettings()
