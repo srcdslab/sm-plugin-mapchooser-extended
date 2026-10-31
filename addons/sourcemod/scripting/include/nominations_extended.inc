@@ -28,7 +28,7 @@ native int PushMapIntoNominationPool(char[] map);
 /**
  * Insert maps into the current nomination pool
  * 
- * @param maps   	ArrayList to insert
+ * @param maps   	ArrayList to insert, the caller keeps ownership of it
  * @noreturn
  */
 native int PushMapsIntoNominationPool(ArrayList maps);
@@ -44,7 +44,7 @@ native int RemoveMapFromNominationPool(char[] map);
 /**
  * Remove maps from the current nomination pool
  * 
- * @param maps   	Numbers of maps to remove
+ * @param maps   	ArrayList of maps to remove, the caller keeps ownership of it
  * @noreturn
  */
 native int RemoveMapsFromNominationPool(ArrayList maps);

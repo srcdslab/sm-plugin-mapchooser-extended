@@ -32,8 +32,8 @@ public int Native_PushMapIntoNominationPool(Handle plugin, int numArgs)
 
 	GetNativeString(1, map, PLATFORM_MAX_PATH);
 
-	g_MapList.ShiftUp(0);
-	g_MapList.SetString(0, map);
+	if (g_MapList.FindString(map) == -1)
+		InsertMapAtTop(map);
 
 	UpdateMapTrie();
 
@@ -50,13 +50,10 @@ public int Native_PushMapsIntoNominationPool(Handle plugin, int numArgs)
 		maps.GetString(i, map, PLATFORM_MAX_PATH);
 
 		if (g_MapList.FindString(map) == -1)
-		{
-			g_MapList.ShiftUp(0);
-			g_MapList.SetString(0, map);
-		}
+			InsertMapAtTop(map);
 	}
 
-	delete maps;
+	// The caller owns `maps`: deleting a handle of another plugin fails (HandleError_Access)
 
 	UpdateMapTrie();
 
@@ -94,11 +91,24 @@ public int Native_RemoveMapsFromNominationPool(Handle plugin, int numArgs)
 			g_MapList.Erase(idx);
 	}
 
-	delete maps;
+	// The caller owns `maps`
 
 	UpdateMapTrie();
 
 	return 0;
+}
+
+// ShiftUp() needs an existing index, it throws on an empty pool
+stock void InsertMapAtTop(const char[] map)
+{
+	if (!g_MapList.Length)
+	{
+		g_MapList.PushString(map);
+		return;
+	}
+
+	g_MapList.ShiftUp(0);
+	g_MapList.SetString(0, map);
 }
 
 public int Native_ToggleNominations(Handle plugin, int numArgs)
