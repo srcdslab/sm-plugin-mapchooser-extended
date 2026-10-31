@@ -569,18 +569,21 @@ bool RemoveStringFromArray(ArrayList array, char[] str)
 
 public Action UnlockNominations(Handle timer)
 {
-#if defined _nominations_extended_included_
-	// TODO: Verify is native is available
-	ToggleNominations(false);
-#endif
+	SetNominationsLocked(false);
 	return Plugin_Continue;
 }
 
 void LockNominations()
 {
+	SetNominationsLocked(true);
+}
+
+// nominations_extended is optional: calling its native while it isn't loaded throws and aborts the caller
+void SetNominationsLocked(bool lock)
+{
 #if defined _nominations_extended_included_
-	// TODO: Verify is native is available
-	ToggleNominations(true);
+	if (CanTestFeatures() && GetFeatureStatus(FeatureType_Native, "ToggleNominations") == FeatureStatus_Available)
+		ToggleNominations(lock);
 #endif
 }
 
