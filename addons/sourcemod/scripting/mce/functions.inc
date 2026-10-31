@@ -600,91 +600,78 @@ void CreateNextVote()
 		delete TimeMapListSnapshot;
 	}
 
+	bool restrictionsActive = InternalAreRestrictionsActive();
 	int voteSize = GetVoteSize(2);
-	int limit = (voteSize < tempMaps.Length ? voteSize : tempMaps.Length);
 
-	// group -> number of maps nominated from group
+	// group id -> number of maps of this group already in the vote
 	StringMap groupmap = new StringMap();
-	char groupstr[8];
 
 	// populate groupmap with maps from nomination list
-	static char map_[PLATFORM_MAX_PATH];
-	int groups_[32];
 	for (int i = 0; i < g_NominateList.Length; i++)
 	{
-		g_NominateList.GetString(i, map_, PLATFORM_MAX_PATH);
-		int groupsfound = InternalGetMapGroups(map_, groups_, sizeof(groups_));
-		for (int group = 0; group < groupsfound; group++)
-		{
-			IntToString(group, groupstr, sizeof(groupstr));
-			int groupcur = 0;
-			groupmap.GetValue(groupstr, groupcur);
-			groupcur++;
-			groupmap.SetValue(groupstr, groupcur, true);
-		}
+		g_NominateList.GetString(i, map, PLATFORM_MAX_PATH);
+		CountMapInGroups(map, groupmap);
 	}
 
 	// find random maps which honor all restrictions
-	for (int i = 0; i < limit; i++)
+	while (g_NextMapList.Length < voteSize && tempMaps.Length)
 	{
-		int b;
-		for (int j = 0; j < 1000; j++)
-		{
-			b = GetRandomInt(0, tempMaps.Length - 1);
-			tempMaps.GetString(b, map, PLATFORM_MAX_PATH);
-
-			if (!InternalAreRestrictionsActive())
-				break;
-
-			if (InternalGetMapAdminRestriction(map))
-				continue;
-
-			if (InternalGetMapVIPRestriction(map))
-				continue;
-
-			if (InternalGetMapLeaderRestriction(map))
-				continue;
-
-			if (InternalGetMapTimeRestriction(map) != 0)
-				continue;
-
-			if (InternalGetMapPlayerRestriction(map) != 0)
-				continue;
-
-			bool okay = true;
-
-			int groups[32];
-			int groupsfound = InternalGetMapGroups(map, groups, sizeof(groups));
-			for (int group = 0; group < groupsfound; group++)
-			{
-				IntToString(group, groupstr, sizeof(groupstr));
-
-				int groupmax = InternalGetGroupMax(groups[group]);
-				if (groupmax >= 0)
-				{
-					int groupcur = 0;
-					groupmap.GetValue(groupstr, groupcur);
-
-					if (groupcur >= groupmax)
-					{
-						okay = false;
-						break;
-					}
-
-					groupcur++;
-					groupmap.SetValue(groupstr, groupcur, true);
-				}
-			}
-
-			if (okay)
-				break;
-		}
-		g_NextMapList.PushString(map);
+		int b = GetRandomInt(0, tempMaps.Length - 1);
+		tempMaps.GetString(b, map, PLATFORM_MAX_PATH);
+		// A map that fails a restriction now keeps failing it for this vote, never draw it again
 		tempMaps.Erase(b);
+
+		if (restrictionsActive && !CanMapFillVote(map, groupmap))
+			continue;
+
+		CountMapInGroups(map, groupmap);
+		g_NextMapList.PushString(map);
 	}
 
 	delete groupmap;
 	delete tempMaps;
+}
+
+// Nomination restrictions for a random map of the vote, groupmap counts the maps already in the vote per group
+stock bool CanMapFillVote(const char[] map, StringMap groupmap)
+{
+	if (InternalGetMapAdminRestriction(map) || InternalGetMapVIPRestriction(map) || InternalGetMapLeaderRestriction(map))
+		return false;
+
+	if (InternalGetMapTimeRestriction(map) != 0 || InternalGetMapPlayerRestriction(map) != 0)
+		return false;
+
+	char groupstr[8];
+	int groups[32];
+	int groupsfound = InternalGetMapGroups(map, groups, sizeof(groups));
+	for (int group = 0; group < groupsfound; group++)
+	{
+		int groupmax = InternalGetGroupMax(groups[group]);
+		if (groupmax < 0)
+			continue;
+
+		IntToString(groups[group], groupstr, sizeof(groupstr));
+		int groupcur = 0;
+		groupmap.GetValue(groupstr, groupcur);
+		if (groupcur >= groupmax)
+			return false;
+	}
+
+	return true;
+}
+
+stock void CountMapInGroups(const char[] map, StringMap groupmap)
+{
+	char groupstr[8];
+	int groups[32];
+	int groupsfound = InternalGetMapGroups(map, groups, sizeof(groups));
+	for (int group = 0; group < groupsfound; group++)
+	{
+		IntToString(groups[group], groupstr, sizeof(groupstr));
+		int groupcur = 0;
+		groupmap.GetValue(groupstr, groupcur);
+		groupmap.SetValue(groupstr, groupcur + 1, true);
+	}
 }
 
 bool CanVoteStart()
