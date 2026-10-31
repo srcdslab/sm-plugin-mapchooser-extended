@@ -72,7 +72,6 @@ int g_RunoffCount = 0;
 int g_mapOfficialFileSerial = -1;
 char g_sGameModName[64];
 bool g_WarningInProgress = false;
-bool g_AddNoVote = false;
 bool g_SaveCDOnMapEnd = true;
 bool g_ZLeader = false;
 bool g_DynamicChannels = false;
@@ -85,7 +84,6 @@ RoundCounting g_RoundCounting = RoundCounting_Standard;
 #define MAXTEAMS 10
 int g_winCount[MAXTEAMS];
 
-bool g_BlockedSlots = false;
 int g_ObjectiveEnt = -1;
 
 enum TimerLocation
