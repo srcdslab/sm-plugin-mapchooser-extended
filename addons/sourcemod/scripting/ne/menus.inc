@@ -628,6 +628,12 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 
 			NominateResult result = NominateMap(map, true, 0);
 
+			if (result == Nominate_InvalidMap)
+			{
+				CPrintToChat(param1, "{green}[NE]{default} %t", "Map was not found", map);
+				return 0;
+			}
+
 			if (result > Nominate_Replaced)
 			{
 				/* We assume already in vote is the casue because the maplist does a Map Validity check and we forced, so it can't be full */
