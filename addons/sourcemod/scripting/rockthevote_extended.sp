@@ -47,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.12.2"
+#define RTVE_VERSION "1.12.3"
 
 public Plugin myinfo =
 {
@@ -189,64 +189,79 @@ public void OnClientDisconnect(int client)
 		g_Votes--;
 	}
 
-	UpdateRTV();
+	// The client is still in game during this forward
+	UpdateRTV(client);
 }
 
 public void OnPlayerChangedTeam(Event event, const char[] name, bool dontBroadcast)
 {
+	// player_team is fired before the player actually changes team
+	RequestFrame(Frame_UpdateRTV);
+}
+
+public void Frame_UpdateRTV(any data)
+{
 	UpdateRTV();
 }
 
-void UpdateRTV()
+// Players counted for RTV: humans that are not AFK. With PlayerManager they are split
+// between Steam and No-Steam, without it only players on a team count (all as Steam).
+void CountRTVVoters(int &votersSteam, int &votersNoSteam, int ignoreClient = 0)
 {
-	g_Voters = 0;
-	int iVotersSteam;
-	int iVotersNoSteam; 
+	votersSteam = 0;
+	votersNoSteam = 0;
 
-	for (int i=1; i<=MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
-		if (IsClientInGame(i) && !IsFakeClient(i))
-		{
-			if (g_bPlugin_AFK)
-			{
+		if (i == ignoreClient || !IsClientInGame(i) || IsFakeClient(i))
+			continue;
+
 #if defined _AFKManager_Included
-				int clientIdleTime = GetClientIdleTime(i);
-#else
-				int clientIdleTime = 0;
+		if (g_bPlugin_AFK && GetClientIdleTime(i) >= g_Cvar_AFKTime.IntValue)
+			continue;
 #endif
-				if (clientIdleTime >= g_Cvar_AFKTime.IntValue)
-					continue;
-			}
 
-			if (g_bPlugin_PM)
-			{
 #if defined _PlayerManager_included
-				if (PM_IsPlayerSteam(i))
-					iVotersSteam++;
-				else
-					iVotersNoSteam++;
-#endif
-			}
+		if (g_bPlugin_PM)
+		{
+			if (PM_IsPlayerSteam(i))
+				votersSteam++;
+			else
+				votersNoSteam++;
+			continue;
 		}
-	}
+#endif
 
+		if (GetClientTeam(i) > 1)
+			votersSteam++;
+	}
+}
+
+// Votes needed for these voters (at least 1), neededSteam/neededNoSteam give the detail for sm_debugrtv
+int GetVotesNeeded(int votersSteam, int votersNoSteam, int &neededSteam, int &neededNoSteam)
+{
 	if (g_bPlugin_PM)
 	{
-		g_Voters = iVotersSteam + iVotersNoSteam;
-		int iVotesNeededSteam = RoundToFloor(float(iVotersSteam) * g_Cvar_Needed.FloatValue);
-		int iVotesNeededNoSteam = RoundToFloor(float(iVotersNoSteam) * g_Cvar_Needed_NoSteam.FloatValue);
-		g_VotesNeeded = iVotesNeededSteam + iVotesNeededNoSteam;
+		neededSteam = RoundToFloor(float(votersSteam) * g_Cvar_Needed.FloatValue);
+		neededNoSteam = RoundToFloor(float(votersNoSteam) * g_Cvar_Needed_NoSteam.FloatValue);
 	}
 	else
 	{
-		g_Voters = GetTeamClientCount(2) + GetTeamClientCount(3);
-		g_VotesNeeded = RoundToCeil(float(g_Voters) * g_Cvar_Needed.FloatValue);
+		neededSteam = RoundToCeil(float(votersSteam + votersNoSteam) * g_Cvar_Needed.FloatValue);
+		neededNoSteam = 0;
 	}
 
-	if (g_VotesNeeded < 1)
-	{
-		g_VotesNeeded = 1;
-	}
+	int needed = neededSteam + neededNoSteam;
+	return needed < 1 ? 1 : needed;
+}
+
+void UpdateRTV(int ignoreClient = 0)
+{
+	int iVotersSteam, iVotersNoSteam, iNeededSteam, iNeededNoSteam;
+	CountRTVVoters(iVotersSteam, iVotersNoSteam, ignoreClient);
+
+	g_Voters = iVotersSteam + iVotersNoSteam;
+	g_VotesNeeded = GetVotesNeeded(iVotersSteam, iVotersNoSteam, iNeededSteam, iNeededNoSteam);
 
 	if (!g_CanRTV)
 	{
@@ -474,52 +489,10 @@ public Action Command_DebugRTV(int client, int args)
 		return Plugin_Handled;
 	}
 
-	g_Voters = 0;
-	int iVotersSteam;
-	int iVotersNoSteam;
-
-	for (int i=1; i<=MaxClients; i++)
-	{
-		if (IsClientInGame(i) && !IsFakeClient(i))
-		{
-			if (g_bPlugin_AFK)
-			{
-#if defined _AFKManager_Included
-				if (GetClientIdleTime(i) >= g_Cvar_AFKTime.IntValue)
-					continue;
-#endif
-			}
-
-			if (g_bPlugin_PM)
-			{
-#if defined _PlayerManager_included
-				if (PM_IsPlayerSteam(i))
-					iVotersSteam++;
-				else
-					iVotersNoSteam++;
-#endif
-			}
-		}
-	}
-
-	int iVotesNeededTotal = 0;
-	int iVotesNeededSteam = 0;
-	int iVotesNeededNoSteam = 0;
-
-	if (g_bPlugin_PM)
-	{
-		g_Voters = iVotersSteam + iVotersNoSteam;
-		iVotesNeededSteam = RoundToFloor(float(iVotersSteam) * g_Cvar_Needed.FloatValue);
-		iVotesNeededNoSteam = RoundToFloor(float(iVotersNoSteam) * g_Cvar_Needed_NoSteam.FloatValue);
-		g_VotesNeeded = iVotesNeededSteam + iVotesNeededNoSteam;
-		iVotesNeededTotal = iVotesNeededSteam + iVotesNeededNoSteam;
-	}
-	else
-	{
-		g_Voters = GetTeamClientCount(2) + GetTeamClientCount(3);
-		g_VotesNeeded = RoundToCeil(float(g_Voters) * g_Cvar_Needed.FloatValue);
-		iVotesNeededTotal = g_VotesNeeded;
-	}
+	// Same computation as UpdateRTV(), without touching the live counters
+	int iVotersSteam, iVotersNoSteam, iVotesNeededSteam, iVotesNeededNoSteam;
+	CountRTVVoters(iVotersSteam, iVotersNoSteam);
+	int iVotesNeededTotal = GetVotesNeeded(iVotersSteam, iVotersNoSteam, iVotesNeededSteam, iVotesNeededNoSteam);
 
 	CReplyToCommand(client, "{green}[RTVE]{default} Currently %d Players needed to start a RTV vote.", iVotesNeededTotal);
 	if (g_bPlugin_PM)
