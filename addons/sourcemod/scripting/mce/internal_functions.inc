@@ -243,6 +243,10 @@ stock bool InternalExcludeMap(const char[] map, int cooldown, int mode)
 	if (!InternalAreRestrictionsActive())
 		return false;
 
+	char key[PLATFORM_MAX_PATH];
+	strcopy(key, sizeof(key), map);
+	NormalizeMapName(key);
+
 	if (mode == 0)
 	{
 		// In TimeOnly mode, don't exclude via counter
@@ -254,11 +258,11 @@ stock bool InternalExcludeMap(const char[] map, int cooldown, int mode)
 	else if (mode == 2)
 	{
 		int current;
-		if (g_OldMapList.GetValue(map, current) && current > cooldown)
+		if (g_OldMapList.GetValue(key, current) && current > cooldown)
 			cooldown = current;
 	}
 
-	g_OldMapList.SetValue(map, cooldown, true);
+	g_OldMapList.SetValue(key, cooldown, true);
 	return true;
 }
 
@@ -267,6 +271,10 @@ stock bool InternalExcludeMapTime(const char[] map, int cooldown, int mode)
 {
 	if (!InternalAreRestrictionsActive())
 		return false;
+
+	char key[PLATFORM_MAX_PATH];
+	strcopy(key, sizeof(key), map);
+	NormalizeMapName(key);
 
 	if (mode == 0)
 	{
@@ -281,10 +289,10 @@ stock bool InternalExcludeMapTime(const char[] map, int cooldown, int mode)
 	int expires = GetTime() + cooldown;
 
 	int current;
-	if (mode == 2 && g_TimeMapList.GetValue(map, current) && current > expires)
+	if (mode == 2 && g_TimeMapList.GetValue(key, current) && current > expires)
 		expires = current;
 
-	g_TimeMapList.SetValue(map, expires, true);
+	g_TimeMapList.SetValue(key, expires, true);
 	return true;
 }
 
@@ -796,8 +804,7 @@ stock void InternalRestoreMapCooldowns()
 			return;
 		}
 
-		if (g_bForceLowerCase)
-			StringToLowerCase(map);
+		NormalizeMapName(map);
 
 		if ((Cooldown = Cooldowns.GetNum("Cooldown", -1)) > 0)
 		{
@@ -835,10 +842,9 @@ stock void InternalStoreMapCooldowns()
 	for (int i = 0; i < OldMapListSnapshot.Length; i++)
 	{
 		OldMapListSnapshot.GetKey(i, map, sizeof(map));
-		if (g_bForceLowerCase)
-			StringToLowerCase(map);
-
+		// Read with the stored key before normalizing it, the key may predate mce_force_lowercase
 		g_OldMapList.GetValue(map, Cooldown);
+		NormalizeMapName(map);
 
 		if (!Cooldowns.JumpToKey(map, true))
 		{
@@ -857,10 +863,8 @@ stock void InternalStoreMapCooldowns()
 	for (int i = 0; i < TimeMapListSnapshot.Length; i++)
 	{
 		TimeMapListSnapshot.GetKey(i, map, sizeof(map));
-		if (g_bForceLowerCase)
-			StringToLowerCase(map);
-
 		g_TimeMapList.GetValue(map, Cooldown);
+		NormalizeMapName(map);
 
 		if (!Cooldowns.JumpToKey(map, true))
 		{
