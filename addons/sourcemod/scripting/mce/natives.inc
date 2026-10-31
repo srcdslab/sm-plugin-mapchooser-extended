@@ -198,11 +198,6 @@ public int Native_IsMapOfficial(Handle plugin, int numParams)
 	return view_as<int>(InternalIsMapOfficial(map));
 }
 
-public int Native_IsWarningTimer(Handle plugin, int numParams)
-{
-	return view_as<int>(g_WarningInProgress);
-}
-
 public int Native_CanNominate(Handle plugin, int numParams)
 {
 	if (g_HasVoteStarted)
