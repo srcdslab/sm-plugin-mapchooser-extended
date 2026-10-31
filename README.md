@@ -59,7 +59,7 @@ Advanced Automated Map Voting with Extensions
         "VIP"           "1" // Map can only be nominated by VIPs
         "Admin"         "1" // Map can only be nominated by Admins
         "Leader"        "1" // Map can only be nominated by Leaders
-        "Extends"       "3" // Number of extends available
+        "Extends"       "3" // Number of extends available, overrides mce_extend (also when mce_extend is 0)
         "ExtendTime"    "15" // Duration of an extend in minutes
         "ExtendRound"   "3" // Number of rounds to extend
         "ExtendFrag"    "100" // Number of frags to extend
@@ -88,7 +88,7 @@ Advanced Automated Map Voting with Extensions
 - mce_include (default: 5) - Number of maps included in the vote.
 - mce_include_reserved (default: 2) - Number of private/random maps included in vote.
 - mce_novote (default: 1) - Pick a map if no votes are received.
-- mce_extend (default: 0) - Number of extensions allowed each map.
+- mce_extend (default: 0) - Number of extensions allowed each map. A map with an `"Extends"` key in its section uses that value instead, even when this is 0.
 - mce_dontchange (default: 1) - Add a "Don't Change" option to early votes.
 - mce_voteduration (default: 20) - Vote duration in seconds.
 - mce_count_bots (default: 1) - Count bots for MinPlayers/MaxPlayers checks.
