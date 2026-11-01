@@ -47,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.12.4"
+#define RTVE_VERSION "1.12.5"
 
 // AFKManager has no forward: how often the AFK players are re-evaluated
 #define RTV_AFK_RECOUNT_INTERVAL 10.0
@@ -197,13 +197,8 @@ public void OnClientPutInServer(int client)
 
 public void OnClientDisconnect(int client)
 {
-	if (g_Voted[client])
-	{
-		g_Voted[client] = false;
-		g_Votes--;
-	}
-
-	// The client is still in game during this forward
+	// Its vote is dropped by the recount, which also skips it: the client is still in game during this forward
+	g_Voted[client] = false;
 	UpdateRTV(client);
 }
 
@@ -218,8 +213,27 @@ public void Frame_UpdateRTV(any data)
 	UpdateRTV();
 }
 
-// Players counted for RTV: humans that are not AFK. With PlayerManager they are split
-// between Steam and No-Steam, without it only players on a team count (all as Steam).
+// Players counted for RTV: humans that are not AFK. With PlayerManager spectators count too,
+// without it only players on a team count.
+bool IsRTVVoter(int client)
+{
+	if (!IsClientInGame(client) || IsFakeClient(client))
+		return false;
+
+#if defined _AFKManager_Included
+	if (g_bPlugin_AFK && GetClientIdleTime(client) >= g_Cvar_AFKTime.IntValue)
+		return false;
+#endif
+
+#if defined _PlayerManager_included
+	if (g_bPlugin_PM)
+		return true;
+#endif
+
+	return GetClientTeam(client) > 1;
+}
+
+// With PlayerManager the voters are split between Steam and No-Steam, without it they all count as Steam.
 void CountRTVVoters(int &votersSteam, int &votersNoSteam, int ignoreClient = 0)
 {
 	votersSteam = 0;
@@ -227,13 +241,8 @@ void CountRTVVoters(int &votersSteam, int &votersNoSteam, int ignoreClient = 0)
 
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if (i == ignoreClient || !IsClientInGame(i) || IsFakeClient(i))
+		if (i == ignoreClient || !IsRTVVoter(i))
 			continue;
-
-#if defined _AFKManager_Included
-		if (g_bPlugin_AFK && GetClientIdleTime(i) >= g_Cvar_AFKTime.IntValue)
-			continue;
-#endif
 
 #if defined _PlayerManager_included
 		if (g_bPlugin_PM)
@@ -246,8 +255,7 @@ void CountRTVVoters(int &votersSteam, int &votersNoSteam, int ignoreClient = 0)
 		}
 #endif
 
-		if (GetClientTeam(i) > 1)
-			votersSteam++;
+		votersSteam++;
 	}
 }
 
@@ -277,6 +285,15 @@ void RecountRTV(int ignoreClient = 0)
 
 	g_Voters = iVotersSteam + iVotersNoSteam;
 	g_VotesNeeded = GetVotesNeeded(iVotersSteam, iVotersNoSteam, iNeededSteam, iNeededNoSteam);
+
+	// Only the votes of the voters count: a player who voted then moved to spectator or went AFK
+	// gets their vote back if they become a voter again
+	g_Votes = 0;
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (i != ignoreClient && g_Voted[i] && IsRTVVoter(i))
+			g_Votes++;
+	}
 }
 
 void UpdateRTV(int ignoreClient = 0)
@@ -345,6 +362,12 @@ void AttemptRTV(int client)
 	if (GetClientCount(true) < g_Cvar_MinPlayers.IntValue)
 	{
 		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Minimal Players Not Met");
+		return;
+	}
+
+	if (!IsRTVVoter(client))
+	{
+		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Not Voter");
 		return;
 	}
 
