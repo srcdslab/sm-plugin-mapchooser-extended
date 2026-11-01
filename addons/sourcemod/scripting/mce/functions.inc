@@ -66,7 +66,7 @@ stock void InitializeGameModeSettings()
 		LogMessage("ImportFromFile() failed!");
 		return;
 	}
-	g_Config.Rewind();
+	CheckConfigTimes();
 
 	if (InternalAreRestrictionsActive())
 		g_SaveCDOnMapEnd = true;
@@ -961,6 +961,78 @@ stock int FindIntInArray(int[] array, int size, int value)
 	}
 
 	return -1;
+}
+
+// What TimeStrToSeconds() reads without guessing: numbers, each followed by an optional h, m or s unit ("1h 30m" is fine).
+// Anything else is skipped by TimeStrToSeconds(): "1.5h" reads as 1 min + 5 h.
+stock bool IsValidTimeStr(const char[] str)
+{
+	bool hasNumber = false;
+	bool afterNumber = false;
+	for (int i = 0; str[i] != '\0'; i++)
+	{
+		int c = CharToLower(str[i]);
+		if (IsCharNumeric(c))
+		{
+			hasNumber = true;
+			afterNumber = true;
+		}
+		else if (afterNumber && (c == 'h' || c == 'm' || c == 's'))
+			afterNumber = false;
+		else if (IsCharSpace(c))
+			afterNumber = false;
+		else
+			return false;
+	}
+	return hasNumber;
+}
+
+// TimeStrToSeconds() runs on every cooldown lookup: invalid times are reported once, when they are read
+stock void CheckTimeStr(const char[] str, const char[] what)
+{
+	if (str[0] && !IsValidTimeStr(str))
+		LogError("%s \"%s\" is not a valid time (numbers followed by h, m or s, e.g. \"1h30m\"), read as %d seconds.", what, str, TimeStrToSeconds(str));
+}
+
+stock void CheckConfigTimes()
+{
+	char section[PLATFORM_MAX_PATH], time[16], what[PLATFORM_MAX_PATH + 32];
+
+	g_Config.Rewind();
+	if (g_Config.GotoFirstSubKey())
+	{
+		do
+		{
+			g_Config.GetSectionName(section, sizeof(section));
+			if (strcmp(section, "_groups") == 0)
+			{
+				if (g_Config.GotoFirstSubKey())
+				{
+					do
+					{
+						g_Config.GetString("_cooldown_time", time, sizeof(time), "");
+						if (time[0])
+						{
+							g_Config.GetSectionName(section, sizeof(section));
+							FormatEx(what, sizeof(what), "_cooldown_time of group %s", section);
+							CheckTimeStr(time, what);
+						}
+					} while (g_Config.GotoNextKey());
+					g_Config.GoBack();
+				}
+			}
+			else
+			{
+				g_Config.GetString("CooldownTime", time, sizeof(time), "");
+				if (time[0])
+				{
+					FormatEx(what, sizeof(what), "CooldownTime of %s", section);
+					CheckTimeStr(time, what);
+				}
+			}
+		} while (g_Config.GotoNextKey());
+	}
+	g_Config.Rewind();
 }
 
 // Parses "60" (minutes), "30m", "2h", "1h30m", "2h15m30s"... A number without unit is read as minutes.

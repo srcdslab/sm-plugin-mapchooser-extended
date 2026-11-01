@@ -282,6 +282,7 @@ stock void CvarsInit()
 	g_bShowMapTierInChat = g_Cvar_ShowMapTierInChat.BoolValue;
 
 	g_Cvar_ExcludeMapsTime.GetString(g_sExcludeMapsTime, sizeof(g_sExcludeMapsTime));
+	CheckTimeStr(g_sExcludeMapsTime, "mce_exclude_time");
 
 	g_iStartRounds = g_Cvar_StartRounds.IntValue;
 	g_iStartFrags = g_Cvar_StartFrags.IntValue;
@@ -339,7 +340,10 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 	else if (convar == g_Cvar_ExcludeMaps)
 		g_iExcludeMaps = g_Cvar_ExcludeMaps.IntValue;
 	else if (convar == g_Cvar_ExcludeMapsTime)
+	{
 		g_Cvar_ExcludeMapsTime.GetString(g_sExcludeMapsTime, sizeof(g_sExcludeMapsTime));
+		CheckTimeStr(g_sExcludeMapsTime, "mce_exclude_time");
+	}
 	else if (convar == g_Cvar_IncludeMaps)
 		g_iIncludeMaps = g_Cvar_IncludeMaps.IntValue;
 	else if (convar == g_Cvar_IncludeMapsReserved)
