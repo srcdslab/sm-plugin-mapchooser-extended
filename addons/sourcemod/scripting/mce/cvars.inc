@@ -204,7 +204,7 @@ stock void CvarsInit()
 	g_Cvar_ShufflePerClient = CreateConVar("mce_shuffle_per_client", "1", "Random shuffle map vote menu per client?", _, true, 0.0, true, 1.0);
 	g_Cvar_NoRestrictionTimeframeEnable = CreateConVar("mce_no_restriction_timeframe_enable", "1", "Enable timeframe where all nomination restrictions and cooldowns are disabled?", _, true, 0.0, true, 1.0);
 	g_Cvar_NoRestrictionTimeframeMinTime = CreateConVar("mce_no_restriction_timeframe_mintime", "0100", "Start of the timeframe where all nomination restrictions and cooldowns are disabled (Format: HHMM)", _, true, 0000.0, true, 2359.0);
-	g_Cvar_NoRestrictionTimeframeMaxTime = CreateConVar("mce_no_restriction_timeframe_maxtime", "0700", "End of the timeframe where all nomination restrictions and cooldowns are disabled (Format: HHMM)", _, true, 0000.0, true, 2359.0);
+	g_Cvar_NoRestrictionTimeframeMaxTime = CreateConVar("mce_no_restriction_timeframe_maxtime", "0700", "End of the timeframe where all nomination restrictions and cooldowns are disabled, included (Format: HHMM). Lower than the start: the timeframe goes past midnight", _, true, 0000.0, true, 2359.0);
 	g_Cvar_LockNominationsAtWarning = CreateConVar("mce_locknominationswarning", "1", "Lock nominations when the warning start for vote", _, true, 0.0, true, 1.0);
 	g_Cvar_TimerUnlockNoms = CreateConVar("mce_locknominations_timer", "15.0", "Unlock nominations after a vote. Time in seconds.", _, true, 0.0, true, 60.0);
 	g_Cvar_ShowNominator = CreateConVar("mce_shownominator", "1", "See who nominated the map which won the vote", _, true, 0.0, true, 1.0);

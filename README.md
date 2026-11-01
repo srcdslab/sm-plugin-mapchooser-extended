@@ -110,7 +110,7 @@ Advanced Automated Map Voting with Extensions
 - mce_shuffle_per_client (default: 1) - Shuffle vote menu per client.
 - mce_no_restriction_timeframe_enable (default: 1) - Disable nomination restrictions during timeframe.
 - mce_no_restriction_timeframe_mintime (default: 0100) - Start of unrestricted timeframe (HHMM).
-- mce_no_restriction_timeframe_maxtime (default: 0700) - End of unrestricted timeframe (HHMM).
+- mce_no_restriction_timeframe_maxtime (default: 0700) - End of unrestricted timeframe (HHMM). Both the start and end minutes are part of the timeframe; an end lower than the start goes past midnight (`2200` / `0600`), the same value for both is a single minute.
 - mce_locknominationswarning (default: 1) - Lock nominations when vote warning starts.
 - mce_locknominations_timer (default: 15.0) - Unlock nominations delay after vote (seconds).
 - mce_shownominator (default: 1) - Show who nominated winning map.
