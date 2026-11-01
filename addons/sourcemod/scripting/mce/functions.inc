@@ -710,14 +710,15 @@ bool CanVoteStart()
 }
 
 // Functions new to Mapchooser Extended
-stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, ArrayList mapList=null, bool force=false)
+// Returns false when no countdown was started (or replaced)
+stock bool SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, ArrayList mapList=null, bool force=false)
 {
 	// g_WaitingForVote: the retry countdown of InitiateVote() is running and will start the vote itself
 	if (!g_MapList.Length || g_ChangeMapInProgress || g_HasVoteStarted || g_WaitingForVote || (!force && ((when == MapChange_MapEnd && !g_bEndOfMapVote) || g_MapVoteCompleted)))
 	{
 		// We own mapList
 		delete mapList;
-		return;
+		return false;
 	}
 
 	bool interrupted = false;
@@ -775,6 +776,7 @@ stock void SetupWarningTimer(WarningType type, MapChange when=MapChange_MapEnd, 
 	data.WriteCell(view_as<int>(when));
 	data.WriteCell(view_as<int>(force));
 	data.Reset();
+	return true;
 }
 
 stock void InitializeOfficialMapList()

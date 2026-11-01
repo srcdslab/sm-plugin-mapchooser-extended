@@ -495,6 +495,21 @@
 		"chi"		"已发起地图投票."
 	}
 
+	"Vote Map Already Running"
+	{
+		"chi"		"地图投票已在进行中或即将开始."
+	}
+
+	"Vote Map Change In Progress"
+	{
+		"chi"		"地图已在更换中."
+	}
+
+	"Vote No Maps Available"
+	{
+		"chi"		"没有可用于投票的地图."
+	}
+
 	"RTVE Not Allowed"
 	{
 		"chi"		"目前还不允许投票换图."
