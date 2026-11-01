@@ -65,7 +65,7 @@ public void Event_TeamPlayWinPanel(Event event, const char[] name, bool dontBroa
 	if (g_ChangeMapAtRoundEnd)
 	{
 		g_ChangeMapAtRoundEnd = false;
-		CreateTimer(2.0, Timer_ChangeMap, _, TIMER_FLAG_NO_MAPCHANGE);
+		g_ChangeMapTimer = CreateTimer(2.0, Timer_ChangeMap, _, TIMER_FLAG_NO_MAPCHANGE);
 		g_ChangeMapInProgress = true;
 	}
 
@@ -200,7 +200,7 @@ public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 	if (g_ChangeMapAtRoundEnd)
 	{
 		g_ChangeMapAtRoundEnd = false;
-		CreateTimer(2.0, Timer_ChangeMap, _, TIMER_FLAG_NO_MAPCHANGE);
+		g_ChangeMapTimer = CreateTimer(2.0, Timer_ChangeMap, _, TIMER_FLAG_NO_MAPCHANGE);
 		g_ChangeMapInProgress = true;
 	}
 
