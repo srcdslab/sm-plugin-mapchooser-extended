@@ -263,6 +263,13 @@ public Action Command_AddExcludeTime(int client, int args)
 	{
 		static char buffer[16];
 		GetCmdArg(2, buffer, sizeof(buffer));
+
+		// TimeStrToSeconds() skips what it can't parse: "1.5h" would exclude the map for 5h01
+		if (!IsValidTimeStr(buffer))
+		{
+			CReplyToCommand(client, "{green}[NE]{default} %t", "NE Invalid Time", buffer);
+			return Plugin_Handled;
+		}
 		cooldown = TimeStrToSeconds(buffer);
 	}
 	if (args >= 3)

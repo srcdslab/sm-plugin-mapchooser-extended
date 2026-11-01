@@ -485,6 +485,11 @@
 		"chi"		"否"
 	}
 
+	"NE Invalid Time"
+	{
+		"chi"		"\"{1}\" 不是有效的时间: 请使用数字加 h, m 或 s (例如 1h30m)."
+	}
+
 	"MCE See Console For Output"
 	{
 		"chi"		"请查看控制台以获取输出."

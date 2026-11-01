@@ -486,6 +486,11 @@
 		"es"		"No"
 	}
 
+	"NE Invalid Time"
+	{
+		"es"		"\"{1}\" no es un tiempo válido: usa números seguidos de h, m o s (p. ej. 1h30m)."
+	}
+
 	"MCE See Console For Output"
 	{
 		"es"		"Ver la consola para el resultado."

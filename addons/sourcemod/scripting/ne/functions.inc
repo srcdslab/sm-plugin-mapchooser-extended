@@ -308,6 +308,30 @@ stock void CustomFormatTime(int seconds, char[] buffer, int maxlen)
 		Format(buffer, maxlen, "%dh", seconds / 3600);
 }
 
+// What TimeStrToSeconds() reads without guessing: numbers, each followed by an optional h, m or s unit ("1h 30m" is fine).
+// Anything else is skipped by TimeStrToSeconds(): "1.5h" reads as 1 min + 5 h.
+stock bool IsValidTimeStr(const char[] str)
+{
+	bool hasNumber = false;
+	bool afterNumber = false;
+	for (int i = 0; str[i] != '\0'; i++)
+	{
+		int c = CharToLower(str[i]);
+		if (IsCharNumeric(c))
+		{
+			hasNumber = true;
+			afterNumber = true;
+		}
+		else if (afterNumber && (c == 'h' || c == 'm' || c == 's'))
+			afterNumber = false;
+		else if (IsCharSpace(c))
+			afterNumber = false;
+		else
+			return false;
+	}
+	return hasNumber;
+}
+
 // Parses "60" (minutes), "30m", "2h", "1h30m", "2h15m30s"... A number without unit is read as minutes.
 stock int TimeStrToSeconds(const char[] str)
 {

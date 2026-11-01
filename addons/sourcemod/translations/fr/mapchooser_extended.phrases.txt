@@ -486,6 +486,11 @@
 		"fr"		"Non"
 	}
 
+	"NE Invalid Time"
+	{
+		"fr"		"\"{1}\" n'est pas une durée valide : utilisez des nombres suivis de h, m ou s (ex. 1h30m)."
+	}
+
 	"MCE See Console For Output"
 	{
 		"fr"		"Voir la console pour le résultat."

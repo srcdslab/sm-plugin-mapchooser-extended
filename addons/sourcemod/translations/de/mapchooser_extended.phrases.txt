@@ -485,6 +485,11 @@
 		"de"		"Nein"
 	}
 
+	"NE Invalid Time"
+	{
+		"de"		"\"{1}\" ist keine gültige Zeit: Zahlen gefolgt von h, m oder s verwenden (z. B. 1h30m)."
+	}
+
 	"MCE See Console For Output"
 	{
 		"de"		"Siehe Konsole für die Ausgabe."
