@@ -59,7 +59,7 @@ Advanced Automated Map Voting with Extensions
         "VIP"           "1" // Map can only be nominated by VIPs
         "Admin"         "1" // Map can only be nominated by Admins
         "Leader"        "1" // Map can only be nominated by Leaders
-        "Extends"       "3" // Number of extends available
+        "Extends"       "3" // Number of extends available, overrides mce_extend (also when mce_extend is 0)
         "ExtendTime"    "15" // Duration of an extend in minutes
         "ExtendRound"   "3" // Number of rounds to extend
         "ExtendFrag"    "100" // Number of frags to extend
@@ -88,7 +88,7 @@ Advanced Automated Map Voting with Extensions
 - mce_include (default: 5) - Number of maps included in the vote.
 - mce_include_reserved (default: 2) - Number of private/random maps included in vote.
 - mce_novote (default: 1) - Pick a map if no votes are received.
-- mce_extend (default: 0) - Number of extensions allowed each map.
+- mce_extend (default: 0) - Number of extensions allowed each map. A map with an `"Extends"` key in its section uses that value instead, even when this is 0.
 - mce_dontchange (default: 1) - Add a "Don't Change" option to early votes.
 - mce_voteduration (default: 20) - Vote duration in seconds.
 - mce_count_bots (default: 1) - Count bots for MinPlayers/MaxPlayers checks.
@@ -114,7 +114,12 @@ Advanced Automated Map Voting with Extensions
 - mce_locknominationswarning (default: 1) - Lock nominations when vote warning starts.
 - mce_locknominations_timer (default: 15.0) - Unlock nominations delay after vote (seconds).
 - mce_shownominator (default: 1) - Show who nominated winning map.
-- mce_sharedcd_mode (default: 1) - Shared cooldown mode for grouped maps.
+- mce_sharedcd_mode (default: 2) - How the `_cooldown` / `_cooldown_time` of a group are applied to the maps of the group when one of them starts:
+  - 0: each map gets its own `Cooldown` / `CooldownTime`.
+  - 1: set or replace. A group cooldown can shorten a longer cooldown that a map already has (for example the 24h `CooldownTime` of a map played recently).
+  - 2: only if it is longer than the cooldown the map already has.
+
+  The default was 1 before 1.14.5. `cfg/sourcemod/mapchooser_extended.cfg` keeps the value it was created with, so existing servers stay on 1 until it is changed there.
 - mce_cooldown_mode (default: 0) - Cooldown evaluation mode.
 - mce_showmaptier_in_chat (default: 1) - Show map tier name in chat.
 ### Commands

@@ -35,6 +35,7 @@ enum
 Handle g_VoteTimer = null;
 Handle g_RetryTimer = null;
 Handle g_WarningTimer = null;
+Handle g_ChangeMapTimer = null;	// Pending Timer_ChangeMap()
 
 /* Data Handles */
 ArrayList g_MapList = null;
@@ -43,6 +44,7 @@ ArrayList g_NominateOwners = null;
 StringMap g_OldMapList;
 StringMap g_TimeMapList;
 ArrayList g_NextMapList = null;
+ArrayList g_WarningMapList = null;	// Map list of the pending warning/retry countdown, owned until the vote starts
 Menu g_VoteMenu = null;
 KeyValues g_Config;
 
@@ -55,12 +57,11 @@ bool g_PendingRevoteActive;
 bool g_ChangeMapAtRoundEnd;
 bool g_ChangeMapInProgress;
 bool g_HasIntermissionStarted = false;
-bool g_bRevoteWarning = false;
+int g_WarningTimePassed = 0;	// Seconds elapsed in the current warning or retry countdown
 int g_mapFileSerial = -1;
 
-int g_NominateCount = 0;
-int g_NominateReservedCount = 0;
 MapChange g_ChangeTime;
+bool g_VoteForced;	// The running vote was forced by sm_mapvote, its runoff is too
 
 /* Mapchooser Extended Data Handles */
 ArrayList g_OfficialList = null;
@@ -70,7 +71,7 @@ int g_RunoffCount = 0;
 int g_mapOfficialFileSerial = -1;
 char g_sGameModName[64];
 bool g_WarningInProgress = false;
-bool g_AddNoVote = false;
+MapChange g_WarningWhen = MapChange_MapEnd;	// When the running warning countdown changes the map
 bool g_SaveCDOnMapEnd = true;
 bool g_ZLeader = false;
 bool g_DynamicChannels = false;
@@ -83,7 +84,6 @@ RoundCounting g_RoundCounting = RoundCounting_Standard;
 #define MAXTEAMS 10
 int g_winCount[MAXTEAMS];
 
-bool g_BlockedSlots = false;
 int g_ObjectiveEnt = -1;
 
 enum TimerLocation
