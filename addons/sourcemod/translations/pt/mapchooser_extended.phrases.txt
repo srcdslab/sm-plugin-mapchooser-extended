@@ -549,4 +549,9 @@
 	{
 		"pt"		"Mudando o mapa para {1}! O Rock the Vote decidiu!"
 	}
+
+	"RTVE Not Voter"
+	{
+		"pt"		"Você não pode votar no Rock the Vote como espectador ou AFK."
+	}
 }

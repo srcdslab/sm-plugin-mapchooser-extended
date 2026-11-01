@@ -550,4 +550,9 @@
 	{
 		"fr"		"Changement vers la carte {1} ! Le vote a tranché !"
 	}
+
+	"RTVE Not Voter"
+	{
+		"fr"		"Vous ne pouvez pas voter pour changer de map en étant spectateur ou AFK."
+	}
 }
