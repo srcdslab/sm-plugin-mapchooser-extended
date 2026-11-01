@@ -236,6 +236,58 @@ stock int InternalGetMapCooldownTime(const char[] map)
 	return Cooldown;
 }
 
+// Mode: 0 = cooldown from config/default, 1 = set or replace, 2 = keep the greatest (see ExcludeMap native)
+// The caller is responsible for InternalStoreMapCooldowns()
+stock bool InternalExcludeMap(const char[] map, int cooldown, int mode)
+{
+	if (!InternalAreRestrictionsActive())
+		return false;
+
+	if (mode == 0)
+	{
+		// In TimeOnly mode, don't exclude via counter
+		if (g_CooldownMode == CooldownMode_TimeOnly)
+			return false;
+
+		cooldown = InternalGetMapCooldown(map);
+	}
+	else if (mode == 2)
+	{
+		int current;
+		if (g_OldMapList.GetValue(map, current) && current > cooldown)
+			cooldown = current;
+	}
+
+	g_OldMapList.SetValue(map, cooldown, true);
+	return true;
+}
+
+// Same modes as InternalExcludeMap, cooldown is a duration in seconds
+stock bool InternalExcludeMapTime(const char[] map, int cooldown, int mode)
+{
+	if (!InternalAreRestrictionsActive())
+		return false;
+
+	if (mode == 0)
+	{
+		// In CounterOnly mode, don't exclude via time
+		if (g_CooldownMode == CooldownMode_CounterOnly)
+			return false;
+
+		cooldown = InternalGetMapCooldownTime(map);
+	}
+
+	// g_TimeMapList stores the timestamp at which the cooldown ends
+	int expires = GetTime() + cooldown;
+
+	int current;
+	if (mode == 2 && g_TimeMapList.GetValue(map, current) && current > expires)
+		expires = current;
+
+	g_TimeMapList.SetValue(map, expires, true);
+	return true;
+}
+
 stock int InternalGetMapMinTime(const char[] map)
 {
 	int MinTime = 0;
