@@ -121,7 +121,8 @@ public int Native_InitiateVote(Handle plugin, int numParams)
 
 	LogAction(-1, -1, "[MCE] Starting map vote countdown because players RTV.");
 
-	SetupWarningTimer(WarningType_Vote, when, inputarray);
+	// The caller keeps its list: we can't delete a handle owned by another plugin, work on our own copy
+	SetupWarningTimer(WarningType_Vote, when, inputarray != null ? inputarray.Clone() : null);
 	//InitiateVote(when, inputarray);
 	return 0;
 }
@@ -197,11 +198,6 @@ public int Native_IsMapOfficial(Handle plugin, int numParams)
 	return view_as<int>(InternalIsMapOfficial(map));
 }
 
-public int Native_IsWarningTimer(Handle plugin, int numParams)
-{
-	return view_as<int>(g_WarningInProgress);
-}
-
 public int Native_CanNominate(Handle plugin, int numParams)
 {
 	if (g_HasVoteStarted)
@@ -214,7 +210,7 @@ public int Native_CanNominate(Handle plugin, int numParams)
 		return view_as<int>(CanNominate_No_VoteComplete);
 	}
 
-	if (g_NominateCount >= GetVoteSize())
+	if (GetNominateCount() >= GetVoteSize())
 	{
 		return view_as<int>(CanNominate_No_VoteFull);
 	}
@@ -224,9 +220,6 @@ public int Native_CanNominate(Handle plugin, int numParams)
 
 public int Native_ExcludeMap(Handle plugin, int numParams)
 {
-	if (!InternalAreRestrictionsActive())
-		return 0;
-
 	int len;
 	GetNativeStringLength(1, len);
 
@@ -236,40 +229,15 @@ public int Native_ExcludeMap(Handle plugin, int numParams)
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
 
-	int Cooldown;
-	int Mode = GetNativeCell(3);
+	if (!InternalExcludeMap(map, GetNativeCell(2), GetNativeCell(3)))
+		return 0;
 
-	if (Mode == 0)
-	{
-		// In TimeOnly mode, don't exclude via counter
-		if (g_CooldownMode == CooldownMode_TimeOnly)
-			return 0;
-
-		Cooldown = InternalGetMapCooldown(map);
-	}
-	else if (Mode == 1)
-	{
-		Cooldown = GetNativeCell(2);
-	}
-	else if (Mode == 2)
-	{
-		g_OldMapList.GetValue(map, Cooldown);
-		int NewCooldown = GetNativeCell(2);
-		if (NewCooldown > Cooldown)
-			Cooldown = NewCooldown;
-	}
-
-	g_OldMapList.SetValue(map, Cooldown, true);
 	InternalStoreMapCooldowns();
-
 	return 1;
 }
 
 public int Native_ExcludeMapTime(Handle plugin, int numParams)
 {
-	if (!InternalAreRestrictionsActive())
-		return 0;
-
 	int len;
 	GetNativeStringLength(1, len);
 
@@ -279,34 +247,10 @@ public int Native_ExcludeMapTime(Handle plugin, int numParams)
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
 
-	int Cooldown;
-	int Mode = GetNativeCell(3);
-	int iCurrentTime = GetTime();
+	if (!InternalExcludeMapTime(map, GetNativeCell(2), GetNativeCell(3)))
+		return 0;
 
-	if (Mode == 0)
-	{
-		// In CounterOnly mode, don't exclude via time
-		if (g_CooldownMode == CooldownMode_CounterOnly)
-			return 0;
-
-		Cooldown = InternalGetMapCooldownTime(map);
-	}
-	else if (Mode == 1)
-	{
-		Cooldown = GetNativeCell(2);
-	}
-	else if (Mode == 2)
-	{
-		g_TimeMapList.GetValue(map, Cooldown);
-		int NewCooldown = iCurrentTime + GetNativeCell(2);
-		if (NewCooldown > Cooldown)
-			Cooldown = GetNativeCell(2);
-	}
-
-	Cooldown += iCurrentTime;
-	g_TimeMapList.SetValue(map, Cooldown, true);
 	InternalStoreMapCooldowns();
-
 	return 1;
 }
 
@@ -323,6 +267,8 @@ public int Native_GetMapCooldown(Handle plugin, int numParams)
 
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
+
+	NormalizeMapName(map);
 
 	int Cooldown = 0;
 	g_OldMapList.GetValue(map, Cooldown);
@@ -343,6 +289,8 @@ public int Native_GetMapCooldownTime(Handle plugin, int numParams)
 
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
+
+	NormalizeMapName(map);
 
 	int Cooldown = 0;
 	g_TimeMapList.GetValue(map, Cooldown);
@@ -498,7 +446,7 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 						g_NominateList.GetString(index, oldmap, PLATFORM_MAX_PATH);
 						static int oldgroups[32];
 						int tmp = InternalGetMapGroups(oldmap, oldgroups, sizeof(oldgroups));
-						if (FindIntInArray(groups_, tmp, groups[group]) != -1)
+						if (FindIntInArray(oldgroups, tmp, groups[group]) != -1)
 							okay = true;
 					}
 				}
@@ -707,6 +655,12 @@ public int Native_AreRestrictionsActive(Handle plugin, int numParams)
 
 public int Native_SimulateMapEnd(Handle plugin, int numParams)
 {
+	// Unlike a real map end, SourceMod doesn't kill our TIMER_FLAG_NO_MAPCHANGE timers here
+	delete g_VoteTimer;
+	delete g_RetryTimer;
+	delete g_WarningTimer;
+	delete g_ChangeMapTimer;
+
 	OnMapEnd();
 	return 0;
 }
