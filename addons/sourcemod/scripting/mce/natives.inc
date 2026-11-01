@@ -660,6 +660,12 @@ public int Native_AreRestrictionsActive(Handle plugin, int numParams)
 
 public int Native_SimulateMapEnd(Handle plugin, int numParams)
 {
+	// Unlike a real map end, SourceMod doesn't kill our TIMER_FLAG_NO_MAPCHANGE timers here
+	delete g_VoteTimer;
+	delete g_RetryTimer;
+	delete g_WarningTimer;
+	delete g_ChangeMapTimer;
+
 	OnMapEnd();
 	return 0;
 }

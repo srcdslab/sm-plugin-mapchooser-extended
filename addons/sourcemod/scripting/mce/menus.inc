@@ -398,10 +398,11 @@ public void Handler_VoteFinishedGeneric(Menu menu,
 		}
 		else if (g_ChangeTime == MapChange_Instant)
 		{
+			// Blocks new votes until Timer_ChangeMap() runs, a map change before that kills the timer
 			DataPack data;
-			CreateDataTimer(4.0, Timer_ChangeMap, data);
+			g_ChangeMapTimer = CreateDataTimer(4.0, Timer_ChangeMap, data, TIMER_FLAG_NO_MAPCHANGE);
 			data.WriteString(map);
-			g_ChangeMapInProgress = false;
+			g_ChangeMapInProgress = true;
 		}
 		else // MapChange_RoundEnd
 		{
