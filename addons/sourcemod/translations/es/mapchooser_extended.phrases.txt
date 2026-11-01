@@ -496,6 +496,21 @@
 		"es"		"Ha iniciado una votacion de mapa."
 	}
 
+	"Vote Map Already Running"
+	{
+		"es"		"Ya hay una votación de mapa en curso o a punto de empezar."
+	}
+
+	"Vote Map Change In Progress"
+	{
+		"es"		"El mapa ya está cambiando."
+	}
+
+	"Vote No Maps Available"
+	{
+		"es"		"No hay mapas disponibles para una votación."
+	}
+
 	"RTVE Not Allowed"
 	{
 		"es"		"Rock the Vote aun no esta permitido."

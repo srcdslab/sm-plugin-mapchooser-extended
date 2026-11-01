@@ -496,6 +496,21 @@
 		"fr"		"A lancé un vote de map."
 	}
 
+	"Vote Map Already Running"
+	{
+		"fr"		"Un vote de map est déjà en cours ou sur le point de commencer."
+	}
+
+	"Vote Map Change In Progress"
+	{
+		"fr"		"La map est déjà en train de changer."
+	}
+
+	"Vote No Maps Available"
+	{
+		"fr"		"Aucune map disponible pour un vote."
+	}
+
 	"RTVE Not Allowed"
 	{
 		"fr"		"Le changement de map n'est pas encore autorisé."

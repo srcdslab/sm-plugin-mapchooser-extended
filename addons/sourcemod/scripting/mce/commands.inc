@@ -143,10 +143,21 @@ public Action Command_ExtendsLeft(int client, int args)
 
 public Action Command_Mapvote(int client, int args)
 {
+	if (!SetupWarningTimer(WarningType_Vote, MapChange_MapEnd, null, true))
+	{
+		// Same checks as SetupWarningTimer(), force skips the others
+		if (g_ChangeMapInProgress)
+			CReplyToCommand(client, "{green}[MCE]{default} %t", "Vote Map Change In Progress");
+		else if (g_HasVoteStarted || g_WaitingForVote)
+			CReplyToCommand(client, "{green}[MCE]{default} %t", "Vote Map Already Running");
+		else
+			CReplyToCommand(client, "{green}[MCE]{default} %t", "Vote No Maps Available");
+
+		return Plugin_Handled;
+	}
+
 	CShowActivity2(client, "{green}[MCE]{olive} ", "{default}%t", "Vote Map Initiated");
 	LogAction(client, -1, "[MCE] \"%L\" Initiated a map vote.", client);
-
-	SetupWarningTimer(WarningType_Vote, MapChange_MapEnd, null, true);
 
 	//InitiateVote(MapChange_MapEnd, null);
 
