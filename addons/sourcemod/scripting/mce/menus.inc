@@ -14,8 +14,9 @@
  *
  * @param when			When the resulting map change should occur.
  * @param inputlist		Optional list of maps to use for the vote, otherwise an internal list of nominations + random maps will be used.
+ * @param force			Vote forced by sm_mapvote, ignores mce_endvote and a completed vote.
  */
-void InitiateVote(MapChange when, ArrayList inputlist=null)
+void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 {
 	g_WaitingForVote = true;
 	g_WarningInProgress = false;
@@ -26,9 +27,10 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 	if (IsVoteInProgress())
 	{
 		// Can't start a vote, try again in 5 seconds.
-		//g_RetryTimer = CreateTimer(5.0, Timer_StartMapVote, _, TIMER_FLAG_NO_MAPCHANGE);
-
 		CPrintToChatAll("{green}[MCE]{default} %t", "Cannot Start Vote", FAILURE_TIMER_LENGTH);
+
+		g_WarningTimePassed = 0;
+
 		DataPack data;
 		g_RetryTimer = CreateDataTimer(1.0, Timer_StartMapVote, data, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
 
@@ -42,19 +44,38 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 		/* End Mapchooser Extended */
 
 		data.WriteCell(view_as<int>(when));
-		data.WriteCell(view_as<int>(inputlist));
+		data.WriteCell(view_as<int>(force));
 		data.Reset();
+
+		// Kept for the retry, Timer_StartMapVote() hands it back to us
+		g_WarningMapList = inputlist;
 		return;
 	}
 
 	/* If the main map vote has completed (and chosen result) and its currently changing (not a delayed change) we block further attempts */
 	if (g_MapVoteCompleted && g_ChangeMapInProgress)
+	{
+		g_WaitingForVote = false;
+		delete inputlist;
 		return;
+	}
 
 	CheckMapRestrictions(true, true);
 	CreateNextVote();
 
+	if (inputlist == null && !g_NominateList.Length && !g_NextMapList.Length)
+	{
+		// Checked before creating the menu, there is nothing to free or reset afterwards
+		LogError("No maps available for vote.");
+		g_WaitingForVote = false;
+
+		if (g_bLockNominationsAtWarning)
+			UnlockNominations(null);
+		return;
+	}
+
 	g_ChangeTime = when;
+	g_VoteForced = force;
 
 	g_WaitingForVote = false;
 
@@ -78,7 +99,6 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 
 		if (g_VoteMenu.Style == radioStyle)
 		{
-			g_BlockedSlots = true;
 			g_VoteMenu.AddItem(LINE_ONE, "Choose something...", ITEMDRAW_DISABLED);
 			g_VoteMenu.AddItem(LINE_TWO, "...will ya?", ITEMDRAW_DISABLED);
 			MenuRandomShuffleStart += 2;
@@ -88,8 +108,6 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 				MenuRandomShuffleStart++;
 			}
 		}
-		else
-			g_BlockedSlots = false;
 	}
 
 	if (g_bNoVoteOption)
@@ -129,8 +147,10 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 		/* Smaller of the two - It should be impossible for nominations to exceed the size though (cvar changed mid-map?) */
 		int nominationsToAdd = nominateCount >= voteSize ? voteSize : nominateCount;
 
-		if (g_bExtendPositionTop) {
-			AddExtendToMenu(g_VoteMenu, when);
+		char extendItem[32];
+		if (g_bExtendPositionTop && AddExtendToMenu(g_VoteMenu, when, extendItem, sizeof(extendItem)))
+		{
+			Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, extendItem);
 			MenuRandomShuffleStart++;
 		}
 
@@ -140,7 +160,7 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 
 			if (randomizeList == null)
 			{
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 
@@ -166,18 +186,11 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 		int count = 0;
 		int availableMaps = g_NextMapList.Length;
 
+		// i > 0 here: a vote without nominations nor random maps is refused before the menu is created
 		if (i < voteSize && availableMaps == 0)
 		{
-			if (i == 0)
-			{
-				LogError("No maps available for vote.");
-				return;
-			}
-			else
-			{
-				LogMessage("Not enough maps to fill map list, reducing map count. Adjust mce_include and mce_exclude to avoid this warning.");
-				voteSize = i;
-			}
+			LogMessage("Not enough maps to fill map list, reducing map count. Adjust mce_include and mce_exclude to avoid this warning.");
+			voteSize = i;
 		}
 
 		while(i < voteSize)
@@ -188,7 +201,7 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 			if (randomizeList == null)
 			{
 				/* Insert the map and increment our count */
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 			else
@@ -212,17 +225,16 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 			for (int j = 0; j < randomizeList.Length; j++)
 			{
 				randomizeList.GetString(j, map, PLATFORM_MAX_PATH);
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 
 			delete randomizeList;
 		}
 
-		if (!g_bExtendPositionTop) {
-			if (InternalGetMapMaxExtends(map) - g_Extends > 0)
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
-			AddExtendToMenu(g_VoteMenu, when);
+		if (!g_bExtendPositionTop && AddExtendToMenu(g_VoteMenu, when, extendItem, sizeof(extendItem)))
+		{
+			Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, extendItem);
 			MenuRandomShuffleStop++;
 		}
 
@@ -242,19 +254,18 @@ void InitiateVote(MapChange when, ArrayList inputlist=null)
 
 			if (IsMapValidEx(map))
 			{
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 			// New in Mapchooser Extended
 			else if (strcmp(map, VOTE_DONTCHANGE) == 0)
 			{
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Don't Change");
 				g_VoteMenu.AddItem(VOTE_DONTCHANGE, "Don't Change");
 			}
 			else if (strcmp(map, VOTE_EXTEND) == 0)
 			{
-				if (InternalGetMapMaxExtends(map) - g_Extends > 0)
-					FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
-
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
 				g_VoteMenu.AddItem(VOTE_EXTEND, "Extend Map");
 			}
 		}
@@ -307,36 +318,38 @@ public void Handler_VoteFinishedGeneric(Menu menu,
 	{
 		g_Extends++;
 
+		// `map` is VOTE_EXTEND here, the per-map extend settings belong to the current map
+		char sCurrentMap[PLATFORM_MAX_PATH];
+		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+
 		int time;
 		if (GetMapTimeLimit(time))
 		{
 			if (time > 0)
-				ExtendMapTimeLimit(InternalGetMapExtendTime(map)*60);
+				ExtendMapTimeLimit(InternalGetMapExtendTime(sCurrentMap)*60);
 		}
 
 		if (g_Cvar_Winlimit != null)
 		{
 			int winlimit = g_Cvar_Winlimit.IntValue;
 			if (winlimit)
-				g_Cvar_Winlimit.SetInt(winlimit + InternalGetMapExtendRound(map));
+				g_Cvar_Winlimit.SetInt(winlimit + InternalGetMapExtendRound(sCurrentMap));
 		}
 
 		if (g_Cvar_Maxrounds != null)
 		{
 			int maxrounds = g_Cvar_Maxrounds.IntValue;
 			if (maxrounds)
-				g_Cvar_Maxrounds.SetInt(maxrounds + InternalGetMapExtendRound(map));
+				g_Cvar_Maxrounds.SetInt(maxrounds + InternalGetMapExtendRound(sCurrentMap));
 		}
 
 		if (g_Cvar_Fraglimit != null)
 		{
 			int fraglimit = g_Cvar_Fraglimit.IntValue;
 			if (fraglimit)
-				g_Cvar_Fraglimit.SetInt(fraglimit + InternalGetMapExtendFrag(map));
+				g_Cvar_Fraglimit.SetInt(fraglimit + InternalGetMapExtendFrag(sCurrentMap));
 		}
 
-		char sCurrentMap[64];
-		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 		int iExentedLeft = InternalGetMapMaxExtends(sCurrentMap) - g_Extends;
 		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
 
@@ -385,10 +398,11 @@ public void Handler_VoteFinishedGeneric(Menu menu,
 		}
 		else if (g_ChangeTime == MapChange_Instant)
 		{
+			// Blocks new votes until Timer_ChangeMap() runs, a map change before that kills the timer
 			DataPack data;
-			CreateDataTimer(4.0, Timer_ChangeMap, data);
+			g_ChangeMapTimer = CreateDataTimer(4.0, Timer_ChangeMap, data, TIMER_FLAG_NO_MAPCHANGE);
 			data.WriteString(map);
-			g_ChangeMapInProgress = false;
+			g_ChangeMapInProgress = true;
 		}
 		else // MapChange_RoundEnd
 		{
@@ -518,7 +532,7 @@ public void Handler_MapVoteFinished(Menu menu,
 			LogAction(-1, -1, "[MCE] The top maps had the same number of votes. A revote is needed!");
 			CPrintToChatAll("{green}[MCE]{default} %t", "Tie Vote", mapList.Length);
 
-			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
+			SetupWarningTimer(WarningType_Revote, g_ChangeTime, mapList, g_VoteForced);
 			return;
 		}
 		else if (highest_votes < required_votes)
@@ -552,7 +566,7 @@ public void Handler_MapVoteFinished(Menu menu,
 			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed", required_percent);
 			CPrintToChatAll("{green}[MCE]{default} %t", "Revote Is Needed New Vote");
 
-			SetupWarningTimer(WarningType_Revote, view_as<MapChange>(g_ChangeTime), mapList);
+			SetupWarningTimer(WarningType_Revote, g_ChangeTime, mapList, g_VoteForced);
 			return;
 		}
 	}
@@ -626,7 +640,7 @@ public int Handler_MapVoteMenu(Menu menu, MenuAction action, int param1, int par
 				}
 			}
 
-			char mapDisplay[32]
+			char mapDisplay[32];
 			if (InternalGetMapTierName(map, mapDisplay, sizeof(mapDisplay)))
 				Format(buffer, sizeof(buffer), "%s [%s]", buffer, mapDisplay);
 
@@ -647,39 +661,41 @@ public int Handler_MapVoteMenu(Menu menu, MenuAction action, int param1, int par
 			// If we receive 0 votes, pick at random.
 			if (param1 == VoteCancel_NoVotes && g_bNoVoteMode)
 			{
-				int count = menu.ItemCount;
-
-				int item;
 				static char map[PLATFORM_MAX_PATH];
 
-				do
+				// Only real maps: skip the blocked slots lines, "Extend" and "Don't Change"
+				ArrayList maps = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
+				for (int item = 0; item < menu.ItemCount; item++)
 				{
-					int startInt = 0;
-					if (g_BlockedSlots)
-					{
-						if (g_AddNoVote)
-						{
-							startInt = 2;
-						}
-						else
-						{
-							startInt = 3;
-						}
-					}
-					item = GetRandomInt(startInt, count - 1);
-					menu.GetItem(item, map, PLATFORM_MAX_PATH, _, _, _, param1);
+					GetMapItem(menu, item, map, PLATFORM_MAX_PATH);
+					if (IsMapValidEx(map))
+						maps.PushString(map);
 				}
-				while(strcmp(map, VOTE_EXTEND, false) == 0);
 
-				SetNextMap(map);
-				Forward_OnSetNextMap(map);
-				LogAction(-1, -1, "[MCE] No votes has been receive. Pickup a random map. Nextmap is : %s", map);
-				g_MapVoteCompleted = true;
+				if (maps.Length)
+				{
+					maps.GetString(GetRandomInt(0, maps.Length - 1), map, PLATFORM_MAX_PATH);
+
+					SetNextMap(map);
+					Forward_OnSetNextMap(map);
+					LogAction(-1, -1, "[MCE] No votes has been receive. Pickup a random map. Nextmap is : %s", map);
+					g_MapVoteCompleted = true;
+				}
+				else
+					LogAction(-1, -1, "[MCE] No votes has been receive. No map to pick from the vote.");
+
+				delete maps;
 			}
 			else
 				LogAction(-1, -1, "[MCE] No votes has been receive.");
 
 			g_HasVoteStarted = false;
+			// A cancelled revote must not keep blocking CanMapChooserStartVote()
+			g_PendingRevoteActive = false;
+
+			// Same as after an extend: nominations were locked by the warning
+			if (!g_MapVoteCompleted && g_bLockNominationsAtWarning)
+				CreateTimer(g_fTimerUnlockNoms, UnlockNominations, _, TIMER_FLAG_NO_MAPCHANGE);
 		}
 	}
 
