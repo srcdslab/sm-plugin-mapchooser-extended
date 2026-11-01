@@ -446,7 +446,7 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 						g_NominateList.GetString(index, oldmap, PLATFORM_MAX_PATH);
 						static int oldgroups[32];
 						int tmp = InternalGetMapGroups(oldmap, oldgroups, sizeof(oldgroups));
-						if (FindIntInArray(groups_, tmp, groups[group]) != -1)
+						if (FindIntInArray(oldgroups, tmp, groups[group]) != -1)
 							okay = true;
 					}
 				}
