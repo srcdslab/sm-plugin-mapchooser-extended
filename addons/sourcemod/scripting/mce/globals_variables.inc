@@ -71,6 +71,7 @@ int g_RunoffCount = 0;
 int g_mapOfficialFileSerial = -1;
 char g_sGameModName[64];
 bool g_WarningInProgress = false;
+MapChange g_WarningWhen = MapChange_MapEnd;	// When the running warning countdown changes the map
 bool g_SaveCDOnMapEnd = true;
 bool g_ZLeader = false;
 bool g_DynamicChannels = false;
