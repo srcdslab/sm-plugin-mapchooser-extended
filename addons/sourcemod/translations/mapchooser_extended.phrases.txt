@@ -544,6 +544,12 @@
 		"en"		"\"{1}\" is not a valid time: use numbers followed by h, m or s (e.g. 1h30m)."
 	}
 
+	"NE Invalid Exclude Mode"
+	{
+		"#format"	"{1:s}"
+		"en"		"Invalid mode \"{1}\": 0 = the map's cooldown from the config, 1 = set or replace, 2 = only if longer."
+	}
+
 	"MCE See Console For Output"
 	{
 		"en"		"See console for output."

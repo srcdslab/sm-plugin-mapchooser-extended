@@ -33,7 +33,7 @@ stock void CommandsInit()
 	RegAdminCmd("sm_nominate_addmap", Command_Addmap, ADMFLAG_CHANGEMAP, "sm_nominate_addmap <mapname> - Forces a map to be on the next mapvote.");
 	RegAdminCmd("sm_nominate_removemap", Command_Removemap, ADMFLAG_CHANGEMAP, "sm_nominate_removemap <mapname> - Removes a map from Nominations.");
 
-	RegAdminCmd("sm_nominate_exclude", Command_AddExclude, ADMFLAG_CHANGEMAP, "sm_nominate_exclude <mapname> [cooldown] [mode]- Forces a map to be inserted into the recently played maps. Effectively blocking the map from being nominated.");
+	RegAdminCmd("sm_nominate_exclude", Command_AddExclude, ADMFLAG_CHANGEMAP, "sm_nominate_exclude <mapname> [cooldown] [mode] - Forces a map to be inserted into the recently played maps. Effectively blocking the map from being nominated.");
 	RegAdminCmd("sm_nominate_exclude_time", Command_AddExcludeTime, ADMFLAG_CHANGEMAP, "sm_nominate_exclude_time <mapname> [cooldown] [mode] - Forces a map to be inserted into the recently played maps. Effectively blocking the map from being nominated.");
 
 	RegAdminCmd("sm_nomban", Command_Nomban, ADMFLAG_BAN, "Ban a client from nominating.");
@@ -202,6 +202,26 @@ public Action Command_Removemap(int client, int args)
 	return Plugin_Handled;
 }
 
+// [mode] of sm_nominate_exclude / _time, same values as ExcludeMap(): 0 = the map's cooldown from the config,
+// 1 = set or replace, 2 = only if longer. A cooldown given without a mode is applied as is: mode 0 would ignore it.
+bool GetExcludeMode(int client, int args, int &mode)
+{
+	mode = (args >= 2) ? 1 : 0;
+	if (args < 3)
+		return true;
+
+	// A mode is a single digit: anything longer is refused, also an argument cut by the buffer ("00000003")
+	char buffer[8];
+	if (GetCmdArg(3, buffer, sizeof(buffer)) != 1 || buffer[0] < '0' || buffer[0] > '2')
+	{
+		CReplyToCommand(client, "{green}[NE]{default} %t", "NE Invalid Exclude Mode", buffer);
+		return false;
+	}
+
+	mode = buffer[0] - '0';
+	return true;
+}
+
 public Action Command_AddExclude(int client, int args)
 {
 	if (args < 1)
@@ -214,19 +234,15 @@ public Action Command_AddExclude(int client, int args)
 	GetCmdArg(1, mapname, sizeof(mapname));
 
 	int cooldown = 0;
-	int mode = 0;
+	int mode;
 	if (args >= 2)
 	{
 		static char buffer[8];
 		GetCmdArg(2, buffer, sizeof(buffer));
 		cooldown = StringToInt(buffer);
 	}
-	if (args >= 3)
-	{
-		static char buffer[8];
-		GetCmdArg(3, buffer, sizeof(buffer));
-		mode = StringToInt(buffer);
-	}
+	if (!GetExcludeMode(client, args, mode))
+		return Plugin_Handled;
 
 	int status;
 	if (!g_mapTrie.GetValue(mapname, status))
@@ -258,7 +274,7 @@ public Action Command_AddExcludeTime(int client, int args)
 	GetCmdArg(1, mapname, sizeof(mapname));
 
 	int cooldown = 0;
-	int mode = 0;
+	int mode;
 	if (args >= 2)
 	{
 		static char buffer[64];
@@ -273,12 +289,8 @@ public Action Command_AddExcludeTime(int client, int args)
 		}
 		cooldown = TimeStrToSeconds(buffer);
 	}
-	if (args >= 3)
-	{
-		static char buffer[8];
-		GetCmdArg(3, buffer, sizeof(buffer));
-		mode = StringToInt(buffer);
-	}
+	if (!GetExcludeMode(client, args, mode))
+		return Plugin_Handled;
 
 	int status;
 	if (!g_mapTrie.GetValue(mapname, status))
