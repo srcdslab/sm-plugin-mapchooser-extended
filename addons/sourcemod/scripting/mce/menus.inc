@@ -302,6 +302,30 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 	CPrintToChatAll("{green}[MCE]{default} %t", "Nextmap Voting Started");
 }
 
+// Sets the map picked by the vote as next map, or changes to it, following the change time of the vote
+void ApplyVoteChangeTime(char[] map)
+{
+	if (g_ChangeTime == MapChange_MapEnd)
+	{
+		SetNextMap(map);
+		Forward_OnSetNextMap(map);
+	}
+	else if (g_ChangeTime == MapChange_Instant)
+	{
+		// Blocks new votes until Timer_ChangeMap() runs, a map change before that kills the timer
+		DataPack data;
+		g_ChangeMapTimer = CreateDataTimer(4.0, Timer_ChangeMap, data, TIMER_FLAG_NO_MAPCHANGE);
+		data.WriteString(map);
+		g_ChangeMapInProgress = true;
+	}
+	else // MapChange_RoundEnd
+	{
+		SetNextMap(map);
+		Forward_OnSetNextMap(map);
+		g_ChangeMapAtRoundEnd = true;
+	}
+}
+
 public void Handler_VoteFinishedGeneric(Menu menu,
 										int num_votes,
 										int num_clients,
@@ -393,25 +417,7 @@ public void Handler_VoteFinishedGeneric(Menu menu,
 	}
 	else
 	{
-		if (g_ChangeTime == MapChange_MapEnd)
-		{
-			SetNextMap(map);
-			Forward_OnSetNextMap(map);
-		}
-		else if (g_ChangeTime == MapChange_Instant)
-		{
-			// Blocks new votes until Timer_ChangeMap() runs, a map change before that kills the timer
-			DataPack data;
-			g_ChangeMapTimer = CreateDataTimer(4.0, Timer_ChangeMap, data, TIMER_FLAG_NO_MAPCHANGE);
-			data.WriteString(map);
-			g_ChangeMapInProgress = true;
-		}
-		else // MapChange_RoundEnd
-		{
-			SetNextMap(map);
-			Forward_OnSetNextMap(map);
-			g_ChangeMapAtRoundEnd = true;
-		}
+		ApplyVoteChangeTime(map);
 
 		g_HasVoteStarted = false;
 		g_MapVoteCompleted = true;
@@ -678,8 +684,9 @@ public int Handler_MapVoteMenu(Menu menu, MenuAction action, int param1, int par
 				{
 					maps.GetString(GetRandomInt(0, maps.Length - 1), map, PLATFORM_MAX_PATH);
 
-					SetNextMap(map);
-					Forward_OnSetNextMap(map);
+					// Same as a won vote: an RTV changes the map, a round end vote at the end of the round
+					ApplyVoteChangeTime(map);
+					CPrintToChatAll("{green}[MCE]{default} %t", "Changed Next Map", map);
 					LogAction(-1, -1, "[MCE] No votes has been receive. Pickup a random map. Nextmap is : %s", map);
 					g_MapVoteCompleted = true;
 				}
