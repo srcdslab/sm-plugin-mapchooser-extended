@@ -199,6 +199,17 @@ stock void ClearNominationsLists()
 	g_NominateList.Clear();
 }
 
+// Cooldown of the map that just ended: keep a longer one it already has (its group cooldown, an admin exclude...)
+// so it doesn't come back before the other maps of its group. Counters and end timestamps both compare as "greater is longer".
+stock void SetMapEndCooldown(StringMap list, const char[] map, int cooldown)
+{
+	int current;
+	if (list.GetValue(map, current) && current > cooldown)
+		return;
+
+	list.SetValue(map, cooldown, true);
+}
+
 stock void CleanOnMapEnd()
 {
 	g_HasVoteStarted = false;
@@ -234,22 +245,22 @@ stock void CleanOnMapEnd()
 			{
 				// Default behavior: save both cooldown types
 				Cooldown = InternalGetMapCooldown(map);
-				g_OldMapList.SetValue(map, Cooldown, true);
+				SetMapEndCooldown(g_OldMapList, map, Cooldown);
 
 				Cooldown = iCurrentTime + InternalGetMapCooldownTime(map) - RoundToFloor(GetGameTime());
-				g_TimeMapList.SetValue(map, Cooldown, true);
+				SetMapEndCooldown(g_TimeMapList, map, Cooldown);
 			}
 			case CooldownMode_CounterOnly:
 			{
 				// Save only counter-based cooldown
 				Cooldown = InternalGetMapCooldown(map);
-				g_OldMapList.SetValue(map, Cooldown, true);
+				SetMapEndCooldown(g_OldMapList, map, Cooldown);
 			}
 			case CooldownMode_TimeOnly:
 			{
 				// Save only time-based cooldown
 				Cooldown = iCurrentTime + InternalGetMapCooldownTime(map) - RoundToFloor(GetGameTime());
-				g_TimeMapList.SetValue(map, Cooldown, true);
+				SetMapEndCooldown(g_TimeMapList, map, Cooldown);
 			}
 			case CooldownMode_Priority:
 			{
@@ -258,12 +269,12 @@ stock void CleanOnMapEnd()
 				if (timeCooldown > 0)
 				{
 					Cooldown = iCurrentTime + timeCooldown - RoundToFloor(GetGameTime());
-					g_TimeMapList.SetValue(map, Cooldown, true);
+					SetMapEndCooldown(g_TimeMapList, map, Cooldown);
 				}
 				else
 				{
 					Cooldown = InternalGetMapCooldown(map);
-					g_OldMapList.SetValue(map, Cooldown, true);
+					SetMapEndCooldown(g_OldMapList, map, Cooldown);
 				}
 			}
 		}
