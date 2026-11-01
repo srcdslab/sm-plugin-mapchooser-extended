@@ -49,6 +49,9 @@
 
 #define RTVE_VERSION "1.12.3"
 
+// AFKManager has no forward: how often the AFK players are re-evaluated
+#define RTV_AFK_RECOUNT_INTERVAL 10.0
+
 public Plugin myinfo =
 {
 	name = "Rock The Vote Extended",
@@ -152,6 +155,17 @@ public void OnMapStart()
 			OnClientPutInServer(i);
 		}
 	}
+
+	CreateTimer(RTV_AFK_RECOUNT_INTERVAL, Timer_RecountAFK, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
+}
+
+// A player going AFK (or coming back) changes the voters without any event
+public Action Timer_RecountAFK(Handle timer)
+{
+	if (g_bPlugin_AFK)
+		UpdateRTV();
+
+	return Plugin_Continue;
 }
 
 public void OnMapEnd()
@@ -255,13 +269,19 @@ int GetVotesNeeded(int votersSteam, int votersNoSteam, int &neededSteam, int &ne
 	return needed < 1 ? 1 : needed;
 }
 
-void UpdateRTV(int ignoreClient = 0)
+// g_Voters / g_VotesNeeded for the players in game now
+void RecountRTV(int ignoreClient = 0)
 {
 	int iVotersSteam, iVotersNoSteam, iNeededSteam, iNeededNoSteam;
 	CountRTVVoters(iVotersSteam, iVotersNoSteam, ignoreClient);
 
 	g_Voters = iVotersSteam + iVotersNoSteam;
 	g_VotesNeeded = GetVotesNeeded(iVotersSteam, iVotersNoSteam, iNeededSteam, iNeededNoSteam);
+}
+
+void UpdateRTV(int ignoreClient = 0)
+{
+	RecountRTV(ignoreClient);
 
 	if (!g_CanRTV)
 	{
@@ -327,6 +347,9 @@ void AttemptRTV(int client)
 		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Minimal Players Not Met");
 		return;
 	}
+
+	// The AFK players may have changed since the last recount
+	RecountRTV();
 
 	if (g_Voted[client])
 	{
