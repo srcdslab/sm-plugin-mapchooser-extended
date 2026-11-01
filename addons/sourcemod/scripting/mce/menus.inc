@@ -67,6 +67,8 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 	{
 		// Checked before creating the menu, there is nothing to free or reset afterwards
 		LogError("No maps available for vote.");
+		// Players who asked for it (RTV) or saw the warning would otherwise get no answer
+		CPrintToChatAll("{green}[MCE]{default} %t", "Vote No Maps Available");
 		g_WaitingForVote = false;
 
 		if (g_bLockNominationsAtWarning)
