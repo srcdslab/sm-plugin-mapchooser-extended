@@ -147,8 +147,10 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 		/* Smaller of the two - It should be impossible for nominations to exceed the size though (cvar changed mid-map?) */
 		int nominationsToAdd = nominateCount >= voteSize ? voteSize : nominateCount;
 
-		if (g_bExtendPositionTop) {
-			AddExtendToMenu(g_VoteMenu, when);
+		char extendItem[32];
+		if (g_bExtendPositionTop && AddExtendToMenu(g_VoteMenu, when, extendItem, sizeof(extendItem)))
+		{
+			Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, extendItem);
 			MenuRandomShuffleStart++;
 		}
 
@@ -158,7 +160,7 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 
 			if (randomizeList == null)
 			{
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 
@@ -199,7 +201,7 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 			if (randomizeList == null)
 			{
 				/* Insert the map and increment our count */
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 			else
@@ -223,17 +225,16 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 			for (int j = 0; j < randomizeList.Length; j++)
 			{
 				randomizeList.GetString(j, map, PLATFORM_MAX_PATH);
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 
 			delete randomizeList;
 		}
 
-		if (!g_bExtendPositionTop) {
-			if (InternalGetMapMaxExtends(map) - g_Extends > 0)
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
-			AddExtendToMenu(g_VoteMenu, when);
+		if (!g_bExtendPositionTop && AddExtendToMenu(g_VoteMenu, when, extendItem, sizeof(extendItem)))
+		{
+			Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, extendItem);
 			MenuRandomShuffleStop++;
 		}
 
@@ -253,19 +254,18 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 
 			if (IsMapValidEx(map))
 			{
-				FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, map);
 				AddMapItem(map);
 			}
 			// New in Mapchooser Extended
 			else if (strcmp(map, VOTE_DONTCHANGE) == 0)
 			{
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Don't Change");
 				g_VoteMenu.AddItem(VOTE_DONTCHANGE, "Don't Change");
 			}
 			else if (strcmp(map, VOTE_EXTEND) == 0)
 			{
-				if (InternalGetMapMaxExtends(map) - g_Extends > 0)
-					FormatEx(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
-
+				Format(allMapsBuffer, allMapsSize, "%s\n- %s", allMapsBuffer, "Extend");
 				g_VoteMenu.AddItem(VOTE_EXTEND, "Extend Map");
 			}
 		}
@@ -318,36 +318,38 @@ public void Handler_VoteFinishedGeneric(Menu menu,
 	{
 		g_Extends++;
 
+		// `map` is VOTE_EXTEND here, the per-map extend settings belong to the current map
+		char sCurrentMap[PLATFORM_MAX_PATH];
+		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+
 		int time;
 		if (GetMapTimeLimit(time))
 		{
 			if (time > 0)
-				ExtendMapTimeLimit(InternalGetMapExtendTime(map)*60);
+				ExtendMapTimeLimit(InternalGetMapExtendTime(sCurrentMap)*60);
 		}
 
 		if (g_Cvar_Winlimit != null)
 		{
 			int winlimit = g_Cvar_Winlimit.IntValue;
 			if (winlimit)
-				g_Cvar_Winlimit.SetInt(winlimit + InternalGetMapExtendRound(map));
+				g_Cvar_Winlimit.SetInt(winlimit + InternalGetMapExtendRound(sCurrentMap));
 		}
 
 		if (g_Cvar_Maxrounds != null)
 		{
 			int maxrounds = g_Cvar_Maxrounds.IntValue;
 			if (maxrounds)
-				g_Cvar_Maxrounds.SetInt(maxrounds + InternalGetMapExtendRound(map));
+				g_Cvar_Maxrounds.SetInt(maxrounds + InternalGetMapExtendRound(sCurrentMap));
 		}
 
 		if (g_Cvar_Fraglimit != null)
 		{
 			int fraglimit = g_Cvar_Fraglimit.IntValue;
 			if (fraglimit)
-				g_Cvar_Fraglimit.SetInt(fraglimit + InternalGetMapExtendFrag(map));
+				g_Cvar_Fraglimit.SetInt(fraglimit + InternalGetMapExtendFrag(sCurrentMap));
 		}
 
-		char sCurrentMap[64];
-		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 		int iExentedLeft = InternalGetMapMaxExtends(sCurrentMap) - g_Extends;
 		int percent = RoundToFloor(float(item_info[0][VOTEINFO_ITEM_VOTES])/float(num_votes)*100.0);
 
