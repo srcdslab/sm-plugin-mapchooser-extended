@@ -255,6 +255,41 @@
 		"de"		"Admin: {1}"
 	}
 
+	"Menu - Nomban Duration Permanent"
+	{
+		"de"		"Dauer: permanent"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"de"		"{1} Tg., {2} Std., {3} Min."
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"de"		"{1} Std., {2} Min."
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"de"		"{1} Min."
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"de"		"{1} Sek."
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"de"		"{1} Std., {2} Min., {3} Sek."
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"de"		"{1} Min., {2} Sek."
+	}
+
 	"Cannot nominate - Nombanned"
 	{
 		"de"		"Du kannst keine Map nominieren, da du von Nominierungen ausgeschlossen wurdest. Nutze {green}!nomstatus{default} für weitere Informationen."
@@ -278,6 +313,11 @@
 	"Nomban usage"
 	{
 		"de"		"Verwendung: sm_nomban <Ziel> <Dauer (in Minuten)>"
+	}
+
+	"Command Usage"
+	{
+		"de"		"Verwendung: {lightgreen}{1}"
 	}
 
 	"Already not nombanned"
@@ -368,6 +408,31 @@
 	"No Maps Nominated"
 	{
 		"de"		"Es wurden keine Maps nominiert."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"de"		"Nominierte Maps"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"de"		"Nominierung entfernen"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"de"		"Zu Stoßzeiten dürfen nur VIPs Maps nominieren. Warte {1} Std. {2} Min. oder kaufe VIP, um wieder zu nominieren."
+	}
+
+	"NE Map Excluded"
+	{
+		"de"		"hat die Map \"{1}\" von den Nominierungen ausgeschlossen"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"de"		"hat die Map \"{1}\" von den Nominierungen ausgeschlossen (Zeit-Cooldown)"
 	}
 
 	"Available Extends"
@@ -553,5 +618,30 @@
 	"RTVE Not Voter"
 	{
 		"de"		"Als Zuschauer oder AFK kannst du nicht für Rock the Vote stimmen."
+	}
+
+	"RTVE Available"
+	{
+		"de"		"Rock the Vote ist jetzt verfügbar!"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"de"		"hat Rock the Vote deaktiviert."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"de"		"hat Rock the Vote aktiviert."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"de"		"Rock the Vote ist bereits deaktiviert."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"de"		"Rock the Vote ist bereits aktiviert."
 	}
 }

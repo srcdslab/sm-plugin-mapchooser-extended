@@ -47,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.12.5"
+#define RTVE_VERSION "1.12.6"
 
 // AFKManager has no forward: how often the AFK players are re-evaluated
 #define RTV_AFK_RECOUNT_INTERVAL 10.0
@@ -398,7 +398,7 @@ public Action Timer_DelayRTV(Handle timer)
 {
 	g_hDelayRTVTimer = null;
 	g_RTVAllowed = true;
-	CPrintToChatAll("{green}[RTVE]{default} RockTheVote is available now!");
+	CPrintToChatAll("{green}[RTVE]{default} %t", "RTVE Available");
 	return Plugin_Continue;
 }
 
@@ -497,7 +497,7 @@ public Action Command_DisableRTV(int client, int args)
 {
 	if (g_RTVAllowed)
 	{
-		CShowActivity2(client, "{green}[RTVE]{olive} ", "{default}disabled RockTheVote.");
+		CShowActivity2(client, "{green}[RTVE]{olive} ", "{default}%t", "RTVE Disabled Activity");
 		LogAction(client, -1, "\"%L\" Disabled RockTheVote.", client);
 	
 		g_RTVAllowed = false;
@@ -505,7 +505,7 @@ public Action Command_DisableRTV(int client, int args)
 	}
 	else
 	{
-		CReplyToCommand(client, "{green}[RTVE]{default} RockTheVote is already Disabled.");
+		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Already Disabled");
 	}
 
 	return Plugin_Handled;
@@ -515,11 +515,11 @@ public Action Command_EnableRTV(int client, int args)
 {
 	if(g_RTVAllowed)
 	{
-		CReplyToCommand(client, "{green}[RTVE]{default} RockTheVote is already Enabled.");
+		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Already Enabled");
 		return Plugin_Handled;
 	}
 
-  	CShowActivity2(client, "{green}[RTVE]{olive} ", "{default}enabled RockTheVote.");
+  	CShowActivity2(client, "{green}[RTVE]{olive} ", "{default}%t", "RTVE Enabled Activity");
 	LogAction(client, -1, "\"%L\" Enabled RockTheVote.", client);
 
 	g_RTVAllowed = true;

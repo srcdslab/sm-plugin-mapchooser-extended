@@ -257,6 +257,41 @@
 		"ru"		"Админ: {1}"
 	}
 
+	"Menu - Nomban Duration Permanent"
+	{
+		"ru"		"Продолжительность: навсегда"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"ru"		"{1} дн., {2} ч., {3} мин."
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"ru"		"{1} ч., {2} мин."
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"ru"		"{1} мин."
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"ru"		"{1} сек."
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"ru"		"{1} ч., {2} мин., {3} сек."
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"ru"		"{1} мин., {2} сек."
+	}
+
 	"Cannot nominate - Nombanned"
 	{
 		"ru"		"Вы не можете номинировать карту, так как были отправлены в бан номинации. Используйте {green}!nomstatus{default} для получения дополнительной информации."
@@ -280,6 +315,11 @@
 	"Nomban usage"
 	{
 		"ru"		"Использование: sm_nomban <цель> <длительность (в минутах)>"
+	}
+
+	"Command Usage"
+	{
+		"ru"		"Использование: {lightgreen}{1}"
 	}
 
 	"Already not nombanned"
@@ -370,6 +410,31 @@
 	"No Maps Nominated"
 	{
 		"ru"		"Ни одна карта не предложена."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"ru"		"Номинированные карты"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"ru"		"Убрать номинацию"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"ru"		"В часы пик номинировать карты могут только VIP. Подождите {1} ч. {2} мин. или купите VIP."
+	}
+
+	"NE Map Excluded"
+	{
+		"ru"		"исключил карту \"{1}\" из номинаций"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"ru"		"исключил карту \"{1}\" из номинаций (кулдаун по времени)"
 	}
 
 	"Available Extends"
@@ -555,5 +620,30 @@
 	"RTVE Not Voter"
 	{
 		"ru"		"Нельзя голосовать за смену карты, будучи наблюдателем или AFK."
+	}
+
+	"RTVE Available"
+	{
+		"ru"		"Голосование за смену карты теперь доступно!"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"ru"		"отключил голосование за смену карты."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"ru"		"включил голосование за смену карты."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"ru"		"Голосование за смену карты уже отключено."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"ru"		"Голосование за смену карты уже включено."
 	}
 }

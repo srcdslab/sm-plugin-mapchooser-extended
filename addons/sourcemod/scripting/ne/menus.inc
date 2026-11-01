@@ -63,7 +63,7 @@ Action AttemptNominate(int client, const char[] filter = "")
 
 	if (!g_bNEAllowed)
 	{
-		CReplyToCommand(client, "{green}[NE]{default} Map nominations is currently locked.");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Nominations Locked");
 		return Plugin_Handled;
 	}
 
@@ -88,7 +88,7 @@ Action AttemptAdminNominate(int client, const char[] filter = "")
 
 	if (!g_bNEAllowed)
 	{
-		CReplyToCommand(client, "{green}[NE]{default} Map nominations is currently locked.");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Nominations Locked");
 		return Plugin_Handled;
 	}
 
@@ -115,11 +115,11 @@ void AttemptAdminRemoveMap(int client, const char[] filter = "")
 	if (!PopulateNominateListMenu(AdminRemoveMapMenu, client, filter))
 	{
 		delete AdminRemoveMapMenu;
-		CReplyToCommand(client, "{green}[NE]{default} No maps have been nominated.");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "No Maps Nominated");
 		return;
 	}
 
-	AdminRemoveMapMenu.SetTitle("Remove nomination", client);
+	AdminRemoveMapMenu.SetTitle("%T", "NE Remove Nomination Title", client);
 	AdminRemoveMapMenu.Display(client, MENU_TIME_FOREVER);
 
 }
