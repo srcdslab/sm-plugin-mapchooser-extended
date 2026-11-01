@@ -114,6 +114,7 @@ void AttemptAdminRemoveMap(int client, const char[] filter = "")
 
 	if (!PopulateNominateListMenu(AdminRemoveMapMenu, client, filter))
 	{
+		delete AdminRemoveMapMenu;
 		CReplyToCommand(client, "{green}[NE]{default} No maps have been nominated.");
 		return;
 	}
@@ -163,7 +164,7 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 			{
 				char tierName[32];
 				if (GetMapTierName(map, tierName, sizeof(tierName)))
-					Format(display, sizeof(display), "%s - [%s]", map, tierName);
+					Format(display, sizeof(display), "%s - [%s]", display, tierName);
 			}
 
 			int owner = OwnerList.Get(i);
@@ -186,6 +187,12 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 	delete MapList;
 	delete OwnerList;
 	return true;
+}
+
+// Rows added by BuildMapMenu() on top of the maps
+stock bool IsSettingsMenuItem(const char[] info)
+{
+	return strcmp(info, "hide_tiers") == 0 || strcmp(info, "show_unavailable") == 0 || strcmp(info, "show_nominated") == 0;
 }
 
 Menu BuildMapMenu(const char[] filter, int client = -1)
@@ -342,19 +349,6 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 
 		case MenuAction_Select:
 		{
-			if (!g_bNEAllowed)
-			{
-				CPrintToChat(param1, "{green}[NE]{default} %t", "Nominations Locked");
-				return 0;
-			}
-
-			if (g_Player_NominationDelay[param1] > iCurrentTime)
-			{
-				CPrintToChat(param1, "{green}[NE]{default} %t", "Wait to Nominate", g_Player_NominationDelay[param1] - iCurrentTime);
-				menu.DisplayAt(param1, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
-				return 0;
-			}
-
 			static char map[PLATFORM_MAX_PATH];
 			char name[MAX_NAME_LENGTH];
 			menu.GetItem(param2, map, sizeof(map));
@@ -370,6 +364,19 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			{
 				g_bHideMapsTiers[param1] = !g_bHideMapsTiers[param1];
 				AttemptNominate(param1, "");
+				return 0;
+			}
+
+			if (!g_bNEAllowed)
+			{
+				CPrintToChat(param1, "{green}[NE]{default} %t", "Nominations Locked");
+				return 0;
+			}
+
+			if (g_Player_NominationDelay[param1] > iCurrentTime)
+			{
+				CPrintToChat(param1, "{green}[NE]{default} %t", "Wait to Nominate", g_Player_NominationDelay[param1] - iCurrentTime);
+				menu.DisplayAt(param1, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
 				return 0;
 			}
 
@@ -390,8 +397,10 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 					CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", name, sNominatedDisplay);
 					LogAction(param1, -1, "\"%L\" has removed his nomination \"%s\".", param1, sNominated);
 					Forward_OnMapNominationRemove(param1, sNominated);
-					return 0;
 				}
+
+				// The nomination may already be gone (vote started, removed by an admin)
+				return 0;
 			}
 
 			if (IsMapRestricted(param1, map))
@@ -447,6 +456,9 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			static char map[PLATFORM_MAX_PATH];
 			menu.GetItem(param2, map, sizeof(map));
 
+			if (IsSettingsMenuItem(map))
+				return ITEMDRAW_DEFAULT;
+
 			int status;
 			if (g_mapTrie.GetValue(map, status))
 			{
@@ -481,6 +493,10 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 		{
 			static char map[PLATFORM_MAX_PATH];
 			menu.GetItem(param2, map, sizeof(map));
+
+			// Keep the text of the settings rows, they are not maps
+			if (IsSettingsMenuItem(map))
+				return 0;
 
 			int mark = g_Cvar_MarkCustomMaps.IntValue;
 			bool official;
@@ -612,6 +628,12 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 
 			NominateResult result = NominateMap(map, true, 0);
 
+			if (result == Nominate_InvalidMap)
+			{
+				CPrintToChat(param1, "{green}[NE]{default} %t", "Map was not found", map);
+				return 0;
+			}
+
 			if (result > Nominate_Replaced)
 			{
 				/* We assume already in vote is the casue because the maplist does a Map Validity check and we forced, so it can't be full */
@@ -631,17 +653,6 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 
 		case MenuAction_DrawItem:
 		{
-			static char map[PLATFORM_MAX_PATH];
-			menu.GetItem(param2, map, sizeof(map));
-
-			char tierName[32];
-			if (GetMapTierName(map, tierName, sizeof(tierName)))
-			{
-				char buffer[PLATFORM_MAX_PATH];
-				Format(buffer, sizeof(buffer), "%s - [%s]", map, tierName);
-				RedrawMenuItem(buffer);
-			}
-
 			if (!CheckCommandAccess(param1, "sm_nominate_ignore", ADMFLAG_CHEATS, true))
 			{
 				return Handler_MapSelectMenu(menu, action, param1, param2);

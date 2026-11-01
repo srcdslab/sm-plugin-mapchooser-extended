@@ -134,8 +134,8 @@ Advanced Automated Map Voting with Extensions
 ## Nominations Extended:
 ### Cvars
 - ne_version (default: plugin version) - Nominations Extended Version.
-- sm_nominate_excludeold (default: 1) - Exclude current map from nominations.
-- sm_nominate_excludecurrent (default: 1) - Exclude maps currently excluded by MapChooser.
+- sm_nominate_excludeold (default: 1) - Exclude maps currently excluded by MapChooser.
+- sm_nominate_excludecurrent (default: 1) - Exclude current map from nominations.
 - sm_nominate_initialdelay (default: 60.0) - Delay before first nomination is allowed (seconds).
 - sm_nominate_delay (default: 3.0) - Delay between nominations (seconds).
 - sm_nominate_vip_timeframe (default: 1) - Enable VIP-only nomination timeframe.

@@ -39,6 +39,14 @@ stock void CookiesInit()
 	}
 }
 
+// A new client can take the slot of a previous one, don't let it inherit its settings
+stock void ResetClientCookies(int client)
+{
+	g_bShowUnavailableMaps[client] = false;
+	g_bHideMapsTiers[client] = false;
+	ResetClientNombanState(client);
+}
+
 public void OnClientCookiesCached(int client)
 {
 	ReadClientCookies(client);
@@ -104,8 +112,6 @@ public void NE_ClientSettings_Menu(int client)
 		Format(buffer, sizeof(buffer), "%T", "Can not Load Cookies", client);
 		menu.AddItem(NULL_STRING, buffer, ITEMDRAW_DISABLED);
 	}
-	
-	menu.AddItem("ShowMap", buffer, bCached ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
 
 	menu.ExitBackButton = true;
 	menu.ExitButton = true;
@@ -127,7 +133,8 @@ public int NE_ClientSettingsHandler(Menu menu, MenuAction action, int param1, in
 		}
 		case MenuAction_Cancel:
 		{
-			ShowCookieMenu(param1);
+			if (param2 == MenuCancel_ExitBack)
+				ShowCookieMenu(param1);
 		}
 		case MenuAction_End:
 		{

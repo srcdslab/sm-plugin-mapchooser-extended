@@ -77,18 +77,24 @@ public Action Command_Addmap(int client, int args)
 			if ((status & MAPSTATUS_DISABLED) == MAPSTATUS_DISABLED)
 			{
 				if ((status & MAPSTATUS_EXCLUDE_CURRENT) == MAPSTATUS_EXCLUDE_CURRENT)
+				{
 					CPrintToChat(client, "{green}[NE]{default} %t", "NE Cant Nominate Current Map");
+					return Plugin_Handled;
+				}
 
+				if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
+				{
+					CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Nominated");
+					return Plugin_Handled;
+				}
+
+				// Like in the menu, a recently played map is only refused while restrictions are active
 				if (restrictionsActive && (status & MAPSTATUS_EXCLUDE_PREVIOUS) == MAPSTATUS_EXCLUDE_PREVIOUS)
 				{
 					int Cooldown = GetMapCooldown(mapname);
 					CPrintToChat(client, "{green}[NE]{default} %t (%d)", "NE Map In Exclude List", Cooldown);
+					return Plugin_Handled;
 				}
-
-				if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
-					CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Nominated");
-
-				return Plugin_Handled;
 			}
 		}
 
@@ -131,7 +137,7 @@ public Action Command_Addmap(int client, int args)
 
 	NominateResult result = NominateMap(mapname, true, 0);
 
-	if (result > Nominate_InvalidMap)
+	if (result == Nominate_InvalidMap)
 	{
 		CReplyToCommand(client, "{green}[NE]{default} %t", "Map was not found", mapname);
 		return Plugin_Handled;
@@ -299,6 +305,12 @@ public Action Command_Nomban(int client, int args)
 		return Plugin_Handled;
 	}
 
+	if (!AreClientCookiesCached(target))
+	{
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Cookies are not cached");
+		return Plugin_Handled;
+	}
+
 	if (IsClientNomBanned(target))
 	{
 		CReplyToCommand(client, "{green}[NE]{default} %t", "Already nombanned", target);
@@ -450,6 +462,7 @@ public Action Command_Say(int client, int args)
 			if (!g_bNEAllowed)
 			{
 				CReplyToCommand(client, "{green}[NE]{default} %t", "Nominations Locked");
+				SetCmdReplySource(old);
 				return Plugin_Handled;
 			}
 			else
@@ -509,18 +522,24 @@ public Action Command_Nominate(int client, int args)
 	if ((status & MAPSTATUS_DISABLED) == MAPSTATUS_DISABLED)
 	{
 		if ((status & MAPSTATUS_EXCLUDE_CURRENT) == MAPSTATUS_EXCLUDE_CURRENT)
+		{
 			CPrintToChat(client, "{green}[NE]{default} %t", "NE Cant Nominate Current Map");
+			return Plugin_Handled;
+		}
 
+		if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
+		{
+			CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Nominated");
+			return Plugin_Handled;
+		}
+
+		// Like in the menu, a recently played map is only refused while restrictions are active
 		if (restrictionsActive && (status & MAPSTATUS_EXCLUDE_PREVIOUS) == MAPSTATUS_EXCLUDE_PREVIOUS)
 		{
 			int Cooldown = GetMapCooldown(mapname);
 			CPrintToChat(client, "{green}[NE]{default} %t (%d)", "NE Map In Exclude List", Cooldown);
+			return Plugin_Handled;
 		}
-
-		if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
-			CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Nominated");
-
-		return Plugin_Handled;
 	}
 
 	int Cooldown = GetMapCooldownTime(mapname);
@@ -626,7 +645,7 @@ public Action Command_Nominate(int client, int args)
 		Forward_OnPublicMapReplaced(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
 
-	return Plugin_Continue;
+	return Plugin_Handled;
 }
 
 public Action Command_UnNominate(int client, int args)
@@ -651,8 +670,12 @@ public Action Command_UnNominate(int client, int args)
 			Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", map, "MapTierDisplay", tierName);
 	}
 
-	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", client, mapnameInChat);
+	char name[MAX_NAME_LENGTH];
+	GetClientName(client, name, sizeof(name));
+
+	CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", name, mapnameInChat);
 	LogAction(client, -1, "\"%L\" has removed his nomination \"%s\".", client, map);
+	Forward_OnMapNominationRemove(client, map);
 
 	return Plugin_Handled;
 }
@@ -672,6 +695,8 @@ public Action Command_NomStatus(int client, int args)
 		char targ[64];
 		GetCmdArg(1, targ, sizeof(targ));
 		target = FindTarget(client, targ, true, false);
+		if (target == -1)
+			return Plugin_Handled;
 	}
 
 	if (!AreClientCookiesCached(target))
@@ -703,7 +728,7 @@ public Action Command_NominateList(int client, int args)
 			StrCat(aBuf, sizeof(aBuf), map);
 		}
 
-		CReplyToCommand(client, aBuf);
+		CReplyToCommand(client, "%s", aBuf);
 		delete MapList;
 		return Plugin_Handled;
 	}
@@ -712,6 +737,7 @@ public Action Command_NominateList(int client, int args)
 
 	if (!PopulateNominateListMenu(NominateListMenu, client))
 	{
+		delete NominateListMenu;
 		CPrintToChat(client, "{green}[NE]{default} %t", "No Maps Nominated");
 		return Plugin_Handled;
 	}
