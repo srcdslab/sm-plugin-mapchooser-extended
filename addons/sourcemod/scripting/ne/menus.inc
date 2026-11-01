@@ -57,13 +57,13 @@ Action AttemptNominate(int client, const char[] filter = "")
 {
 	if (!client)
 	{
-		ReplyToCommand(client, "[SM] Cannot use this command from server console.");
+		ReplyToCommand(client, "[NE] %t", "Can only use command in game");
 		return Plugin_Handled;
 	}
 
 	if (!g_bNEAllowed)
 	{
-		CReplyToCommand(client, "{green}[NE]{default} Map nominations is currently locked.");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Nominations Locked");
 		return Plugin_Handled;
 	}
 
@@ -88,7 +88,7 @@ Action AttemptAdminNominate(int client, const char[] filter = "")
 
 	if (!g_bNEAllowed)
 	{
-		CReplyToCommand(client, "{green}[NE]{default} Map nominations is currently locked.");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Nominations Locked");
 		return Plugin_Handled;
 	}
 
@@ -115,7 +115,7 @@ void AttemptAdminRemoveMap(int client, const char[] filter = "")
 	if (!PopulateNominateListMenu(AdminRemoveMapMenu, client, filter))
 	{
 		delete AdminRemoveMapMenu;
-		CReplyToCommand(client, "{green}[NE]{default} No maps have been nominated.");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "No Maps Nominated");
 		return;
 	}
 

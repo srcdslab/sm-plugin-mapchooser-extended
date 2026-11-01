@@ -249,7 +249,7 @@ public Action Command_AddExclude(int client, int args)
 		return Plugin_Handled;
 	}
 
-	CShowActivity(client, "Excluded map \"%s\" from nomination", mapname);
+	CShowActivity(client, "%t", "NE Map Excluded", mapname);
 	LogAction(client, -1, "\"%L\" excluded map \"%s\" from nomination", client, mapname);
 
 	g_mapTrie.SetValue(mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_PREVIOUS);
@@ -296,7 +296,7 @@ public Action Command_AddExcludeTime(int client, int args)
 		return Plugin_Handled;
 	}
 
-	CShowActivity(client, "ExcludedTime map \"%s\" from nomination", mapname);
+	CShowActivity(client, "%t", "NE Map Excluded Time", mapname);
 	LogAction(client, -1, "\"%L\" excludedTime map \"%s\" from nomination", client, mapname);
 
 	// native call to mapchooser_extended

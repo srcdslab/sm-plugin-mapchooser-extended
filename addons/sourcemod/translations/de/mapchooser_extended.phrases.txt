@@ -495,6 +495,56 @@
 		"de"		"Ungültiger Modus \"{1}\": 0 = Cooldown der Map aus der Config, 1 = setzen oder ersetzen, 2 = nur wenn länger."
 	}
 
+	"NE VIP Peak Hours"
+	{
+		"de"		"Zu Stoßzeiten dürfen nur VIPs Maps nominieren. Warte {1} Std. und {2} Min. oder kaufe VIP, um wieder Maps zu nominieren."
+	}
+
+	"NE Map Excluded"
+	{
+		"de"		"hat die Map \"{1}\" von der Nominierung ausgeschlossen."
+	}
+
+	"NE Map Excluded Time"
+	{
+		"de"		"hat die Map \"{1}\" von der Nominierung ausgeschlossen (Zeit-Cooldown)."
+	}
+
+	"NE Time Permanent"
+	{
+		"de"		"Permanent"
+	}
+
+	"NE Time Days Hours Minutes"
+	{
+		"de"		"{1} Tage, {2} Stunden, {3} Minuten"
+	}
+
+	"NE Time Hours Minutes"
+	{
+		"de"		"{1} Stunden, {2} Minuten"
+	}
+
+	"NE Time Hours Minutes Seconds"
+	{
+		"de"		"{1} Stunden, {2} Minuten, {3} Sekunden"
+	}
+
+	"NE Time Minutes"
+	{
+		"de"		"{1} Minuten"
+	}
+
+	"NE Time Minutes Seconds"
+	{
+		"de"		"{1} Minuten, {2} Sekunden"
+	}
+
+	"NE Time Seconds"
+	{
+		"de"		"{1} Sekunden"
+	}
+
 	"MCE See Console For Output"
 	{
 		"de"		"Siehe Konsole für die Ausgabe."

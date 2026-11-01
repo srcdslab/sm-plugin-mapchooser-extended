@@ -61,6 +61,7 @@ public void PrepareNomStatusMenu(int client, int target)
 	menu.SetTitle("%T", "NomStatus Menu Title", client, target);
 
 	char buffer[PLATFORM_MAX_PATH];
+	char time[64];
 	if (!IsClientNomBanned(target))
 	{
 		Format(buffer, sizeof(buffer), "%T", "Menu - Not Nombanned", client);
@@ -71,7 +72,8 @@ public void PrepareNomStatusMenu(int client, int target)
 
 	if (g_iNomBanLength[target] == NOMBAN_PERMANENT)
 	{
-		Format(buffer, sizeof(buffer), "%T", "Menu - Nomban Duration", client, "Permanent");
+		Format(time, sizeof(time), "%T", "NE Time Permanent", client);
+		Format(buffer, sizeof(buffer), "%T", "Menu - Nomban Duration", client, time);
 		menu.AddItem(buffer, buffer, ITEMDRAW_DISABLED);
 	}
 	else
@@ -81,16 +83,14 @@ public void PrepareNomStatusMenu(int client, int target)
 		int hours = minutes / 60;
 		int days = hours / 24;
 
-		char time[64];
-
 		if (days > 0)
-			Format(time, sizeof(time), "%d days, %d hours, %d minutes", days, hours%24, minutes%60);
+			Format(time, sizeof(time), "%T", "NE Time Days Hours Minutes", client, days, hours%24, minutes%60);
 		else if (hours > 0)
-			Format(time, sizeof(time), "%d hours %d minutes", hours, minutes%60);
+			Format(time, sizeof(time), "%T", "NE Time Hours Minutes", client, hours, minutes%60);
 		else if (minutes > 0)
-			Format(time, sizeof(time), "%d minutes", minutes);
+			Format(time, sizeof(time), "%T", "NE Time Minutes", client, minutes);
 		else
-			Format(time, sizeof(time), "%d seconds", seconds);
+			Format(time, sizeof(time), "%T", "NE Time Seconds", client, seconds);
 
 		Format(buffer, sizeof(buffer), "%T", "Menu - Nomban Duration", client, time);
 		menu.AddItem(buffer, buffer, ITEMDRAW_DISABLED);
@@ -108,13 +108,13 @@ public void PrepareNomStatusMenu(int client, int target)
 		int timeleftD = timeleftH / 24;
 
 		if (timeleftD > 0)
-			Format(time, sizeof(time), "%d days, %d hours, %d minutes", timeleftD, timeleftH%24, timeleftM%60);
+			Format(time, sizeof(time), "%T", "NE Time Days Hours Minutes", client, timeleftD, timeleftH%24, timeleftM%60);
 		else if (timeleftH > 0)
-			Format(time, sizeof(time), "%d hours, %d minutes, %d seconds", timeleftH, timeleftM%60, timeleftS%60);
+			Format(time, sizeof(time), "%T", "NE Time Hours Minutes Seconds", client, timeleftH, timeleftM%60, timeleftS%60);
 		else if (timeleftM > 0)
-			Format(time, sizeof(time), "%d minutes, %d seconds", timeleftM, timeleftS%60);
+			Format(time, sizeof(time), "%T", "NE Time Minutes Seconds", client, timeleftM, timeleftS%60);
 		else
-			Format(time, sizeof(time), "%d seconds", timeleftS);
+			Format(time, sizeof(time), "%T", "NE Time Seconds", client, timeleftS);
 
 		Format(buffer, sizeof(buffer), "%T", "Menu - Nomban timeleft", client, time);
 		menu.AddItem("timeleft", buffer, ITEMDRAW_DISABLED);

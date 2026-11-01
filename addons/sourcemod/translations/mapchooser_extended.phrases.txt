@@ -550,6 +550,65 @@
 		"en"		"Invalid mode \"{1}\": 0 = the map's cooldown from the config, 1 = set or replace, 2 = only if longer."
 	}
 
+	"NE VIP Peak Hours"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"		"During peak hours only VIPs are allowed to nominate maps. Wait for {1} hours and {2} minutes or buy VIP to nominate maps again."
+	}
+
+	"NE Map Excluded"
+	{
+		"#format"	"{1:s}"
+		"en"		"Excluded map \"{1}\" from nomination."
+	}
+
+	"NE Map Excluded Time"
+	{
+		"#format"	"{1:s}"
+		"en"		"Excluded map \"{1}\" from nomination (time cooldown)."
+	}
+
+	"NE Time Permanent"
+	{
+		"en"		"Permanent"
+	}
+
+	"NE Time Days Hours Minutes"
+	{
+		"#format"	"{1:d},{2:d},{3:d}"
+		"en"		"{1} days, {2} hours, {3} minutes"
+	}
+
+	"NE Time Hours Minutes"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"		"{1} hours, {2} minutes"
+	}
+
+	"NE Time Hours Minutes Seconds"
+	{
+		"#format"	"{1:d},{2:d},{3:d}"
+		"en"		"{1} hours, {2} minutes, {3} seconds"
+	}
+
+	"NE Time Minutes"
+	{
+		"#format"	"{1:d}"
+		"en"		"{1} minutes"
+	}
+
+	"NE Time Minutes Seconds"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"		"{1} minutes, {2} seconds"
+	}
+
+	"NE Time Seconds"
+	{
+		"#format"	"{1:d}"
+		"en"		"{1} seconds"
+	}
+
 	"MCE See Console For Output"
 	{
 		"en"		"See console for output."

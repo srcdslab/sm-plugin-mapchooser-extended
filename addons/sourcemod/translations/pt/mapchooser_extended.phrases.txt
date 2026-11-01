@@ -495,6 +495,56 @@
 		"pt"		"Modo \"{1}\" inválido: 0 = cooldown do mapa na config, 1 = definir ou substituir, 2 = só se for mais longo."
 	}
 
+	"NE VIP Peak Hours"
+	{
+		"pt"		"Em horários de pico só VIPs podem indicar mapas. Aguarde {1} h e {2} min ou compre VIP para indicar mapas novamente."
+	}
+
+	"NE Map Excluded"
+	{
+		"pt"		"excluiu o mapa \"{1}\" das indicações."
+	}
+
+	"NE Map Excluded Time"
+	{
+		"pt"		"excluiu o mapa \"{1}\" das indicações (cooldown por tempo)."
+	}
+
+	"NE Time Permanent"
+	{
+		"pt"		"Permanente"
+	}
+
+	"NE Time Days Hours Minutes"
+	{
+		"pt"		"{1} dias, {2} horas, {3} minutos"
+	}
+
+	"NE Time Hours Minutes"
+	{
+		"pt"		"{1} horas, {2} minutos"
+	}
+
+	"NE Time Hours Minutes Seconds"
+	{
+		"pt"		"{1} horas, {2} minutos, {3} segundos"
+	}
+
+	"NE Time Minutes"
+	{
+		"pt"		"{1} minutos"
+	}
+
+	"NE Time Minutes Seconds"
+	{
+		"pt"		"{1} minutos, {2} segundos"
+	}
+
+	"NE Time Seconds"
+	{
+		"pt"		"{1} segundos"
+	}
+
 	"MCE See Console For Output"
 	{
 		"pt"		"Veja o console para o resultado."

@@ -495,6 +495,56 @@
 		"chi"		"无效的模式 \"{1}\": 0 = 使用配置中的地图冷却, 1 = 设置或替换, 2 = 仅当更长时."
 	}
 
+	"NE VIP Peak Hours"
+	{
+		"chi"		"高峰时段只有 VIP 可以提名地图. 请等待 {1} 小时 {2} 分钟, 或购买 VIP 以再次提名地图."
+	}
+
+	"NE Map Excluded"
+	{
+		"chi"		"已将地图 \"{1}\" 排除出提名."
+	}
+
+	"NE Map Excluded Time"
+	{
+		"chi"		"已将地图 \"{1}\" 排除出提名 (时间冷却)."
+	}
+
+	"NE Time Permanent"
+	{
+		"chi"		"永久"
+	}
+
+	"NE Time Days Hours Minutes"
+	{
+		"chi"		"{1} 天 {2} 小时 {3} 分钟"
+	}
+
+	"NE Time Hours Minutes"
+	{
+		"chi"		"{1} 小时 {2} 分钟"
+	}
+
+	"NE Time Hours Minutes Seconds"
+	{
+		"chi"		"{1} 小时 {2} 分钟 {3} 秒"
+	}
+
+	"NE Time Minutes"
+	{
+		"chi"		"{1} 分钟"
+	}
+
+	"NE Time Minutes Seconds"
+	{
+		"chi"		"{1} 分钟 {2} 秒"
+	}
+
+	"NE Time Seconds"
+	{
+		"chi"		"{1} 秒"
+	}
+
 	"MCE See Console For Output"
 	{
 		"chi"		"请查看控制台以获取输出."
