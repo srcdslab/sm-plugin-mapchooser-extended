@@ -538,6 +538,12 @@
 		"en"		"No"
 	}
 
+	"NE Invalid Time"
+	{
+		"#format"	"{1:s}"
+		"en"		"\"{1}\" is not a valid time: use numbers followed by h, m or s (e.g. 1h30m)."
+	}
+
 	"MCE See Console For Output"
 	{
 		"en"		"See console for output."
