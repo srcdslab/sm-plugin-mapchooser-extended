@@ -299,6 +299,12 @@ public Action Command_Nomban(int client, int args)
 		return Plugin_Handled;
 	}
 
+	if (!AreClientCookiesCached(target))
+	{
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Cookies are not cached");
+		return Plugin_Handled;
+	}
+
 	if (IsClientNomBanned(target))
 	{
 		CReplyToCommand(client, "{green}[NE]{default} %t", "Already nombanned", target);
