@@ -526,4 +526,9 @@
 		"es"		"Cambiando al mapa {1}! Rock the Vote ha hablado!"
 	}
 
+	"RTVE Not Voter"
+	{
+		"es"		"No puedes votar para Rock the Vote siendo espectador o estando AFK."
+	}
+
 }

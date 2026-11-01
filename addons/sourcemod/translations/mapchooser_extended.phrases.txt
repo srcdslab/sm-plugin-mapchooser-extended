@@ -580,4 +580,9 @@
 		"#format"	"{1:s}"
 		"en"		"Changing map to {1}! Rock the Vote has spoken!"
 	}
+
+	"RTVE Not Voter"
+	{
+		"en"		"You can't rock the vote while you are a spectator or AFK."
+	}
 }
