@@ -207,7 +207,7 @@ stock bool IsNominateAllowed(int client)
 {
 	if (IsClientNomBanned(client))
 	{
-		CPrintToChat(client, "{green}[NE]{default} %t", "Cannot nominate - Nombanned", client);
+		CPrintToChat(client, "{green}[NE]{default} %t", "Cannot nominate - Nombanned");
 		return false;
 	}
 
@@ -216,7 +216,7 @@ stock bool IsNominateAllowed(int client)
 		int VIPTimeRestriction = GetVIPTimeRestriction();
 		if ((VIPTimeRestriction) && AreRestrictionsActive())
 		{
-			CReplyToCommand(client, "{green}[NE]{default} During peak hours only VIPs are allowed to nominate maps. Wait for %d hours and %d minutes or buy VIP to nominate maps again.", VIPTimeRestriction / 60, VIPTimeRestriction % 60);
+			CReplyToCommand(client, "{green}[NE]{default} %t", "NE VIP Peak Hours", VIPTimeRestriction / 60, VIPTimeRestriction % 60);
 			return false;
 		}
 	}

@@ -37,7 +37,7 @@ public Action Command_SetNextmap(int client, int args)
 {
 	if (args < 1)
 	{
-		CReplyToCommand(client, "{green}[MCE]{default} Usage: {lightgreen}sm_setnextmap <map>");
+		CReplyToCommand(client, "{green}[MCE]{default} %t", "Command Usage", "sm_setnextmap <map>");
 		return Plugin_Handled;
 	}
 
@@ -50,7 +50,7 @@ public Action Command_SetNextmap(int client, int args)
 		return Plugin_Handled;
 	}
 
-	CShowActivity(client, "%t", "Changed Next Map", map);
+	CShowActivity2(client, "[SM] ", "%t", "Changed Next Map", map);
 	LogAction(client, -1, "[MCE] \"%L\" changed nextmap to \"%s\"", client, map);
 
 	SetNextMap(map);

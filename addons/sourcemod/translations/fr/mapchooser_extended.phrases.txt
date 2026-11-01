@@ -256,6 +256,41 @@
 		"fr"		"Admin: {1}"
 	}
 
+	"Menu - Nomban Duration Permanent"
+	{
+		"fr"		"Durée: permanente"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"fr"		"{1} j, {2} h, {3} min"
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"fr"		"{1} h, {2} min"
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"fr"		"{1} min"
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"fr"		"{1} s"
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"fr"		"{1} h, {2} min, {3} s"
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"fr"		"{1} min, {2} s"
+	}
+
 	"Cannot nominate - Nombanned"
 	{
 		"fr"		"Vous ne pouvez pas sélectionner une carte parce que vous avez été restreint. Utilisez {green}!nomstatus{default} pour plus d'informations."
@@ -279,6 +314,11 @@
 	"Nomban usage"
 	{
 		"fr"		"Utilisation: sm_nomban <cible> <durée (en minutes)>"
+	}
+
+	"Command Usage"
+	{
+		"fr"		"Utilisation: {lightgreen}{1}"
 	}
 
 	"Already not nombanned"
@@ -369,6 +409,31 @@
 	"No Maps Nominated"
 	{
 		"fr"		"Aucune carte n'a été sélectionnée."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"fr"		"Maps nominées"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"fr"		"Retirer une nomination"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"fr"		"Aux heures de pointe, seuls les VIP peuvent nominer des maps. Attendez {1} h {2} min ou achetez le VIP pour nominer à nouveau."
+	}
+
+	"NE Map Excluded"
+	{
+		"fr"		"a exclu la map \"{1}\" des nominations"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"fr"		"a exclu la map \"{1}\" des nominations (cooldown en temps)"
 	}
 
 	"Available Extends"
@@ -554,5 +619,30 @@
 	"RTVE Not Voter"
 	{
 		"fr"		"Vous ne pouvez pas voter pour changer de map en étant spectateur ou AFK."
+	}
+
+	"RTVE Available"
+	{
+		"fr"		"Le vote pour changer de map est maintenant disponible !"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"fr"		"a désactivé le vote pour changer de map."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"fr"		"a activé le vote pour changer de map."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"fr"		"Le vote pour changer de map est déjà désactivé."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"fr"		"Le vote pour changer de map est déjà activé."
 	}
 }

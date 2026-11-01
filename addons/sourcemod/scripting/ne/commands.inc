@@ -53,7 +53,7 @@ public Action Command_Addmap(int client, int args)
 
 	if (args != 1)
 	{
-		CReplyToCommand(client, "{green}[NE]{default} Usage: {lightgreen}sm_nominate_addmap <mapname>");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Command Usage", "sm_nominate_addmap <mapname>");
 		return Plugin_Handled;
 	}
 
@@ -172,7 +172,7 @@ public Action Command_Removemap(int client, int args)
 
 	if (args != 1)
 	{
-		CReplyToCommand(client, "{green}[NE]{default} Usage: {lightgreen}sm_nominate_removemap <mapname>");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Command Usage", "sm_nominate_removemap <mapname>");
 		return Plugin_Handled;
 	}
 
@@ -226,7 +226,7 @@ public Action Command_AddExclude(int client, int args)
 {
 	if (args < 1)
 	{
-		CReplyToCommand(client, "{green}[NE]{default} Usage: {lightgreen}sm_nominate_exclude <mapname> [cooldown] [mode]");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Command Usage", "sm_nominate_exclude <mapname> [cooldown] [mode]");
 		return Plugin_Handled;
 	}
 
@@ -251,7 +251,7 @@ public Action Command_AddExclude(int client, int args)
 		return Plugin_Handled;
 	}
 
-	CShowActivity(client, "Excluded map \"%s\" from nomination", mapname);
+	CShowActivity2(client, "[SM] ", "%t", "NE Map Excluded", mapname);
 	LogAction(client, -1, "\"%L\" excluded map \"%s\" from nomination", client, mapname);
 
 	g_mapTrie.SetValue(mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_PREVIOUS);
@@ -266,7 +266,7 @@ public Action Command_AddExcludeTime(int client, int args)
 {
 	if (args < 1)
 	{
-		CReplyToCommand(client, "{green}[NE]{default} Usage: {lightgreen}sm_nominate_exclude_time <mapname> [cooldown] [mode]");
+		CReplyToCommand(client, "{green}[NE]{default} %t", "Command Usage", "sm_nominate_exclude_time <mapname> [cooldown] [mode]");
 		return Plugin_Handled;
 	}
 
@@ -299,7 +299,7 @@ public Action Command_AddExcludeTime(int client, int args)
 		return Plugin_Handled;
 	}
 
-	CShowActivity(client, "ExcludedTime map \"%s\" from nomination", mapname);
+	CShowActivity2(client, "[SM] ", "%t", "NE Map Excluded Time", mapname);
 	LogAction(client, -1, "\"%L\" excludedTime map \"%s\" from nomination", client, mapname);
 
 	// native call to mapchooser_extended
@@ -762,7 +762,7 @@ public Action Command_NominateList(int client, int args)
 		return Plugin_Handled;
 	}
 
-	NominateListMenu.SetTitle("Nominated Maps", client);
+	NominateListMenu.SetTitle("%T", "NE Nominated Maps Title", client);
 	NominateListMenu.Display(client, MENU_TIME_FOREVER);
 
 	return Plugin_Handled;

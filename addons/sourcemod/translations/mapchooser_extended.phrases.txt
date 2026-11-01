@@ -290,6 +290,47 @@
 		"en"		"Admin: {1}"
 	}
 
+	"Menu - Nomban Duration Permanent"
+	{
+		"en"		"Duration: Permanent"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"#format"	"{1:d},{2:d},{3:d}"
+		"en"		"{1} days, {2} hours, {3} minutes"
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"		"{1} hours {2} minutes"
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"#format"	"{1:d}"
+		"en"		"{1} minutes"
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"#format"	"{1:d}"
+		"en"		"{1} seconds"
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"#format"	"{1:d},{2:d},{3:d}"
+		"en"		"{1} hours, {2} minutes, {3} seconds"
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"		"{1} minutes, {2} seconds"
+	}
+
 	"Cannot nominate - Nombanned"
 	{
 		"en"		"You cannot nominate a map because you have been nombanned. Use {green}!nomstatus{default} for more information."
@@ -314,6 +355,12 @@
 	"Nomban usage"
 	{
 		"en"		"Usage: sm_nomban <target> <duration (in minutes)>"
+	}
+
+	"Command Usage"
+	{
+		"#format"	"{1:s}"
+		"en"		"Usage: {lightgreen}{1}"
 	}
 
 	"Already not nombanned"
@@ -413,6 +460,34 @@
 	"No Maps Nominated"
 	{
 		"en"		"No maps have been nominated."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"en"		"Nominated Maps"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"en"		"Remove nomination"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"		"During peak hours only VIPs are allowed to nominate maps. Wait for {1} hours and {2} minutes or buy VIP to nominate maps again."
+	}
+
+	"NE Map Excluded"
+	{
+		"#format"	"{1:s}"
+		"en"		"Excluded map \"{1}\" from nomination"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"#format"	"{1:s}"
+		"en"		"ExcludedTime map \"{1}\" from nomination"
 	}
 
 	"Available Extends"
@@ -611,5 +686,30 @@
 	"RTVE Not Voter"
 	{
 		"en"		"You can't rock the vote while you are a spectator or AFK."
+	}
+
+	"RTVE Available"
+	{
+		"en"		"RockTheVote is available now!"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"en"		"disabled RockTheVote."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"en"		"enabled RockTheVote."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"en"		"RockTheVote is already Disabled."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"en"		"RockTheVote is already Enabled."
 	}
 }

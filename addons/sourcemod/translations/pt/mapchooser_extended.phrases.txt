@@ -255,6 +255,41 @@
 		"pt"		"Admin: {1}"
 	}
 
+	"Menu - Nomban Duration Permanent"
+	{
+		"pt"		"Duração: permanente"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"pt"		"{1} d, {2} h, {3} min"
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"pt"		"{1} h, {2} min"
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"pt"		"{1} min"
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"pt"		"{1} s"
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"pt"		"{1} h, {2} min, {3} s"
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"pt"		"{1} min, {2} s"
+	}
+
 	"Cannot nominate - Nombanned"
 	{
 		"pt"		"Você não pode indicar mapas porque foi banido das indicações. Use {green}!nomstatus{default} para mais informações."
@@ -278,6 +313,11 @@
 	"Nomban usage"
 	{
 		"pt"		"Uso: sm_nomban <alvo> <duração (em minutos)>"
+	}
+
+	"Command Usage"
+	{
+		"pt"		"Uso: {lightgreen}{1}"
 	}
 
 	"Already not nombanned"
@@ -368,6 +408,31 @@
 	"No Maps Nominated"
 	{
 		"pt"		"Nenhum mapa foi indicado."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"pt"		"Mapas indicados"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"pt"		"Remover indicação"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"pt"		"No horário de pico, só VIPs podem indicar mapas. Aguarde {1} h {2} min ou compre VIP para indicar novamente."
+	}
+
+	"NE Map Excluded"
+	{
+		"pt"		"excluiu o mapa \"{1}\" das indicações"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"pt"		"excluiu o mapa \"{1}\" das indicações (cooldown por tempo)"
 	}
 
 	"Available Extends"
@@ -553,5 +618,30 @@
 	"RTVE Not Voter"
 	{
 		"pt"		"Você não pode votar no Rock the Vote como espectador ou AFK."
+	}
+
+	"RTVE Available"
+	{
+		"pt"		"O Rock the Vote já está disponível!"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"pt"		"desativou o Rock the Vote."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"pt"		"ativou o Rock the Vote."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"pt"		"O Rock the Vote já está desativado."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"pt"		"O Rock the Vote já está ativado."
 	}
 }
