@@ -210,13 +210,15 @@ bool GetExcludeMode(int client, int args, int &mode)
 	if (args < 3)
 		return true;
 
+	// A mode is a single digit: anything longer is refused, also an argument cut by the buffer ("00000003")
 	char buffer[8];
-	GetCmdArg(3, buffer, sizeof(buffer));
-	if (!buffer[0] || StringToIntEx(buffer, mode) != strlen(buffer) || mode < 0 || mode > 2)
+	if (GetCmdArg(3, buffer, sizeof(buffer)) != 1 || buffer[0] < '0' || buffer[0] > '2')
 	{
 		CReplyToCommand(client, "{green}[NE]{default} %t", "NE Invalid Exclude Mode", buffer);
 		return false;
 	}
+
+	mode = buffer[0] - '0';
 	return true;
 }
 
