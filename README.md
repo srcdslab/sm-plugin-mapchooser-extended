@@ -155,8 +155,10 @@ Advanced Automated Map Voting with Extensions
 - sm_nominate_force_unlock - Force unlock nominations.
 - sm_nominate_addmap - Forces a map to be on the next mapvote.
 - sm_nominate_removemap - Removes a map from Nominations.
-- sm_nominate_exclude - Forces a map to be inserted into the recently played maps. Effectively blocking the map from being nominated.
-- sm_nominate_exclude_time - Forces a map to be inserted into the recently played maps. Effectively blocking the map from being nominated.
+- sm_nominate_exclude <mapname> [cooldown] [mode] - Forces a map to be inserted into the recently played maps. Effectively blocking the map from being nominated.
+- sm_nominate_exclude_time <mapname> [time] [mode] - Same with a time cooldown (`2h`, `1h30m`, `45m`...).
+
+  `mode`: 0 = the map's own `Cooldown` / `CooldownTime` from the config (default without a cooldown), 1 = set or replace (default when a cooldown is given), 2 = only if longer than the cooldown the map already has.
 - sm_nomban - Ban a client from nominating.
 - sm_nombanlist - View a list of nomination-banned clients.
 - sm_unnomban, sm_nomunban, sm_unomban - Unban a client from nominating.

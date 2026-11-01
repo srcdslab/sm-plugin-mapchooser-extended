@@ -490,6 +490,11 @@
 		"pt"		"\"{1}\" não é um tempo válido: use números seguidos de h, m ou s (ex.: 1h30m)."
 	}
 
+	"NE Invalid Exclude Mode"
+	{
+		"pt"		"Modo \"{1}\" inválido: 0 = cooldown do mapa na config, 1 = definir ou substituir, 2 = só se for mais longo."
+	}
+
 	"MCE See Console For Output"
 	{
 		"pt"		"Veja o console para o resultado."
