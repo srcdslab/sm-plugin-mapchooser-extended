@@ -38,17 +38,13 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	}
 
 	/* Too many nominated maps. */
-	if (g_NominateCount >= GetVoteSize(0) && !force)
+	if (!force && GetNominateCount() >= GetVoteSize(0))
 	{
 		return Nominate_VoteFull;
 	}
 
 	g_NominateList.PushString(map);
 	g_NominateOwners.Push(owner);
-	if (owner == 0 && g_NominateReservedCount < GetVoteSize(1))
-		g_NominateReservedCount++;
-	else
-		g_NominateCount++;
 
 	while(g_NominateList.Length > GetVoteSize(2))
 	{
@@ -61,11 +57,6 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 		g_NominateList.Erase(0);
 		g_NominateOwners.Erase(0);
 		ClearStoredNomination(owner_);
-
-		if (owner_ == 0)
-			g_NominateReservedCount--;
-		else
-			g_NominateCount--;
 	}
 
 	strcopy(g_sNominations[owner], sizeof(g_sNominations[]), map);
@@ -95,10 +86,6 @@ bool InternalRemoveNominationByMap(char[] map)
 			Forward_OnNominationRemoved(oldmap, g_NominateOwners.Get(i));
 
 			int owner = g_NominateOwners.Get(i);
-			if (owner)
-				g_NominateCount--;
-			else
-				g_NominateReservedCount--;
 
 			g_NominateList.Erase(i);
 			g_NominateOwners.Erase(i);
@@ -124,7 +111,6 @@ bool InternalRemoveNominationByOwner(int owner)
 		g_NominateList.Erase(index);
 		g_NominateOwners.Erase(index);
 		ClearStoredNomination(owner);
-		g_NominateCount--;
 
 		return true;
 	}
@@ -236,6 +222,66 @@ stock int InternalGetMapCooldownTime(const char[] map)
 	return Cooldown;
 }
 
+// Mode: 0 = cooldown from config/default, 1 = set or replace, 2 = keep the greatest (see ExcludeMap native)
+// The caller is responsible for InternalStoreMapCooldowns()
+stock bool InternalExcludeMap(const char[] map, int cooldown, int mode)
+{
+	if (!InternalAreRestrictionsActive())
+		return false;
+
+	char key[PLATFORM_MAX_PATH];
+	strcopy(key, sizeof(key), map);
+	NormalizeMapName(key);
+
+	if (mode == 0)
+	{
+		// In TimeOnly mode, don't exclude via counter
+		if (g_CooldownMode == CooldownMode_TimeOnly)
+			return false;
+
+		cooldown = InternalGetMapCooldown(map);
+	}
+	else if (mode == 2)
+	{
+		int current;
+		if (g_OldMapList.GetValue(key, current) && current > cooldown)
+			cooldown = current;
+	}
+
+	g_OldMapList.SetValue(key, cooldown, true);
+	return true;
+}
+
+// Same modes as InternalExcludeMap, cooldown is a duration in seconds
+stock bool InternalExcludeMapTime(const char[] map, int cooldown, int mode)
+{
+	if (!InternalAreRestrictionsActive())
+		return false;
+
+	char key[PLATFORM_MAX_PATH];
+	strcopy(key, sizeof(key), map);
+	NormalizeMapName(key);
+
+	if (mode == 0)
+	{
+		// In CounterOnly mode, don't exclude via time
+		if (g_CooldownMode == CooldownMode_CounterOnly)
+			return false;
+
+		cooldown = InternalGetMapCooldownTime(map);
+	}
+
+	// g_TimeMapList stores the timestamp at which the cooldown ends
+	int expires = GetTime() + cooldown;
+
+	int current;
+	if (mode == 2 && g_TimeMapList.GetValue(key, current) && current > expires)
+		expires = current;
+
+	g_TimeMapList.SetValue(key, expires, true);
+	return true;
+}
+
 stock int InternalGetMapMinTime(const char[] map)
 {
 	int MinTime = 0;
@@ -292,10 +338,21 @@ stock int InternalGetMapMaxPlayers(const char[] map)
 	return MaxPlayers;
 }
 
+// Every group helper starts from the root: the other getters leave the cursor inside a map section,
+// and JumpToKey() only searches the children of the current key.
+stock bool InternalJumpToGroups()
+{
+	if (!g_Config)
+		return false;
+
+	g_Config.Rewind();
+	return g_Config.JumpToKey("_groups");
+}
+
 stock int InternalGetMapGroupID(const char[] map)
 {
 	int group = 0;
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	if (InternalJumpToGroups())
 	{
 		if (!g_Config.GotoFirstSubKey(false))
 		{
@@ -325,7 +382,7 @@ stock int InternalGetMapGroupID(const char[] map)
 stock int InternalGetMapGroups(const char[] map, int[] groups, int size)
 {
 	int found = 0;
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	if (InternalJumpToGroups())
 	{
 		if (!g_Config.GotoFirstSubKey(false))
 		{
@@ -360,7 +417,7 @@ stock int InternalGetGroupMax(int group)
 {
 	char groupstr[8];
 	IntToString(group, groupstr, sizeof(groupstr));
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	if (InternalJumpToGroups())
 	{
 		if (g_Config.JumpToKey(groupstr, false))
 		{
@@ -379,7 +436,7 @@ stock int InternalGetGroupCooldown(int group)
 {
 	char groupstr[8];
 	IntToString(group, groupstr, sizeof(groupstr));
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	if (InternalJumpToGroups())
 	{
 		if (g_Config.JumpToKey(groupstr, false))
 		{
@@ -398,80 +455,66 @@ stock int InternalGetGroupCooldownTime(int group)
 {
 	char groupstr[8];
 	IntToString(group, groupstr, sizeof(groupstr));
-	if (g_Config && g_Config.JumpToKey("_groups"))
+	int cooldown = 0;
+	if (InternalJumpToGroups())
 	{
 		if (g_Config.JumpToKey(groupstr, false))
 		{
 			char time[16];
 			g_Config.GetString("_cooldown_time", time, sizeof(time), "");
 			if (time[0])
-			{
-				g_Config.Rewind();
-				return TimeStrToSeconds(time);
-			}
-			g_Config.Rewind();
-		}
-	}
-	return 0;
-}
-
-stock void InternalSetGroupCooldownToMaps(int group, int cooldown)
-{
-	if (g_Config && g_Config.JumpToKey("_groups"))
-	{
-		char groupstr[8];
-		IntToString(group, groupstr, sizeof(groupstr));
-		if (g_Config.JumpToKey(groupstr, false))
-		{
-			if (!g_Config.GotoFirstSubKey(false))
-			{
-				g_Config.Rewind();
-				return;
-			}
-
-			do
-			{
-				char map[PLATFORM_MAX_PATH];
-				g_Config.GetSectionName(map, sizeof(map));
-				if (strncmp(map, "_", 1) == 0) // Skip: All groups settings, always starting with "_"
-					continue;
-
-				// Use time-based cooldown instead of counter-based
-				int cooldownTime = InternalGetGroupCooldownTime(group);
-				if (cooldownTime > 0)
-				{
-					ExcludeMapTime(map, cooldownTime, g_iSharedCDMode);
-				}
-				else
-				{
-					ExcludeMap(map, cooldown, g_iSharedCDMode);
-				}
-			}
-			while (g_Config.GotoNextKey());
-
-			g_Config.Rewind();
-		}
-	}
-}
-
-stock void InternalGetGroupName(int group)
-{
-	char groupstr[8];
-	IntToString(group, groupstr, sizeof(groupstr));
-	if (g_Config && g_Config.JumpToKey("_groups"))
-	{
-		if (g_Config.JumpToKey(groupstr, false))
-		{
-			char sGrpName[PLATFORM_MAX_PATH];
-			g_Config.GetString("_name", sGrpName, sizeof(sGrpName), "This group has no name configured.");
-			g_Config.Rewind();
-			return;
+				cooldown = TimeStrToSeconds(time);
 		}
 
 		g_Config.Rewind();
 	}
 
-	return;
+	return cooldown;
+}
+
+// Applies the group cooldowns to every map of the group, following mce_cooldown_mode like per-map cooldowns do.
+// Returns true if a cooldown was set (the caller then stores the cooldowns file once).
+stock bool InternalSetGroupCooldownToMaps(int group, int cooldown, int cooldownTime)
+{
+	bool applyTime = cooldownTime > 0 && ShouldApplyTimeCooldown();
+	bool applyCounter = cooldown > 0 && ShouldApplyCounterCooldown() && !(applyTime && g_CooldownMode == CooldownMode_Priority);
+
+	if ((!applyTime && !applyCounter) || !InternalJumpToGroups())
+		return false;
+
+	// Collect the maps first: excluding a map may read the config and move the cursor
+	ArrayList maps = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
+
+	char groupstr[8];
+	IntToString(group, groupstr, sizeof(groupstr));
+	if (g_Config.JumpToKey(groupstr, false) && g_Config.GotoFirstSubKey(false))
+	{
+		char map[PLATFORM_MAX_PATH];
+		do
+		{
+			g_Config.GetSectionName(map, sizeof(map));
+			if (map[0] != '_') // Skip: All groups settings, always starting with "_"
+				maps.PushString(map);
+		}
+		while (g_Config.GotoNextKey(false));
+	}
+	g_Config.Rewind();
+
+	bool changed = false;
+	char map[PLATFORM_MAX_PATH];
+	for (int i = 0; i < maps.Length; i++)
+	{
+		maps.GetString(i, map, sizeof(map));
+
+		if (applyCounter && InternalExcludeMap(map, cooldown, g_iSharedCDMode))
+			changed = true;
+
+		if (applyTime && InternalExcludeMapTime(map, cooldownTime, g_iSharedCDMode))
+			changed = true;
+	}
+
+	delete maps;
+	return changed;
 }
 
 // 0 = Okay
@@ -747,8 +790,7 @@ stock void InternalRestoreMapCooldowns()
 			return;
 		}
 
-		if (g_bForceLowerCase)
-			StringToLowerCase(map);
+		NormalizeMapName(map);
 
 		if ((Cooldown = Cooldowns.GetNum("Cooldown", -1)) > 0)
 		{
@@ -786,10 +828,9 @@ stock void InternalStoreMapCooldowns()
 	for (int i = 0; i < OldMapListSnapshot.Length; i++)
 	{
 		OldMapListSnapshot.GetKey(i, map, sizeof(map));
-		if (g_bForceLowerCase)
-			StringToLowerCase(map);
-
+		// Read with the stored key before normalizing it, the key may predate mce_force_lowercase
 		g_OldMapList.GetValue(map, Cooldown);
+		NormalizeMapName(map);
 
 		if (!Cooldowns.JumpToKey(map, true))
 		{
@@ -808,10 +849,8 @@ stock void InternalStoreMapCooldowns()
 	for (int i = 0; i < TimeMapListSnapshot.Length; i++)
 	{
 		TimeMapListSnapshot.GetKey(i, map, sizeof(map));
-		if (g_bForceLowerCase)
-			StringToLowerCase(map);
-
 		g_TimeMapList.GetValue(map, Cooldown);
+		NormalizeMapName(map);
 
 		if (!Cooldowns.JumpToKey(map, true))
 		{
