@@ -80,12 +80,23 @@ stock void UpdateMapTrie()
 
 	static char map[PLATFORM_MAX_PATH];
 	static char currentMap[PLATFORM_MAX_PATH];
-	ArrayList excludeMaps;
+	StringMap excludeMaps;
 
+	// MCE may store the excluded maps lowercased (mce_force_lowercase), compare them without case
 	if (bExcludeOld)
 	{
-		excludeMaps = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
-		GetExcludeMapList(excludeMaps);
+		ArrayList excludeList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
+		GetExcludeMapList(excludeList);
+
+		excludeMaps = new StringMap();
+		for (int i = 0; i < excludeList.Length; i++)
+		{
+			excludeList.GetString(i, map, sizeof(map));
+			StringToLowerCase(map);
+			excludeMaps.SetValue(map, true);
+		}
+
+		delete excludeList;
 	}
 
 	if (bExcludeCurrent)
@@ -101,14 +112,18 @@ stock void UpdateMapTrie()
 
 		if (bExcludeCurrent)
 		{
-			if (strcmp(map, currentMap) == 0)
+			if (strcmp(map, currentMap, false) == 0)
 				status = MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_CURRENT;
 		}
 
 		/* Dont bother with this check if the current map check passed */
 		if (bExcludeOld && status == MAPSTATUS_ENABLED)
 		{
-			if (excludeMaps.FindString(map) != -1)
+			static char lowerMap[PLATFORM_MAX_PATH];
+			strcopy(lowerMap, sizeof(lowerMap), map);
+			StringToLowerCase(lowerMap);
+
+			if (excludeMaps.ContainsKey(lowerMap))
 				status = MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_PREVIOUS;
 		}
 
@@ -331,6 +346,12 @@ stock int TimeStrToSeconds(const char[] str)
 		}
 	}
 	return seconds;
+}
+
+stock void StringToLowerCase(char[] input)
+{
+	for (int i = 0; input[i] != '\0'; i++)
+		input[i] = CharToLower(input[i]);
 }
 
 stock bool IsMapRestricted(int client, char[] map)
