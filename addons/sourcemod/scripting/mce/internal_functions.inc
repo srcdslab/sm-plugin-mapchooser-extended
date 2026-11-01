@@ -212,7 +212,7 @@ stock int InternalGetMapCooldownTime(const char[] map)
 	if (!g_Config.JumpToKey(map))
 		return Cooldown;
 
-	char time[16];
+	char time[TIME_STR_LENGTH];
 	g_Config.GetString("CooldownTime", time, sizeof(time), "");
 	if (time[0])
 		Cooldown = TimeStrToSeconds(time);
@@ -460,7 +460,7 @@ stock int InternalGetGroupCooldownTime(int group)
 	{
 		if (g_Config.JumpToKey(groupstr, false))
 		{
-			char time[16];
+			char time[TIME_STR_LENGTH];
 			g_Config.GetString("_cooldown_time", time, sizeof(time), "");
 			if (time[0])
 				cooldown = TimeStrToSeconds(time);
@@ -913,7 +913,7 @@ stock void InternalShowMapGroups(int client, const char[] map)
 
 		int max = g_Config.GetNum("_max", -1);
 		int cd = g_Config.GetNum("_cooldown", -1);
-		char time[16];
+		char time[TIME_STR_LENGTH];
 		g_Config.GetString("_cooldown_time", time, sizeof(time), "");
 
 		if (max > 0)

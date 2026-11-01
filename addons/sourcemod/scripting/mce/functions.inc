@@ -987,16 +987,26 @@ stock bool IsValidTimeStr(const char[] str)
 	return hasNumber;
 }
 
-// TimeStrToSeconds() runs on every cooldown lookup: invalid times are reported once, when they are read
-stock void CheckTimeStr(const char[] str, const char[] what)
+// TimeStrToSeconds() runs on every cooldown lookup: invalid times are reported once, when they are read.
+// str is the full value, usedLength the size of the buffer it is read into for the lookups (a longer time is cut there).
+stock void CheckTimeStr(const char[] str, int usedLength, const char[] what)
 {
-	if (str[0] && !IsValidTimeStr(str))
-		LogError("%s \"%s\" is not a valid time (numbers followed by h, m or s, e.g. \"1h30m\"), read as %d seconds.", what, str, TimeStrToSeconds(str));
+	if (!str[0])
+		return;
+
+	char used[64];
+	strcopy(used, usedLength < sizeof(used) ? usedLength : sizeof(used), str);
+
+	if (strlen(str) >= usedLength)
+		LogError("%s \"%s\" is longer than %d characters, read as \"%s\" (%d seconds).", what, str, usedLength - 1, used, TimeStrToSeconds(used));
+	else if (!IsValidTimeStr(str))
+		LogError("%s \"%s\" is not a valid time (numbers followed by h, m or s, e.g. \"1h30m\"), read as %d seconds.", what, str, TimeStrToSeconds(used));
 }
 
 stock void CheckConfigTimes()
 {
-	char section[PLATFORM_MAX_PATH], time[16], what[PLATFORM_MAX_PATH + 32];
+	// Larger than TIME_STR_LENGTH, so that a time cut by the lookups is reported
+	char section[PLATFORM_MAX_PATH], time[64], what[PLATFORM_MAX_PATH + 32];
 
 	g_Config.Rewind();
 	if (g_Config.GotoFirstSubKey())
@@ -1015,7 +1025,7 @@ stock void CheckConfigTimes()
 						{
 							g_Config.GetSectionName(section, sizeof(section));
 							FormatEx(what, sizeof(what), "_cooldown_time of group %s", section);
-							CheckTimeStr(time, what);
+							CheckTimeStr(time, TIME_STR_LENGTH, what);
 						}
 					} while (g_Config.GotoNextKey());
 					g_Config.GoBack();
@@ -1027,7 +1037,7 @@ stock void CheckConfigTimes()
 				if (time[0])
 				{
 					FormatEx(what, sizeof(what), "CooldownTime of %s", section);
-					CheckTimeStr(time, what);
+					CheckTimeStr(time, TIME_STR_LENGTH, what);
 				}
 			}
 		} while (g_Config.GotoNextKey());

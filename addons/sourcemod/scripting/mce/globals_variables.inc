@@ -118,6 +118,8 @@ CooldownMode g_CooldownMode = CooldownMode_Both;
 #define LINE_TWO "##linetwo##"
 #define LINE_SPACER "##linespacer##"
 #define FAILURE_TIMER_LENGTH 5
+// Buffer the cooldown lookups read CooldownTime / _cooldown_time into, a longer time is cut there
+#define TIME_STR_LENGTH 16
 
 char g_sExcludeMapsTime[32];
 
