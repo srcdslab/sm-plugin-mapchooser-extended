@@ -579,9 +579,9 @@ stock bool InternalAreRestrictionsActive()
 	int MinTime = g_iTimeFrameMin;
 	int MaxTime = g_iTimeFrameMax;
 
-	//Wrap around.
-	CurTime = (CurTime <= MinTime) ? CurTime + 2400 : CurTime;
-	MaxTime = (MaxTime <= MinTime) ? MaxTime + 2400 : MaxTime;
+	// Both ends are part of the timeframe; it goes past midnight when MaxTime is lower than MinTime
+	CurTime = (CurTime < MinTime) ? CurTime + 2400 : CurTime;
+	MaxTime = (MaxTime < MinTime) ? MaxTime + 2400 : MaxTime;
 
 	if ((MinTime <= CurTime <= MaxTime))
 	{
