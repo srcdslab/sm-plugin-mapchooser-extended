@@ -119,6 +119,8 @@ Advanced Automated Map Voting with Extensions
   - 1: set or replace. A group cooldown can shorten a longer cooldown that a map already has (for example the 24h `CooldownTime` of a map played recently).
   - 2: only if it is longer than the cooldown the map already has.
 
+  At map end, the map that was played gets its own `Cooldown` / `CooldownTime`, unless the cooldown it already has (from its group, for example) is longer.
+
   The default was 1 before 1.14.5. `cfg/sourcemod/mapchooser_extended.cfg` keeps the value it was created with, so existing servers stay on 1 until it is changed there.
 - mce_cooldown_mode (default: 0) - Cooldown evaluation mode.
 - mce_showmaptier_in_chat (default: 1) - Show map tier name in chat.
