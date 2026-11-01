@@ -529,4 +529,34 @@
 	{
 		"de"		"Als Zuschauer oder AFK kannst du nicht für Rock the Vote stimmen."
 	}
+
+	"RTVE Available"
+	{
+		"de"		"Rock the Vote ist jetzt verfügbar!"
+	}
+
+	"RTVE Disabled By Admin"
+	{
+		"de"		"hat Rock the Vote deaktiviert."
+	}
+
+	"RTVE Enabled By Admin"
+	{
+		"de"		"hat Rock the Vote aktiviert."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"de"		"Rock the Vote ist bereits deaktiviert."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"de"		"Rock the Vote ist bereits aktiviert."
+	}
+
+	"RTVE Currently Disabled"
+	{
+		"de"		"Rock the Vote ist derzeit deaktiviert."
+	}
 }

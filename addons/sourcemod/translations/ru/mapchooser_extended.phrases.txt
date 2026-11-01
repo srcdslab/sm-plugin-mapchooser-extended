@@ -531,4 +531,34 @@
 	{
 		"ru"		"Нельзя голосовать за смену карты, будучи наблюдателем или AFK."
 	}
+
+	"RTVE Available"
+	{
+		"ru"		"Смена карты теперь доступна!"
+	}
+
+	"RTVE Disabled By Admin"
+	{
+		"ru"		"отключил смену карты (RTV)."
+	}
+
+	"RTVE Enabled By Admin"
+	{
+		"ru"		"включил смену карты (RTV)."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"ru"		"Смена карты (RTV) уже отключена."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"ru"		"Смена карты (RTV) уже включена."
+	}
+
+	"RTVE Currently Disabled"
+	{
+		"ru"		"Смена карты (RTV) сейчас отключена."
+	}
 }

@@ -585,4 +585,34 @@
 	{
 		"en"		"You can't rock the vote while you are a spectator or AFK."
 	}
+
+	"RTVE Available"
+	{
+		"en"		"Rock the Vote is available now!"
+	}
+
+	"RTVE Disabled By Admin"
+	{
+		"en"		"disabled Rock the Vote."
+	}
+
+	"RTVE Enabled By Admin"
+	{
+		"en"		"enabled Rock the Vote."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"en"		"Rock the Vote is already disabled."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"en"		"Rock the Vote is already enabled."
+	}
+
+	"RTVE Currently Disabled"
+	{
+		"en"		"Rock the Vote is currently disabled."
+	}
 }

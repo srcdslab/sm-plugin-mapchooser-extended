@@ -530,4 +530,34 @@
 	{
 		"fr"		"Vous ne pouvez pas voter pour changer de map en étant spectateur ou AFK."
 	}
+
+	"RTVE Available"
+	{
+		"fr"		"Le changement de map est maintenant disponible !"
+	}
+
+	"RTVE Disabled By Admin"
+	{
+		"fr"		"a désactivé le changement de map (RTV)."
+	}
+
+	"RTVE Enabled By Admin"
+	{
+		"fr"		"a activé le changement de map (RTV)."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"fr"		"Le changement de map (RTV) est déjà désactivé."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"fr"		"Le changement de map (RTV) est déjà activé."
+	}
+
+	"RTVE Currently Disabled"
+	{
+		"fr"		"Le changement de map (RTV) est actuellement désactivé."
+	}
 }

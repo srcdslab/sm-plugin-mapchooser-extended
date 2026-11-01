@@ -530,4 +530,34 @@
 		"chi"		"旁观或挂机时无法投票换图."
 	}
 
+	"RTVE Available"
+	{
+		"chi"		"现在可以投票换图了!"
+	}
+
+	"RTVE Disabled By Admin"
+	{
+		"chi"		"已关闭投票换图."
+	}
+
+	"RTVE Enabled By Admin"
+	{
+		"chi"		"已开启投票换图."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"chi"		"投票换图已经是关闭状态."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"chi"		"投票换图已经是开启状态."
+	}
+
+	"RTVE Currently Disabled"
+	{
+		"chi"		"投票换图当前已关闭."
+	}
+
 }
