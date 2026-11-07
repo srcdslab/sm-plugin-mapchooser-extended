@@ -512,6 +512,31 @@
 		"ru"		"{1} изменил свою номинацию на {2}."
 	}
 
+	"NE Map Already Your Nomination"
+	{
+		"ru"		"Вы уже предложили эту карту."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"ru"		"{1} тоже предложил карту {2} (голосов: {3})."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"ru"		"{1} изменил свою номинацию на {2} (голосов: {3})."
+	}
+
+	"NE Nomination Vote"
+	{
+		"ru"		"голосов: 1"
+	}
+
+	"NE Nomination Votes"
+	{
+		"ru"		"голосов: {1}"
+	}
+
 	"NE Map Not In Pool"
 	{
 		"ru"		"Карта '{1}' отсутствует в списке номинаций."

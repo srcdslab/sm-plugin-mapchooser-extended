@@ -22,6 +22,10 @@ bool g_bSortedMapListDirty = true;
 #define MAPSTATUS_EXCLUDE_PREVIOUS (1<<3)
 #define MAPSTATUS_EXCLUDE_NOMINATED (1<<4)
 
+// Flags of a row of the nominated maps list with nomination votes, see GroupNominationVotes()
+#define NOMINATION_OWN (1<<0)		// The client nominated the map
+#define NOMINATION_ADMIN (1<<1)	// An admin forced the map in the vote
+
 int g_NominationDelay;
 int g_mapFileSerial = -1;
 int g_AdminMapFileSerial = -1;
@@ -185,6 +189,76 @@ public Action Timer_DelayNominate(Handle timer)
 	g_NominationDelay = 0;
 
 	return Plugin_Stop;
+}
+
+// mce_nomination_votes: several players can nominate the same map, the maps nominated by the most players go in the vote
+stock bool NominationVotesEnabled()
+{
+	return g_Cvar_NominationVotes != null && g_Cvar_NominationVotes.BoolValue;
+}
+
+// A map marked as nominated in g_mapTrie can't be nominated again. With nomination votes it can, to add a vote
+stock bool IsStatusNominated(int status)
+{
+	return !NominationVotesEnabled() && (status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED;
+}
+
+stock void MarkMapNominated(const char[] map)
+{
+	if (!NominationVotesEnabled())
+		g_mapTrie.SetValue(map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+}
+
+// Number of nominations of the map, the admin one included
+stock int GetMapNominationVotes(const char[] map)
+{
+	ArrayList MapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
+	ArrayList OwnerList = new ArrayList();
+
+	// With an owner list, MCE gives every nomination of a map, not only the first one
+	GetNominatedMapList(MapList, OwnerList);
+
+	int votes = 0;
+	static char nominated[PLATFORM_MAX_PATH];
+	for (int i = 0; i < MapList.Length; i++)
+	{
+		MapList.GetString(i, nominated, sizeof(nominated));
+		if (strcmp(nominated, map, false) == 0)
+			votes++;
+	}
+
+	delete MapList;
+	delete OwnerList;
+	return votes;
+}
+
+stock void FormatNominationVotes(int client, int votes, char[] buffer, int maxlen)
+{
+	if (votes == 1)
+		FormatEx(buffer, maxlen, "%T", "NE Nomination Vote", client);
+	else
+		FormatEx(buffer, maxlen, "%T", "NE Nomination Votes", client, votes);
+}
+
+// Chat message of a player nomination, with the number of votes of the map once several players nominated it
+stock void PrintNominationToAll(NominateResult result, const char[] name, const char[] map, const char[] mapnameInChat)
+{
+	int votes = NominationVotesEnabled() ? GetMapNominationVotes(map) : 1;
+
+	if (result == Nominate_Added)
+	{
+		if (votes > 1)
+			CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nominated Votes", name, mapnameInChat, votes);
+		else
+			CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nominated", name, mapnameInChat);
+	}
+	else if (result == Nominate_Replaced)
+	{
+		if (votes > 1)
+			CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nomination Changed Votes", name, mapnameInChat, votes);
+		else
+			CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nomination Changed", name, mapnameInChat);
+	}
 }
 
 // This is SM Forward (file: mapchooser.inc)

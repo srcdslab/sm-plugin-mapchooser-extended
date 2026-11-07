@@ -510,6 +510,31 @@
 		"pt"		"{1} mudou sua indicação para {2}."
 	}
 
+	"NE Map Already Your Nomination"
+	{
+		"pt"		"Você já indicou este mapa."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"pt"		"{1} também indicou {2} ({3} votos)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"pt"		"{1} mudou sua indicação para {2} ({3} votos)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"pt"		"1 voto"
+	}
+
+	"NE Nomination Votes"
+	{
+		"pt"		"{1} votos"
+	}
+
 	"NE Map Not In Pool"
 	{
 		"pt"		"O mapa '{1}' não está disponível para indicação."

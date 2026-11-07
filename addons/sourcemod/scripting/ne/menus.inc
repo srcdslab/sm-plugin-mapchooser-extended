@@ -138,6 +138,14 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 		return false;
 	}
 
+	// Nomination votes: one row per map, the most nominated first, OwnerList then holds the NOMINATION_* flags of the row
+	ArrayList VoteList = null;
+	if (NominationVotesEnabled())
+	{
+		VoteList = new ArrayList();
+		GroupNominationVotes(MapList, OwnerList, VoteList, client);
+	}
+
 	static char map[PLATFORM_MAX_PATH];
 	static char display[PLATFORM_MAX_PATH];
 	static char description[PLATFORM_MAX_PATH];
@@ -167,6 +175,24 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 					Format(display, sizeof(display), "%s - [%s]", display, tierName);
 			}
 
+			if (VoteList != null)
+			{
+				int flags = OwnerList.Get(i);
+
+				char sVotes[32];
+				FormatNominationVotes(client, VoteList.Get(i), sVotes, sizeof(sVotes));
+				Format(display, sizeof(display), "%s (%s)", display, sVotes);
+
+				if (flags & NOMINATION_ADMIN)
+					Format(display, sizeof(display), "%s (%T)", display, "Nominated by Admin", client);
+
+				if (flags & NOMINATION_OWN)
+					Format(display, sizeof(display), "%s (%T)", display, "Unnominate", client);
+
+				menu.AddItem(map, display);
+				continue;
+			}
+
 			int owner = OwnerList.Get(i);
 
 			char sBuffer[64];
@@ -186,7 +212,69 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 
 	delete MapList;
 	delete OwnerList;
+	delete VoteList;
 	return true;
+}
+
+/**
+ * Groups the nominations by map: MapList gets each map once, the most nominated first, VoteList its number
+ * of nominations and OwnerList its NOMINATION_* flags for client.
+ */
+void GroupNominationVotes(ArrayList MapList, ArrayList OwnerList, ArrayList VoteList, int client)
+{
+	ArrayList maps = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
+	ArrayList flags = new ArrayList();
+	ArrayList votes = new ArrayList();
+
+	static char map[PLATFORM_MAX_PATH];
+	for (int i = 0; i < MapList.Length; i++)
+	{
+		MapList.GetString(i, map, sizeof(map));
+
+		int index = maps.FindString(map);
+		if (index == -1)
+		{
+			index = maps.PushString(map);
+			flags.Push(0);
+			votes.Push(0);
+		}
+
+		int owner = OwnerList.Get(i);
+		if (!owner)
+			flags.Set(index, flags.Get(index) | NOMINATION_ADMIN);
+		else if (owner == client)
+			flags.Set(index, flags.Get(index) | NOMINATION_OWN);
+
+		votes.Set(index, votes.Get(index) + 1);
+	}
+
+	MapList.Clear();
+	OwnerList.Clear();
+	VoteList.Clear();
+
+	// The most nominated first, in the order of MCE (alphabetical) for the same number of nominations
+	while (maps.Length)
+	{
+		int best = 0;
+		for (int i = 1; i < maps.Length; i++)
+		{
+			if (votes.Get(i) > votes.Get(best))
+				best = i;
+		}
+
+		maps.GetString(best, map, sizeof(map));
+		MapList.PushString(map);
+		OwnerList.Push(flags.Get(best));
+		VoteList.Push(votes.Get(best));
+
+		maps.Erase(best);
+		flags.Erase(best);
+		votes.Erase(best);
+	}
+
+	delete maps;
+	delete flags;
+	delete votes;
 }
 
 // Rows added by BuildMapMenu() on top of the maps
@@ -414,7 +502,11 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			/* Don't need to check for InvalidMap because the menu did that already */
 			if (result == Nominate_AlreadyInVote)
 			{
-				CPrintToChat(param1, "{green}[NE]{default} %t", "NE Map Already Nominated");
+				// With nomination votes, a map nominated by others takes one more vote: only the player's own nomination is refused
+				if (NominationVotesEnabled())
+					CPrintToChat(param1, "{green}[NE]{default} %t", "NE Map Already Your Nomination");
+				else
+					CPrintToChat(param1, "{green}[NE]{default} %t", "NE Map Already Nominated");
 				return 0;
 			}
 			else if (result == Nominate_VoteFull)
@@ -424,7 +516,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			}
 
 			/* Map was nominated! - Disable the menu item and update the trie */
-			g_mapTrie.SetValue(map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+			MarkMapNominated(map);
 			g_Player_NominationDelay[param1] = iCurrentTime + g_Cvar_NominateDelay.IntValue;
 
 			char mapnameInChat[64];
@@ -437,15 +529,15 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 					Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", map, "MapTierDisplay", tierName);
 			}
 
+			PrintNominationToAll(result, name, map, mapnameInChat);
+
 			if (result == Nominate_Added)
 			{
-				CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nominated", name, mapnameInChat);
 				LogMessage("%L has nominated %s", param1, map);
 				Forward_OnPublicMapInsert(param1, map, IsMapVIPRestricted(map), IsMapLeaderRestricted(map), IsMapAdminRestricted(map));
 			}
 			else if (result == Nominate_Replaced)
 			{
-				CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nomination Changed", name, mapnameInChat);
 				LogMessage("%L has changed their nomination to %s", param1, map);
 				Forward_OnPublicMapReplaced(param1, map, IsMapVIPRestricted(map), IsMapLeaderRestricted(map), IsMapAdminRestricted(map));
 			}
@@ -474,7 +566,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 						return ITEMDRAW_DISABLED;
 					}
 
-					if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
+					if (IsStatusNominated(status))
 					{
 						return ITEMDRAW_DISABLED;
 					}
@@ -562,12 +654,23 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 						return RedrawMenuItem(display);
 					}
 
-					if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
+					if (IsStatusNominated(status))
 					{
 						Format(display, sizeof(display), "%s (%T)", buffer, "NE Nominated", param1);
 						return RedrawMenuItem(display);
 					}
 				}
+			}
+
+			// Nomination votes: a nominated map stays available, with its number of votes
+			bool hasVotes = false;
+			int votes;
+			if (NominationVotesEnabled() && (votes = GetMapNominationVotes(map)) > 0)
+			{
+				char sVotes[32];
+				FormatNominationVotes(param1, votes, sVotes, sizeof(sVotes));
+				Format(buffer, sizeof(buffer), "%s (%s)", buffer, sVotes);
+				hasVotes = true;
 			}
 
 			int Cooldown = GetMapCooldownTime(map);
@@ -590,7 +693,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			}
 
 			// If we have badges or custom mark, return the formatted buffer
-			if (hasBadges || (mark && !official))
+			if (hasBadges || hasVotes || (mark && !official))
 				return RedrawMenuItem(buffer);
 
 			if (displayMapTier)
@@ -642,7 +745,7 @@ public int Handler_AdminMapSelectMenu(Menu menu, MenuAction action, int param1, 
 			}
 
 			/* Map was nominated! - Disable the menu item and update the trie */
-			g_mapTrie.SetValue(map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+			MarkMapNominated(map);
 
 			CPrintToChat(param1, "{green}[NE]{default} %t", "NE Map Inserted", map);
 			CPrintToChatAll("{green}[NE]{default} %t", "Client inserted Map", param1, map);

@@ -61,11 +61,15 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 	}
 
 	CheckMapRestrictions(true, true);
-	CreateNextVote();
 
-	if (inputlist == null && !g_NominateList.Length && !g_NextMapList.Length)
+	// Picked once: with nomination votes (mce_nomination_votes), a tie for the last slots is drawn at random
+	ArrayList voteNominations = GetVoteNominations();
+	CreateNextVote(voteNominations);
+
+	if (inputlist == null && !voteNominations.Length && !g_NextMapList.Length)
 	{
-		// Checked before creating the menu, there is nothing to free or reset afterwards
+		// Checked before creating the menu, there is nothing else to free or reset afterwards
+		delete voteNominations;
 		LogError("No maps available for vote.");
 		// Players who asked for it (RTV) or saw the warning would otherwise get no answer
 		CPrintToChatAll("{green}[MCE]{default} %t", "Vote No Maps Available");
@@ -140,14 +144,12 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 
 		ArrayList randomizeList = null;
 		if (g_bRandomizeNominations)
-			randomizeList = g_NominateList.Clone();
-
-		int nominateCount = g_NominateList.Length;
+			randomizeList = voteNominations.Clone();
 
 		int voteSize = GetVoteSize(2);
 
-		/* Smaller of the two - It should be impossible for nominations to exceed the size though (cvar changed mid-map?) */
-		int nominationsToAdd = nominateCount >= voteSize ? voteSize : nominateCount;
+		/* GetVoteNominations() keeps at most voteSize maps */
+		int nominationsToAdd = voteNominations.Length;
 
 		char extendItem[32];
 		if (g_bExtendPositionTop && AddExtendToMenu(g_VoteMenu, when, extendItem, sizeof(extendItem)))
@@ -158,7 +160,7 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 
 		for (int i = 0; i < nominationsToAdd; i++)
 		{
-			g_NominateList.GetString(i, map, PLATFORM_MAX_PATH);
+			voteNominations.GetString(i, map, PLATFORM_MAX_PATH);
 
 			if (randomizeList == null)
 			{
@@ -167,18 +169,12 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 			}
 
 			RemoveStringFromArray(g_NextMapList, map);
-
-			/* Notify Nominations that this map is now free */
-			Forward_OnNominationRemoved(map, g_NominateOwners.Get(i));
 		}
 
-		/* Clear out the rest of the nominations array */
-		for (int i = nominationsToAdd; i < nominateCount; i++)
+		/* Notify Nominations that every nominated map is now free, in the vote or not */
+		for (int i = 0; i < g_NominateList.Length; i++)
 		{
 			g_NominateList.GetString(i, map, PLATFORM_MAX_PATH);
-			/* These maps shouldn't be excluded from the vote as they weren't really nominated at all */
-
-			/* Notify Nominations that this map is now free */
 			Forward_OnNominationRemoved(map, g_NominateOwners.Get(i));
 		}
 
@@ -276,6 +272,8 @@ void InitiateVote(MapChange when, ArrayList inputlist=null, bool force=false)
 		if (allMapsBuffer[0])
 			LogAction(-1, -1, "[MCE] Maps List: %s", allMapsBuffer);
 	}
+
+	delete voteNominations;
 
 	int voteDuration = g_iVoteDuration;
 
