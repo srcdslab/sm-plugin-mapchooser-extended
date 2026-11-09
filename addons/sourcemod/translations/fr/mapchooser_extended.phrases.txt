@@ -511,6 +511,31 @@
 		"fr"		"{1} a changé sa sélection pour {2}."
 	}
 
+	"NE Map Already Your Nomination"
+	{
+		"fr"		"Vous avez déjà sélectionné cette map."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"fr"		"{1} a aussi sélectionné {2} ({3} votes)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"fr"		"{1} a changé sa sélection pour {2} ({3} votes)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"fr"		"1 vote"
+	}
+
+	"NE Nomination Votes"
+	{
+		"fr"		"{1} votes"
+	}
+
 	"NE Map Not In Pool"
 	{
 		"fr"		"La carte '{1}' n'est pas dans la liste des nominations."

@@ -69,6 +69,7 @@ ConVar g_Cvar_ShowNominator;
 ConVar g_Cvar_SharedCDMode;
 ConVar g_Cvar_CooldownMode;
 ConVar g_Cvar_ShowMapTierInChat;
+ConVar g_Cvar_NominationVotes;
 
 /* Cache convars values */
 bool g_bEndOfMapVote;
@@ -89,6 +90,7 @@ bool g_bRandomizeNominations;
 bool g_bExtendPositionTop;
 bool g_bForceLowerCase;
 bool g_bShowMapTierInChat;
+bool g_bNominationVotes;
 
 int g_iStartRounds;
 int g_iStartFrags;
@@ -211,6 +213,7 @@ stock void CvarsInit()
 	g_Cvar_SharedCDMode = CreateConVar("mce_sharedcd_mode", "2", "How the cooldowns of a group are applied to its maps when one of them starts: 0 = each map gets its own cooldown, 1 = set or replace, 2 = only if longer than the current cooldown (See ExcludeMap native docs for mode)", _, true, 0.0, true, 2.0);
 	g_Cvar_CooldownMode = CreateConVar("mce_cooldown_mode", "0", "Cooldown mode: 0 = Both (Cooldown + CooldownTime), 1 = Counter only (Cooldown), 2 = Time only (CooldownTime), 3 = Priority (CooldownTime first, then Cooldown)", _, true, 0.0, true, 3.0);
 	g_Cvar_ShowMapTierInChat = CreateConVar("mce_showmaptier_in_chat", "1", "See the map tier name in chat", _, true, 0.0, true, 1.0);
+	g_Cvar_NominationVotes = CreateConVar("mce_nomination_votes", "0", "Several players can nominate the same map, and the maps nominated by the most players go in the vote. 0 = one player per map, the first nominations take the slots of the vote. 1 = nomination votes, the number of nominated maps is not limited.", _, true, 0.0, true, 1.0);
 
 	AutoExecConfig(true, "mapchooser_extended");
 
@@ -260,6 +263,7 @@ stock void CvarsInit()
 	g_Cvar_SharedCDMode.AddChangeHook(OnConVarChanged);
 	g_Cvar_CooldownMode.AddChangeHook(OnConVarChanged);
 	g_Cvar_ShowMapTierInChat.AddChangeHook(OnConVarChanged);
+	g_Cvar_NominationVotes.AddChangeHook(OnConVarChanged);
 
 	// Cache cvars values
 	g_bForceLowerCase = g_Cvar_ForceLowerCase.BoolValue;
@@ -280,6 +284,7 @@ stock void CvarsInit()
 	g_bRandomizeNominations = g_Cvar_RandomizeNominations.BoolValue;
 	g_bExtendPositionTop = g_Cvar_ExtendPosition.BoolValue;
 	g_bShowMapTierInChat = g_Cvar_ShowMapTierInChat.BoolValue;
+	g_bNominationVotes = g_Cvar_NominationVotes.BoolValue;
 
 	ReadExcludeMapsTime();
 
@@ -404,6 +409,8 @@ public void OnConVarChanged(ConVar convar, char[] oldValue, char[] newValue)
 		g_CooldownMode = view_as<CooldownMode>(g_Cvar_CooldownMode.IntValue);
 	else if (convar == g_Cvar_ShowMapTierInChat)
 		g_bShowMapTierInChat = g_Cvar_ShowMapTierInChat.BoolValue;
+	else if (convar == g_Cvar_NominationVotes)
+		g_bNominationVotes = g_Cvar_NominationVotes.BoolValue;
 }
 
 // g_sExcludeMapsTime is cut to its size, CheckTimeStr() gets the full value

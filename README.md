@@ -124,6 +124,11 @@ Advanced Automated Map Voting with Extensions
   The default was 1 before 1.14.5. `cfg/sourcemod/mapchooser_extended.cfg` keeps the value it was created with, so existing servers stay on 1 until it is changed there.
 - mce_cooldown_mode (default: 0) - Cooldown evaluation mode.
 - mce_showmaptier_in_chat (default: 1) - Show map tier name in chat.
+- mce_nomination_votes (default: 0) - Nomination votes: several players can nominate the same map.
+  - 0: one nomination per map, and once `mce_include` maps are nominated nobody else can nominate.
+  - 1: a player can nominate a map that someone else already nominated, which adds their vote to it. Each player still has one nomination, and changing it moves their vote. Any number of maps can be nominated. When the vote starts, admin nominations (`sm_nominate_addmap`) go in first, then the maps nominated by the most players fill the `mce_include` slots. If maps are tied for the last slots, the ones that go in are drawn at random. `sm_nomlist` and the nomination menu show how many votes each map has.
+
+  Groups (`_max`) count each nominated map once, however many votes it has, and voting for a map that is already nominated is not refused because of its group. `GetNominatedMapList()` returns one entry per nomination when an owner list is passed, so a map can appear several times. Without an owner list it returns each map once.
 ### Commands
 #### Public
 - sm_extends, sm_extendsleft - Shows how many extends are left on the current map.

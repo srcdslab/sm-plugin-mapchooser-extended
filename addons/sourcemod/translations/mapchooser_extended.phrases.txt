@@ -572,6 +572,34 @@
 		"en"		"{1} has changed their nomination to {2}."
 	}
 
+	"NE Map Already Your Nomination"
+	{
+		"en"		"You have already nominated this map."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"#format"	"{1:s},{2:s},{3:d}"
+		"en"		"{1} has also nominated {2} ({3} votes)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"#format"	"{1:s},{2:s},{3:d}"
+		"en"		"{1} has changed their nomination to {2} ({3} votes)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"en"		"1 vote"
+	}
+
+	"NE Nomination Votes"
+	{
+		"#format"	"{1:d}"
+		"en"		"{1} votes"
+	}
+
 	"NE Map Not In Pool"
 	{
 		"#format"	"{1:s}"

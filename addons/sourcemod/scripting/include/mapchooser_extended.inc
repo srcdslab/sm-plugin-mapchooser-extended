@@ -40,8 +40,8 @@
 #include <mapchooser>
 
 #define MCE_V_MAJOR "1"
-#define MCE_V_MINOR "14"
-#define MCE_V_PATCH "22"
+#define MCE_V_MINOR "15"
+#define MCE_V_PATCH "0"
 
 #define MCE_VERSION MCE_V_MAJOR..."."...MCE_V_MINOR..."."...MCE_V_PATCH
 
@@ -83,6 +83,9 @@ forward void OnMapVoteEnd(const char[] map);
 
 /**
  * Called when a client who own a nomination disconnect
+ *
+ * Like OnNominationRemoved (mapchooser.inc), it is called once per nomination, with its owner. With mce_nomination_votes,
+ * other players may still have the map nominated: GetNominatedMapList() tells if it still is.
  */
 forward void OnNominationDisconnect(char[] oldmap, int owner);
 

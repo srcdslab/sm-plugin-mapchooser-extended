@@ -510,6 +510,31 @@
 		"de"		"{1} hat seine Nominierung auf {2} geändert."
 	}
 
+	"NE Map Already Your Nomination"
+	{
+		"de"		"Du hast diese Map bereits nominiert."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"de"		"{1} hat {2} ebenfalls nominiert ({3} Stimmen)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"de"		"{1} hat seine Nominierung auf {2} geändert ({3} Stimmen)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"de"		"1 Stimme"
+	}
+
+	"NE Nomination Votes"
+	{
+		"de"		"{1} Stimmen"
+	}
+
 	"NE Map Not In Pool"
 	{
 		"de"		"Map '{1}' steht nicht zur Nominierung zur Verfügung."
