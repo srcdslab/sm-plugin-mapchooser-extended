@@ -179,9 +179,13 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 			{
 				int flags = OwnerList.Get(i);
 
-				char sVotes[32];
-				FormatNominationVotes(client, VoteList.Get(i), sVotes, sizeof(sVotes));
-				Format(display, sizeof(display), "%s (%s)", display, sVotes);
+				// A map nominated only by an admin has no votes
+				if (VoteList.Get(i) > 0)
+				{
+					char sVotes[32];
+					FormatNominationVotes(client, VoteList.Get(i), sVotes, sizeof(sVotes));
+					Format(display, sizeof(display), "%s (%s)", display, sVotes);
+				}
 
 				if (flags & NOMINATION_ADMIN)
 					Format(display, sizeof(display), "%s (%T)", display, "Nominated by Admin", client);
@@ -217,8 +221,8 @@ bool PopulateNominateListMenu(Menu menu, int client, const char[] filter = "")
 }
 
 /**
- * Groups the nominations by map: MapList gets each map once, the most nominated first, VoteList its number
- * of nominations and OwnerList its NOMINATION_* flags for client.
+ * Groups the nominations by map: MapList gets each map once, in the order MCE picks them for the vote (admin
+ * nominations, then the most nominated), VoteList its number of player nominations and OwnerList its NOMINATION_* flags for client.
  */
 void GroupNominationVotes(ArrayList MapList, ArrayList OwnerList, ArrayList VoteList, int client)
 {
@@ -241,8 +245,12 @@ void GroupNominationVotes(ArrayList MapList, ArrayList OwnerList, ArrayList Vote
 
 		int owner = OwnerList.Get(i);
 		if (!owner)
+		{
 			flags.Set(index, flags.Get(index) | NOMINATION_ADMIN);
-		else if (owner == client)
+			continue;
+		}
+
+		if (owner == client)
 			flags.Set(index, flags.Get(index) | NOMINATION_OWN);
 
 		votes.Set(index, votes.Get(index) + 1);
@@ -252,13 +260,15 @@ void GroupNominationVotes(ArrayList MapList, ArrayList OwnerList, ArrayList Vote
 	OwnerList.Clear();
 	VoteList.Clear();
 
-	// The most nominated first, in the order of MCE (alphabetical) for the same number of nominations
+	// Admin nominations first, then the most nominated, in the order of MCE (alphabetical) for the same rank
 	while (maps.Length)
 	{
 		int best = 0;
 		for (int i = 1; i < maps.Length; i++)
 		{
-			if (votes.Get(i) > votes.Get(best))
+			bool admin = (flags.Get(i) & NOMINATION_ADMIN) != 0;
+			bool bestAdmin = (flags.Get(best) & NOMINATION_ADMIN) != 0;
+			if (admin != bestAdmin ? admin : votes.Get(i) > votes.Get(best))
 				best = i;
 		}
 

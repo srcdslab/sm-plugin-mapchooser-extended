@@ -83,6 +83,9 @@ forward void OnMapVoteEnd(const char[] map);
 
 /**
  * Called when a client who own a nomination disconnect
+ *
+ * Like OnNominationRemoved (mapchooser.inc), it is called once per nomination, with its owner. With mce_nomination_votes,
+ * other players may still have the map nominated: GetNominatedMapList() tells if it still is.
  */
 forward void OnNominationDisconnect(char[] oldmap, int owner);
 

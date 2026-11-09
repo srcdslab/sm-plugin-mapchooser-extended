@@ -209,7 +209,7 @@ stock void MarkMapNominated(const char[] map)
 		g_mapTrie.SetValue(map, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
 }
 
-// Number of nominations of the map, the admin one included
+// Number of players who nominated the map. An admin nomination is not a vote: MCE puts the map in the vote whatever its votes are
 stock int GetMapNominationVotes(const char[] map)
 {
 	ArrayList MapList = new ArrayList(ByteCountToCells(PLATFORM_MAX_PATH));
@@ -223,7 +223,7 @@ stock int GetMapNominationVotes(const char[] map)
 	for (int i = 0; i < MapList.Length; i++)
 	{
 		MapList.GetString(i, nominated, sizeof(nominated));
-		if (strcmp(nominated, map, false) == 0)
+		if (OwnerList.Get(i) && strcmp(nominated, map, false) == 0)
 			votes++;
 	}
 
