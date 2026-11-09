@@ -41,7 +41,7 @@ public int Handler_NominateListMenu(Menu menu, MenuAction action, int param1, in
 				{
 					char tierName[32];
 					if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
-						Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", sMap, "MapTierDisplay", tierName);
+						Format(mapnameInChat, sizeof(mapnameInChat), "%s %T", sMap, "MapTierDisplay", LANG_SERVER, tierName);
 				}
 
 				CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", sName, mapnameInChat);
@@ -391,7 +391,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 					strcopy(sNominatedDisplay, sizeof(sNominatedDisplay), sNominated);
 					char tierName[32];
 					if (MCE_CanShowMapTierInChat() && GetMapTierName(sNominated, tierName, sizeof(tierName)))
-						Format(sNominatedDisplay, sizeof(sNominatedDisplay), "%s %t", sNominated, "MapTierDisplay", tierName);
+						Format(sNominatedDisplay, sizeof(sNominatedDisplay), "%s %T", sNominated, "MapTierDisplay", LANG_SERVER, tierName);
 
 					RemoveNominationByOwner(param1);
 					CPrintToChatAll("{green}[NE]{default} %t", "Map Unnominated", name, sNominatedDisplay);
@@ -434,7 +434,7 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			{
 				char tierName[32];
 				if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
-					Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", map, "MapTierDisplay", tierName);
+					Format(mapnameInChat, sizeof(mapnameInChat), "%s %T", map, "MapTierDisplay", LANG_SERVER, tierName);
 			}
 
 			if (result == Nominate_Added)
