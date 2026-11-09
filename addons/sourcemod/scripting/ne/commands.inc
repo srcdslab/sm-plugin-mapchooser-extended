@@ -632,7 +632,7 @@ public Action Command_Nominate(int client, int args)
 	{
 		char tierName[32];
 		if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
-			Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", mapname, "MapTierDisplay", tierName);
+			Format(mapnameInChat, sizeof(mapnameInChat), "%s %T", mapname, "MapTierDisplay", LANG_SERVER, tierName);
 	}
 
 	if (result > Nominate_Replaced)
@@ -690,7 +690,7 @@ public Action Command_UnNominate(int client, int args)
 	{
 		char tierName[32];
 		if (GetTierNameFromInt(mapTier, tierName, sizeof(tierName)))
-			Format(mapnameInChat, sizeof(mapnameInChat), "%s %t", map, "MapTierDisplay", tierName);
+			Format(mapnameInChat, sizeof(mapnameInChat), "%s %T", map, "MapTierDisplay", LANG_SERVER, tierName);
 	}
 
 	char name[MAX_NAME_LENGTH];
