@@ -173,6 +173,14 @@ Advanced Automated Map Voting with Extensions
 - sm_rtv_postvoteaction (default: 0) - RTV behavior after a map vote has completed.
 - sm_rtv_autodisable (default: 0) - Automatically disable RTV when map time is over.
 - sm_rtv_afk_time (default: 180) - AFK time in seconds after which a player is not counted in RTV ratio.
+- sm_rtv_eligibility_query (default: 0) - Only clients that answered a cvar query sent on connect can RTV (blocks fake clients that never answer). The query is sent again every `sm_rtv_eligibility_query_retry` seconds.
+- sm_rtv_eligibility_query_retry (default: 10) - Time in seconds before the cvar query is sent again to a client that did not answer.
+- sm_rtv_eligibility_time (default: 0) - Time in seconds a client must be connected (GetClientTime, kept across map changes) before being able to RTV.
+- sm_rtv_eligibility_distance (default: 0) - Distance in units a client must walk, alive on a team and pressing movement keys, before being able to RTV. Teleports, trains and pushes do not count.
+- sm_rtv_eligibility_log_interval (default: 60) - Minimum time in seconds between two logs of a refused RTV for the same client (0 logs every refusal).
+
+  With every eligibility cvar at 0 (default) nothing changes. Otherwise a player that does not meet them yet cannot RTV and is not counted in the RTV ratio, like an AFK player. Once all are met the player stays eligible until disconnect (a player who played then moved to spectator can still RTV). Admins with the `sm_rtv_eligibility_bypass` override (default flag: `b`, generic) are always eligible.
+  `AutoExecConfig` does not add new cvars to an existing `cfg/sourcemod/rtv.cfg`: add them by hand.
 ### Commands
 #### Public
 - sm_rtv - Vote to change the map.

@@ -38,6 +38,7 @@
 #include <utilshelper>
 #include <multicolors>
 #include <sdktools_functions>
+#include <sdktools_hooks>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -47,10 +48,27 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.12.6"
+#define RTVE_VERSION "1.13.0"
 
 // AFKManager has no forward: how often the AFK players are re-evaluated
 #define RTV_AFK_RECOUNT_INTERVAL 10.0
+
+// Voter eligibility: sampling period of the movement / query retry checks
+#define RTV_ELIG_TICK 1.0
+// Moves longer than this between two samples are teleports / respawns, not walking
+#define RTV_ELIG_MAX_STEP 600.0
+// Any client cvar works: only the fact that the client answers matters
+#define RTV_ELIG_QUERY_CVAR "cl_cmdrate"
+#define RTV_ELIG_BYPASS "sm_rtv_eligibility_bypass"
+#define RTV_ELIG_MOVE_BUTTONS (IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT)
+
+enum RTVIneligibility
+{
+	Inelig_None = 0,
+	Inelig_Query,	// Did not answer the cvar query yet
+	Inelig_Time,	// Not connected for long enough
+	Inelig_Move		// Did not walk enough while alive on a team
+};
 
 public Plugin myinfo =
 {
@@ -70,6 +88,23 @@ ConVar g_Cvar_RTVPostVoteAction;
 ConVar g_Cvar_RTVAutoDisable;
 ConVar g_Cvar_AFKTime;
 ConVar g_Cvar_Needed_NoSteam;
+ConVar g_Cvar_EligQuery;
+ConVar g_Cvar_EligQueryRetry;
+ConVar g_Cvar_EligTime;
+ConVar g_Cvar_EligDistance;
+ConVar g_Cvar_EligLogInterval;
+
+/* Voter eligibility state. Kept across map changes (the client stays connected,
+   same userid) and reset on disconnect or when the slot gets a new userid. */
+int g_iEligUserId[MAXPLAYERS+1];
+bool g_bEligible[MAXPLAYERS+1];			// All criteria met once: eligible until disconnect
+bool g_bEligQueryOk[MAXPLAYERS+1];
+float g_fEligQuerySent[MAXPLAYERS+1];
+float g_fEligDistance[MAXPLAYERS+1];
+bool g_bEligHasPos[MAXPLAYERS+1];
+float g_vEligLastPos[MAXPLAYERS+1][3];
+bool g_bEligMoveInput[MAXPLAYERS+1];
+float g_fEligLastLog[MAXPLAYERS+1];
 
 bool g_CanRTV = false;			// True if RTV loaded maps and is active.
 bool g_RTVAllowed = false;		// True if RTV is available to players. Used to delay rtv votes.
@@ -97,6 +132,11 @@ public void OnPluginStart()
 	g_Cvar_RTVAutoDisable = CreateConVar("sm_rtv_autodisable", "0", "Automatically disable RTV when map time is over.", _, true, 0.0, true, 1.0);
 	g_Cvar_AFKTime = CreateConVar("sm_rtv_afk_time", "180", "AFK Time in seconds after which a player is not counted in the rtv ratio");
 	g_Cvar_Needed_NoSteam = CreateConVar("sm_rtv_needed_nosteam", "0.45", "Percentage of No-Steam players added to rockthevote calculation (Def 45%)", 0, true, 0.05, true, 1.0);
+	g_Cvar_EligQuery = CreateConVar("sm_rtv_eligibility_query", "0", "Only clients that answered a cvar query sent on connect can rtv (blocks fake clients). 0 - Disabled, 1 - Enabled", _, true, 0.0, true, 1.0);
+	g_Cvar_EligQueryRetry = CreateConVar("sm_rtv_eligibility_query_retry", "10", "Time (in seconds) before the cvar query is sent again to a client that did not answer", _, true, 1.0);
+	g_Cvar_EligTime = CreateConVar("sm_rtv_eligibility_time", "0", "Time (in seconds) a client must be connected before being able to rtv. 0 - Disabled", _, true, 0.0);
+	g_Cvar_EligDistance = CreateConVar("sm_rtv_eligibility_distance", "0", "Distance (in units) a client must walk alive on a team before being able to rtv. 0 - Disabled", _, true, 0.0);
+	g_Cvar_EligLogInterval = CreateConVar("sm_rtv_eligibility_log_interval", "60", "Minimum time (in seconds) between two logs of a refused rtv for the same client. 0 - Log every refusal", _, true, 0.0);
 
 	RegConsoleCmd("sm_rtv", Command_RTV);
 
@@ -106,6 +146,9 @@ public void OnPluginStart()
 	RegAdminCmd("sm_debugrtv", Command_DebugRTV, ADMFLAG_CHANGEMAP, "Check the current RTV calculation");
 
 	HookEvent("player_team", OnPlayerChangedTeam, EventHookMode_PostNoCopy);
+
+	// Not tied to the map: the eligibility state survives map changes
+	CreateTimer(RTV_ELIG_TICK, Timer_Eligibility, _, TIMER_REPEAT);
 
 	AutoExecConfig(true, "rtv");
 }
@@ -146,6 +189,12 @@ public void OnMapStart()
 	   connected across a map change keep their g_Voted[] flag otherwise, which
 	   locks them out of RTV and makes g_Votes go negative on disconnect. */
 	ResetRTV();
+
+	// Positions from the previous map mean nothing on this one
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		g_bEligHasPos[i] = false;
+	}
 
 	/* Handle late load */
 	for (int i=1; i<=MaxClients; i++)
@@ -192,6 +241,17 @@ void KillDelayRTVTimer()
 
 public void OnClientPutInServer(int client)
 {
+	// Also called again after a map change: keep the state of the same client (same userid)
+	int userid = GetClientUserId(client);
+	if (g_iEligUserId[client] != userid)
+	{
+		ResetEligibility(client);
+		g_iEligUserId[client] = userid;
+	}
+
+	if (g_Cvar_EligQuery.BoolValue && !g_bEligQueryOk[client] && !IsFakeClient(client))
+		SendEligibilityQuery(client);
+
 	UpdateRTV();
 }
 
@@ -199,7 +259,171 @@ public void OnClientDisconnect(int client)
 {
 	// Its vote is dropped by the recount, which also skips it: the client is still in game during this forward
 	g_Voted[client] = false;
+	ResetEligibility(client);
+	g_iEligUserId[client] = 0;
 	UpdateRTV(client);
+}
+
+void ResetEligibility(int client)
+{
+	g_bEligible[client] = false;
+	g_bEligQueryOk[client] = false;
+	g_fEligQuerySent[client] = 0.0;
+	g_fEligDistance[client] = 0.0;
+	g_bEligHasPos[client] = false;
+	g_bEligMoveInput[client] = false;
+	g_fEligLastLog[client] = 0.0;
+}
+
+bool IsEligibilityEnabled()
+{
+	return g_Cvar_EligQuery.BoolValue || g_Cvar_EligTime.FloatValue > 0.0 || g_Cvar_EligDistance.FloatValue > 0.0;
+}
+
+void SendEligibilityQuery(int client)
+{
+	g_fEligQuerySent[client] = GetEngineTime();
+	QueryClientConVar(client, RTV_ELIG_QUERY_CVAR, OnEligibilityQueryReply, GetClientUserId(client));
+}
+
+// Any answer (even "cvar not found") proves the client handles the query, which the RTV bots never do
+public void OnEligibilityQueryReply(QueryCookie cookie, int client, ConVarQueryResult result, const char[] cvarName, const char[] cvarValue, any userid)
+{
+	if (GetClientOfUserId(userid) != client)
+		return;
+
+	g_bEligQueryOk[client] = true;
+}
+
+// First criterion the client does not meet yet, regardless of the admin bypass
+RTVIneligibility GetRTVIneligibility(int client)
+{
+	if (g_bEligible[client])
+		return Inelig_None;
+
+	if (g_Cvar_EligQuery.BoolValue && !g_bEligQueryOk[client])
+		return Inelig_Query;
+
+	if (GetClientTime(client) < g_Cvar_EligTime.FloatValue)
+		return Inelig_Time;
+
+	if (g_fEligDistance[client] < g_Cvar_EligDistance.FloatValue)
+		return Inelig_Move;
+
+	return Inelig_None;
+}
+
+bool IsRTVEligible(int client)
+{
+	if (g_bEligible[client] || !IsEligibilityEnabled())
+		return true;
+
+	if (CheckCommandAccess(client, RTV_ELIG_BYPASS, ADMFLAG_GENERIC, true))
+		return true;
+
+	return GetRTVIneligibility(client) == Inelig_None;
+}
+
+public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float vel[3], const float angles[3], int weapon, int subtype, int cmdnum, int tickcount, int seed, const int mouse[2])
+{
+	// Only movement driven by the player counts: trains, pushes and teleports move AFK players too
+	if (buttons & RTV_ELIG_MOVE_BUTTONS)
+		g_bEligMoveInput[client] = true;
+}
+
+void TrackEligibilityMovement(int client)
+{
+	if (!IsPlayerAlive(client) || GetClientTeam(client) <= 1)
+	{
+		g_bEligHasPos[client] = false;
+		g_bEligMoveInput[client] = false;
+		return;
+	}
+
+	float vPos[3];
+	GetClientAbsOrigin(client, vPos);
+
+	if (g_bEligHasPos[client] && g_bEligMoveInput[client])
+	{
+		float fStep = GetVectorDistance(vPos, g_vEligLastPos[client]);
+		if (fStep <= RTV_ELIG_MAX_STEP)
+			g_fEligDistance[client] += fStep;
+	}
+
+	g_vEligLastPos[client] = vPos;
+	g_bEligHasPos[client] = true;
+	g_bEligMoveInput[client] = false;
+}
+
+public Action Timer_Eligibility(Handle timer)
+{
+	if (!IsEligibilityEnabled())
+		return Plugin_Continue;
+
+	bool bQuery = g_Cvar_EligQuery.BoolValue;
+	bool bMove = g_Cvar_EligDistance.FloatValue > 0.0;
+	float fNow = GetEngineTime();
+	bool bChanged = false;
+
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (g_bEligible[i] || !IsClientInGame(i) || IsFakeClient(i))
+			continue;
+
+		// The query or its answer can be lost: send it again until the client answers
+		if (bQuery && !g_bEligQueryOk[i] && fNow - g_fEligQuerySent[i] >= g_Cvar_EligQueryRetry.FloatValue)
+			SendEligibilityQuery(i);
+
+		if (bMove)
+			TrackEligibilityMovement(i);
+
+		if (GetRTVIneligibility(i) == Inelig_None)
+		{
+			g_bEligible[i] = true;
+			bChanged = true;
+		}
+	}
+
+	// A new voter changes the votes needed
+	if (bChanged)
+		UpdateRTV();
+
+	return Plugin_Continue;
+}
+
+void ReplyNotEligible(int client, RTVIneligibility reason)
+{
+	char sReason[16];
+	switch (reason)
+	{
+		case Inelig_Query:
+		{
+			strcopy(sReason, sizeof(sReason), "query");
+			CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Not Eligible Query");
+		}
+		case Inelig_Time:
+		{
+			strcopy(sReason, sizeof(sReason), "time");
+			int iLeft = RoundToCeil(g_Cvar_EligTime.FloatValue - GetClientTime(client));
+			CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Not Eligible Time", iLeft < 1 ? 1 : iLeft);
+		}
+		case Inelig_Move:
+		{
+			strcopy(sReason, sizeof(sReason), "move");
+			CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Not Eligible Move");
+		}
+	}
+
+	float fNow = GetEngineTime();
+	if (g_fEligLastLog[client] > 0.0 && fNow - g_fEligLastLog[client] < g_Cvar_EligLogInterval.FloatValue)
+		return;
+
+	g_fEligLastLog[client] = fNow;
+
+	char sIP[64];
+	GetClientIP(client, sIP, sizeof(sIP));
+	LogMessage("RTV refused for \"%L\" (ip %s): missing %s (query %s, connected %.0fs, distance %.0f)",
+		client, sIP, sReason, g_bEligQueryOk[client] ? "ok" : "no answer", GetClientTime(client), g_fEligDistance[client]);
 }
 
 public void OnPlayerChangedTeam(Event event, const char[] name, bool dontBroadcast)
@@ -213,11 +437,14 @@ public void Frame_UpdateRTV(any data)
 	UpdateRTV();
 }
 
-// Players counted for RTV: humans that are not AFK. With PlayerManager spectators count too,
+// Players counted for RTV: eligible humans that are not AFK. With PlayerManager spectators count too,
 // without it only players on a team count.
 bool IsRTVVoter(int client)
 {
 	if (!IsClientInGame(client) || IsFakeClient(client))
+		return false;
+
+	if (!IsRTVEligible(client))
 		return false;
 
 #if defined _AFKManager_Included
@@ -362,6 +589,12 @@ void AttemptRTV(int client)
 	if (GetClientCount(true) < g_Cvar_MinPlayers.IntValue)
 	{
 		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Minimal Players Not Met");
+		return;
+	}
+
+	if (!IsRTVEligible(client))
+	{
+		ReplyNotEligible(client, GetRTVIneligibility(client));
 		return;
 	}
 
@@ -545,6 +778,17 @@ public Action Command_DebugRTV(int client, int args)
 	{
 		CReplyToCommand(client, "{green}[RTVE]{default} Calculated on %d Active Steam Players * %.2f Ratio = %d", iVotersSteam, g_Cvar_Needed.FloatValue, iVotesNeededSteam);
 		CReplyToCommand(client, "{green}[RTVE]{default} + on %d Active No Steam Players * %.2f Ratio = %d.", iVotersNoSteam, g_Cvar_Needed_NoSteam.FloatValue, iVotesNeededNoSteam);
+	}
+
+	if (IsEligibilityEnabled())
+	{
+		int iIneligible = 0;
+		for (int i = 1; i <= MaxClients; i++)
+		{
+			if (IsClientInGame(i) && !IsFakeClient(i) && !IsRTVEligible(i))
+				iIneligible++;
+		}
+		CReplyToCommand(client, "{green}[RTVE]{default} %d players not eligible yet (not counted).", iIneligible);
 	}
 
 	return Plugin_Handled;
