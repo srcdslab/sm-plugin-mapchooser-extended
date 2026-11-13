@@ -712,4 +712,20 @@
 	{
 		"en"		"RockTheVote is already Enabled."
 	}
+
+	"RTVE Not Eligible Query"
+	{
+		"en"		"Your game client is being verified, try again in a moment."
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"#format"	"{1:d}"
+		"en"		"You must play {1} more seconds before you can rock the vote."
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"en"		"You must play (move around in a team) before you can rock the vote."
+	}
 }

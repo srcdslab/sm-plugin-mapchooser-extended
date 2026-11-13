@@ -644,4 +644,19 @@
 	{
 		"pt"		"O Rock the Vote já está ativado."
 	}
+
+	"RTVE Not Eligible Query"
+	{
+		"pt"		"Seu cliente de jogo está sendo verificado, tente novamente em instantes."
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"pt"		"Você deve jogar mais {1} segundos antes de poder votar na troca de mapa."
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"pt"		"Você deve jogar (mover-se em uma equipe) antes de poder votar na troca de mapa."
+	}
 }
