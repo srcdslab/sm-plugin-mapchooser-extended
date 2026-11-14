@@ -47,7 +47,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.12.6"
+#define RTVE_VERSION "1.12.7"
 
 // AFKManager has no forward: how often the AFK players are re-evaluated
 #define RTV_AFK_RECOUNT_INTERVAL 10.0
@@ -347,6 +347,13 @@ public Action Command_RTV(int client, int args)
 
 void AttemptRTV(int client)
 {
+	// A connected client that is not in game yet can still run sm_rtv:
+	// replying to it would throw "Client is not in game".
+	if (!IsClientInGame(client))
+	{
+		return;
+	}
+
 	if (!RTVAllowed() || (g_Cvar_RTVPostVoteAction.IntValue == 1 && HasEndOfMapVoteFinished()))
 	{
 		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Not Allowed");
