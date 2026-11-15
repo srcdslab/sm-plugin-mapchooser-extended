@@ -574,6 +574,13 @@ public Action Command_RTV(int client, int args)
 
 void AttemptRTV(int client)
 {
+	// A connected client that is not in game yet can still run sm_rtv:
+	// replying to it would throw "Client is not in game".
+	if (!client || !IsClientInGame(client))
+	{
+		return;
+	}
+
 	if (!RTVAllowed() || (g_Cvar_RTVPostVoteAction.IntValue == 1 && HasEndOfMapVoteFinished()))
 	{
 		CReplyToCommand(client, "{green}[RTVE]{default} %t", "RTVE Not Allowed");
