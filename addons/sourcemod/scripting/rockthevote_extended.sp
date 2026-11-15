@@ -349,7 +349,7 @@ void AttemptRTV(int client)
 {
 	// A connected client that is not in game yet can still run sm_rtv:
 	// replying to it would throw "Client is not in game".
-	if (!IsClientInGame(client))
+	if (!client || !IsClientInGame(client))
 	{
 		return;
 	}
