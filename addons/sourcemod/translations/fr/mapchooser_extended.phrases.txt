@@ -645,4 +645,19 @@
 	{
 		"fr"		"Le vote pour changer de map est déjà activé."
 	}
+
+	"RTVE Not Eligible Query"
+	{
+		"fr"		"Votre client de jeu est en cours de vérification, réessayez dans un instant."
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"fr"		"Vous devez jouer encore {1} secondes avant de pouvoir changer de map."
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"fr"		"Vous devez jouer (vous déplacer dans une équipe) avant de pouvoir changer de map."
+	}
 }

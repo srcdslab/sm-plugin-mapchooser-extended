@@ -645,4 +645,18 @@
 		"chi"		"投票换图已经是启用状态。"
 	}
 
+	"RTVE Not Eligible Query"
+	{
+		"chi"		"正在验证你的游戏客户端，请稍后再试。"
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"chi"		"你还需要游玩 {1} 秒才能投票换图。"
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"chi"		"你需要先进行游戏（在队伍中移动）才能投票换图。"
+	}
 }
