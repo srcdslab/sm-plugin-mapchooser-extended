@@ -510,6 +510,31 @@
 		"chi"		"{1} 将提名更改为 {2}."
 	}
 
+	"NE Map Already Your Nomination"
+	{
+		"chi"		"你已经提名了该地图."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"chi"		"{1} 也提名了 {2} ({3} 票)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"chi"		"{1} 将提名更改为 {2} ({3} 票)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"chi"		"1 票"
+	}
+
+	"NE Nomination Votes"
+	{
+		"chi"		"{1} 票"
+	}
+
 	"NE Map Not In Pool"
 	{
 		"chi"		"地图 '{1}' 不在提名列表中."

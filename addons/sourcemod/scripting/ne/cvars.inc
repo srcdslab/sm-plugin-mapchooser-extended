@@ -11,6 +11,7 @@
 
 // MCE Convars 
 ConVar g_Cvar_MarkCustomMaps;
+ConVar g_Cvar_NominationVotes;
 
 // Nominations Extended Convars
 ConVar g_Cvar_ExcludeOld;
@@ -47,4 +48,6 @@ stock void FindMCECvars()
 {
 	// This is an MCE cvar... this plugin requires MCE to be loaded.  Granted, this plugin SHOULD have an MCE dependency.
 	g_Cvar_MarkCustomMaps = FindConVar("mce_markcustommaps");
+	// Missing with an older MCE: one nomination per map
+	g_Cvar_NominationVotes = FindConVar("mce_nomination_votes");
 }

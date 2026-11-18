@@ -337,6 +337,157 @@ stock int GetNominateCount()
 	return g_NominateOwners.Length - admins + (overflow > 0 ? overflow : 0);
 }
 
+// Index of the nomination of map made by owner (0 = admin nomination), -1 if there is none
+stock int FindNomination(const char[] map, int owner)
+{
+	static char nominated[PLATFORM_MAX_PATH];
+	for (int i = 0; i < g_NominateList.Length; i++)
+	{
+		if (g_NominateOwners.Get(i) != owner)
+			continue;
+
+		g_NominateList.GetString(i, nominated, sizeof(nominated));
+		if (strcmp(nominated, map, false) == 0)
+			return i;
+	}
+
+	return -1;
+}
+
+// Number of nominations of the map. Only nomination votes (mce_nomination_votes) can give it more than one
+stock int GetNominationVotes(const char[] map)
+{
+	int votes = 0;
+	static char nominated[PLATFORM_MAX_PATH];
+	for (int i = 0; i < g_NominateList.Length; i++)
+	{
+		g_NominateList.GetString(i, nominated, sizeof(nominated));
+		if (strcmp(nominated, map, false) == 0)
+			votes++;
+	}
+
+	return votes;
+}
+
+// True if the nomination at index is the first one of its map: with nomination votes, a map can be nominated several times
+stock bool IsFirstNominationOfMap(int index)
+{
+	static char map[PLATFORM_MAX_PATH], nominated[PLATFORM_MAX_PATH];
+	g_NominateList.GetString(index, map, sizeof(map));
+	for (int i = 0; i < index; i++)
+	{
+		g_NominateList.GetString(i, nominated, sizeof(nominated));
+		if (strcmp(nominated, map, false) == 0)
+			return false;
+	}
+
+	return true;
+}
+
+/**
+ * Nominated maps that go in the vote, sorted alphabetically. The caller deletes the list.
+ * Admin nominations (owner 0) go first, up to the size of the vote. Player nominations take the mce_include slots
+ * (minus the admin nominations that don't fit in the reserved slots, like GetNominateCount()): the maps nominated
+ * by the most players first, a tie for the last slots is drawn at random.
+ * Without nomination votes every map has one nomination and they all fit, unless the cvars changed mid-map.
+ */
+stock ArrayList GetVoteNominations()
+{
+	int arraySize = ByteCountToCells(PLATFORM_MAX_PATH);
+	ArrayList maps = new ArrayList(arraySize);
+	ArrayList votes = new ArrayList();		// Player nominations of each map of maps, -1 once the map is in the vote
+	ArrayList result = new ArrayList(arraySize);
+	int voteSize = GetVoteSize(2);
+
+	static char map[PLATFORM_MAX_PATH];
+	for (int i = 0; i < g_NominateList.Length; i++)
+	{
+		g_NominateList.GetString(i, map, sizeof(map));
+
+		int index = -1;
+		static char known[PLATFORM_MAX_PATH];
+		for (int j = 0; j < maps.Length; j++)
+		{
+			maps.GetString(j, known, sizeof(known));
+			if (strcmp(known, map, false) == 0)
+			{
+				index = j;
+				break;
+			}
+		}
+
+		if (index == -1)
+		{
+			index = maps.PushString(map);
+			votes.Push(0);
+		}
+
+		if (g_NominateOwners.Get(i))
+		{
+			if (votes.Get(index) != -1)
+				votes.Set(index, votes.Get(index) + 1);
+		}
+		// Forced by an admin: in the vote whatever the player nominations are
+		else if (votes.Get(index) != -1)
+		{
+			votes.Set(index, -1);
+			if (result.Length < voteSize)
+				result.PushString(map);
+		}
+	}
+
+	int admins = result.Length;
+	int overflow = admins - GetVoteSize(1);
+	int playerSlots = GetVoteSize(0) - (overflow > 0 ? overflow : 0);
+	if (playerSlots > voteSize - admins)
+		playerSlots = voteSize - admins;
+
+	for (; playerSlots > 0; playerSlots--)
+	{
+		// The most nominated map left, ties drawn at random (reservoir sampling)
+		int best = -1;
+		int bestVotes = 0;
+		int ties = 0;
+		for (int i = 0; i < maps.Length; i++)
+		{
+			int mapVotes = votes.Get(i);
+			if (mapVotes <= 0 || mapVotes < bestVotes)
+				continue;
+
+			if (mapVotes > bestVotes)
+			{
+				bestVotes = mapVotes;
+				ties = 0;
+			}
+
+			if (GetRandomInt(0, ties++) == 0)
+				best = i;
+		}
+
+		if (best == -1)
+			break;
+
+		maps.GetString(best, map, sizeof(map));
+		result.PushString(map);
+		votes.Set(best, -1);
+	}
+
+	delete maps;
+	delete votes;
+
+	result.SortCustom(NominationSortCallback);
+	return result;
+}
+
+public int NominationSortCallback(int index1, int index2, Handle array, Handle hndl)
+{
+	char map1[PLATFORM_MAX_PATH], map2[PLATFORM_MAX_PATH];
+	view_as<ArrayList>(array).GetString(index1, map1, sizeof(map1));
+	view_as<ArrayList>(array).GetString(index2, map2, sizeof(map2));
+
+	return strcmp(map1, map2, false);
+}
+
 void SetupTimeleftTimer()
 {
 	int time;
@@ -600,7 +751,8 @@ void SetNominationsLocked(bool lock)
 #endif
 }
 
-void CreateNextVote()
+// nominations: the nominated maps that go in the vote (GetVoteNominations()), the random maps respect their groups
+void CreateNextVote(ArrayList nominations)
 {
 	assert(g_NextMapList)
 	g_NextMapList.Clear();
@@ -644,10 +796,10 @@ void CreateNextVote()
 	// group id -> number of maps of this group already in the vote
 	StringMap groupmap = new StringMap();
 
-	// populate groupmap with maps from nomination list
-	for (int i = 0; i < g_NominateList.Length; i++)
+	// populate groupmap with the nominated maps of the vote
+	for (int i = 0; i < nominations.Length; i++)
 	{
-		g_NominateList.GetString(i, map, PLATFORM_MAX_PATH);
+		nominations.GetString(i, map, PLATFORM_MAX_PATH);
 		CountMapInGroups(map, groupmap);
 	}
 

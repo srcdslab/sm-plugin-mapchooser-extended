@@ -171,6 +171,10 @@ public int Native_GetNominatedMapList(Handle plugin, int numParams)
 
 	for (int i = 0; i < g_NominateList.Length; i++)
 	{
+		// With nomination votes a map can be nominated several times: once per map without an owner list
+		if (ownerarray == null && !IsFirstNominationOfMap(i))
+			continue;
+
 		g_NominateList.GetString(i, map, PLATFORM_MAX_PATH);
 		maparray.PushString(map);
 
@@ -210,7 +214,8 @@ public int Native_CanNominate(Handle plugin, int numParams)
 		return view_as<int>(CanNominate_No_VoteComplete);
 	}
 
-	if (GetNominateCount() >= GetVoteSize())
+	// With nomination votes the number of nominated maps is not limited
+	if (!g_bNominationVotes && GetNominateCount() >= GetVoteSize())
 	{
 		return view_as<int>(CanNominate_No_VoteFull);
 	}
@@ -413,6 +418,10 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 	char[] map = new char[len+1];
 	GetNativeString(1, map, len+1);
 
+	// Nomination votes: nominating a map that is already nominated adds a vote, not a map of the group
+	if (g_bNominationVotes && GetNominationVotes(map) > 0)
+		return -1;
+
 	int groups[32];
 	int groupsfound = InternalGetMapGroups(map, groups, sizeof(groups));
 
@@ -427,6 +436,10 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 			int groups_[32];
 			for (int i = 0; i < g_NominateList.Length; i++)
 			{
+				// Each map counts once, whatever its number of nominations
+				if (!IsFirstNominationOfMap(i))
+					continue;
+
 				g_NominateList.GetString(i, map_, PLATFORM_MAX_PATH);
 				int tmp = InternalGetMapGroups(map_, groups_, sizeof(groups_));
 				if (FindIntInArray(groups_, tmp, groups[group]) != -1)
@@ -446,7 +459,8 @@ public int Native_GetMapGroupRestriction(Handle plugin, int numParams)
 						g_NominateList.GetString(index, oldmap, PLATFORM_MAX_PATH);
 						static int oldgroups[32];
 						int tmp = InternalGetMapGroups(oldmap, oldgroups, sizeof(oldgroups));
-						if (FindIntInArray(oldgroups, tmp, groups[group]) != -1)
+						// The old map only leaves the group if nobody else nominated it
+						if (FindIntInArray(oldgroups, tmp, groups[group]) != -1 && GetNominationVotes(oldmap) == 1)
 							okay = true;
 					}
 				}

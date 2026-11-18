@@ -82,7 +82,7 @@ public Action Command_Addmap(int client, int args)
 					return Plugin_Handled;
 				}
 
-				if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
+				if (IsStatusNominated(status))
 				{
 					CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Nominated");
 					return Plugin_Handled;
@@ -152,7 +152,7 @@ public Action Command_Addmap(int client, int args)
 	}
 
 	/* Map was nominated! - Disable the menu item and update the trie */
-	g_mapTrie.SetValue(mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+	MarkMapNominated(mapname);
 
 	CReplyToCommand(client, "{green}[NE]{default} %t", "NE Map Inserted", mapname);
 	CPrintToChatAll("{green}[NE]{default} %t", "Client inserted Map", client, mapname);
@@ -547,7 +547,7 @@ public Action Command_Nominate(int client, int args)
 			return Plugin_Handled;
 		}
 
-		if ((status & MAPSTATUS_EXCLUDE_NOMINATED) == MAPSTATUS_EXCLUDE_NOMINATED)
+		if (IsStatusNominated(status))
 		{
 			CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Nominated");
 			return Plugin_Handled;
@@ -637,7 +637,10 @@ public Action Command_Nominate(int client, int args)
 
 	if (result > Nominate_Replaced)
 	{
-		if (result == Nominate_AlreadyInVote)
+		// With nomination votes, a map nominated by others takes one more vote: only the player's own nomination is refused
+		if (result == Nominate_AlreadyInVote && NominationVotesEnabled())
+			CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already Your Nomination");
+		else if (result == Nominate_AlreadyInVote)
 			CPrintToChat(client, "{green}[NE]{default} %t", "NE Map Already In Vote", mapnameInChat);
 		else if (result == Nominate_VoteFull)
 			CPrintToChat(client, "{green}[NE]{default} %t", "NE Max Nominations");
@@ -646,21 +649,21 @@ public Action Command_Nominate(int client, int args)
 	}
 
 	/* Map was nominated! - Disable the menu item and update the trie */
-	g_mapTrie.SetValue(mapname, MAPSTATUS_DISABLED|MAPSTATUS_EXCLUDE_NOMINATED);
+	MarkMapNominated(mapname);
 	g_Player_NominationDelay[client] = iCurrentTime + g_Cvar_NominateDelay.IntValue;
 
 	static char name[MAX_NAME_LENGTH];
 	GetClientName(client, name, sizeof(name));
 
+	PrintNominationToAll(result, name, mapname, mapnameInChat);
+
 	if (result == Nominate_Added)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nominated", name, mapnameInChat);
 		LogMessage("%L has nominated %s", client, mapname);
 		Forward_OnPublicMapInsert(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}
 	else if (result == Nominate_Replaced)
 	{
-		CPrintToChatAll("{green}[NE]{default} %t", "NE Map Nomination Changed", name, mapnameInChat);
 		LogMessage("%L has changed their nomination to %s", client, mapname);
 		Forward_OnPublicMapReplaced(client, mapname, IsMapVIPRestricted(mapname), IsMapLeaderRestricted(mapname), IsMapAdminRestricted(mapname));
 	}

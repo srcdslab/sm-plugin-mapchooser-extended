@@ -16,8 +16,8 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 		return Nominate_InvalidMap;
 	}
 
-	/* Map already in the vote */
-	if (g_NominateList.FindString(map) != -1)
+	/* Map already in the vote - With nomination votes (mce_nomination_votes), another player nominating it adds their vote */
+	if (g_NominateList.FindString(map) != -1 && (!g_bNominationVotes || FindNomination(map, owner) != -1))
 	{
 		return Nominate_AlreadyInVote;
 	}
@@ -37,8 +37,8 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 		return Nominate_Replaced;
 	}
 
-	/* Too many nominated maps. */
-	if (!force && GetNominateCount() >= GetVoteSize(0))
+	/* Too many nominated maps - With nomination votes, the maps nominated by the most players are picked when the vote starts */
+	if (!force && !g_bNominationVotes && GetNominateCount() >= GetVoteSize(0))
 	{
 		return Nominate_VoteFull;
 	}
@@ -46,7 +46,7 @@ NominateResult InternalNominateMap(char[] map, bool force, int owner)
 	g_NominateList.PushString(map);
 	g_NominateOwners.Push(owner);
 
-	while(g_NominateList.Length > GetVoteSize(2))
+	while(!g_bNominationVotes && g_NominateList.Length > GetVoteSize(2))
 	{
 		char oldmap[PLATFORM_MAX_PATH];
 		g_NominateList.GetString(0, oldmap, PLATFORM_MAX_PATH);
@@ -74,27 +74,30 @@ void InternalGetNominationByOwner(int owner, char[] buffer)
 	}
 }
 
+// Removes every nomination of the map: with nomination votes, several players may have nominated it
 bool InternalRemoveNominationByMap(char[] map)
 {
-	for (int i = 0; i < g_NominateList.Length; i++)
+	bool removed = false;
+
+	// Backwards: removing an entry must not skip the next one
+	for (int i = g_NominateList.Length - 1; i >= 0; i--)
 	{
 		char oldmap[PLATFORM_MAX_PATH];
 		g_NominateList.GetString(i, oldmap, PLATFORM_MAX_PATH);
 
 		if (strcmp(map, oldmap, false) == 0)
 		{
-			Forward_OnNominationRemoved(oldmap, g_NominateOwners.Get(i));
-
 			int owner = g_NominateOwners.Get(i);
+			Forward_OnNominationRemoved(oldmap, owner);
 
 			g_NominateList.Erase(i);
 			g_NominateOwners.Erase(i);
 			ClearStoredNomination(owner);
-			return true;
+			removed = true;
 		}
 	}
 
-	return false;
+	return removed;
 }
 
 bool InternalRemoveNominationByOwner(int owner)
