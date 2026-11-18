@@ -48,7 +48,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.13.0"
+#define RTVE_VERSION "1.13.1"
 
 // AFKManager has no forward: how often the AFK players are re-evaluated
 #define RTV_AFK_RECOUNT_INTERVAL 10.0
@@ -92,13 +92,18 @@ ConVar g_Cvar_EligQuery;
 ConVar g_Cvar_EligQueryRetry;
 ConVar g_Cvar_EligTime;
 ConVar g_Cvar_EligDistance;
+ConVar g_Cvar_EligDistancePerMap;
 ConVar g_Cvar_EligLogInterval;
 
-/* Voter eligibility state. Kept across map changes (the client stays connected,
-   same userid) and reset on disconnect or when the slot gets a new userid. */
+/* Voter eligibility state. Reset when a new client connects (OnClientConnected, or a new userid
+   in OnClientPutInServer), not in OnClientDisconnect: SourceMod also calls it for every client on
+   a map change (engine: CGameClient::Inactivate -> RemoveClientFromGame -> ClientDisconnect).
+   With sm_rtv_eligibility_distance_per_map the distance (and so the eligibility) is reset on map start. */
 int g_iEligUserId[MAXPLAYERS+1];
-bool g_bEligible[MAXPLAYERS+1];			// All criteria met once: eligible until disconnect
+bool g_bEligible[MAXPLAYERS+1];			// All criteria met: eligible until disconnect (or map end with the per-map distance)
+bool g_bEligPreviousMap[MAXPLAYERS+1];	// Was eligible on a previous map of this connection (per-map distance only)
 bool g_bEligQueryOk[MAXPLAYERS+1];
+char g_sEligQueryAnswer[MAXPLAYERS+1][32];	// Answer to the cvar query, logged to tell bots from real clients
 float g_fEligQuerySent[MAXPLAYERS+1];
 float g_fEligDistance[MAXPLAYERS+1];
 bool g_bEligHasPos[MAXPLAYERS+1];
@@ -136,6 +141,7 @@ public void OnPluginStart()
 	g_Cvar_EligQueryRetry = CreateConVar("sm_rtv_eligibility_query_retry", "10", "Time (in seconds) before the cvar query is sent again to a client that did not answer", _, true, 1.0);
 	g_Cvar_EligTime = CreateConVar("sm_rtv_eligibility_time", "0", "Time (in seconds) a client must be connected before being able to rtv. 0 - Disabled", _, true, 0.0);
 	g_Cvar_EligDistance = CreateConVar("sm_rtv_eligibility_distance", "0", "Distance (in units) a client must walk alive on a team before being able to rtv. 0 - Disabled", _, true, 0.0);
+	g_Cvar_EligDistancePerMap = CreateConVar("sm_rtv_eligibility_distance_per_map", "1", "The distance of sm_rtv_eligibility_distance must be walked again on each map. 0 - Kept until disconnect, 1 - Reset on each map", _, true, 0.0, true, 1.0);
 	g_Cvar_EligLogInterval = CreateConVar("sm_rtv_eligibility_log_interval", "60", "Minimum time (in seconds) between two logs of a refused rtv for the same client. 0 - Log every refusal", _, true, 0.0);
 
 	RegConsoleCmd("sm_rtv", Command_RTV);
@@ -191,9 +197,21 @@ public void OnMapStart()
 	ResetRTV();
 
 	// Positions from the previous map mean nothing on this one
+	bool bDistancePerMap = g_Cvar_EligDistancePerMap.BoolValue && g_Cvar_EligDistance.FloatValue > 0.0;
 	for (int i = 1; i <= MaxClients; i++)
 	{
 		g_bEligHasPos[i] = false;
+		g_bEligMoveInput[i] = false;
+
+		// Measured on 2026-11-18: the RTV bots walk up to ~1400 u per map, a real player 1500 u in a few seconds
+		if (bDistancePerMap)
+		{
+			if (g_bEligible[i])
+				g_bEligPreviousMap[i] = true;
+
+			g_fEligDistance[i] = 0.0;
+			g_bEligible[i] = false;
+		}
 	}
 
 	/* Handle late load */
@@ -239,6 +257,13 @@ void KillDelayRTVTimer()
 	}
 }
 
+// Only called for a new connection, not on a map change
+public void OnClientConnected(int client)
+{
+	ResetEligibility(client);
+	g_iEligUserId[client] = GetClientUserId(client);
+}
+
 public void OnClientPutInServer(int client)
 {
 	// Also called again after a map change: keep the state of the same client (same userid)
@@ -259,15 +284,16 @@ public void OnClientDisconnect(int client)
 {
 	// Its vote is dropped by the recount, which also skips it: the client is still in game during this forward
 	g_Voted[client] = false;
-	ResetEligibility(client);
-	g_iEligUserId[client] = 0;
+	// No eligibility reset here: this forward also runs on every map change
 	UpdateRTV(client);
 }
 
 void ResetEligibility(int client)
 {
 	g_bEligible[client] = false;
+	g_bEligPreviousMap[client] = false;
 	g_bEligQueryOk[client] = false;
+	g_sEligQueryAnswer[client][0] = '\0';
 	g_fEligQuerySent[client] = 0.0;
 	g_fEligDistance[client] = 0.0;
 	g_bEligHasPos[client] = false;
@@ -286,13 +312,18 @@ void SendEligibilityQuery(int client)
 	QueryClientConVar(client, RTV_ELIG_QUERY_CVAR, OnEligibilityQueryReply, GetClientUserId(client));
 }
 
-// Any answer (even "cvar not found") proves the client handles the query, which the RTV bots never do
+/* Any answer (even "cvar not found") proves the client handles the query. The first RTV bots never
+   answered; since 2026-11-15 they do, so the answer is kept for the refusal log. */
 public void OnEligibilityQueryReply(QueryCookie cookie, int client, ConVarQueryResult result, const char[] cvarName, const char[] cvarValue, any userid)
 {
 	if (GetClientOfUserId(userid) != client)
 		return;
 
 	g_bEligQueryOk[client] = true;
+	if (result == ConVarQuery_Okay)
+		FormatEx(g_sEligQueryAnswer[client], sizeof(g_sEligQueryAnswer[]), "%s=%s", cvarName, cvarValue);
+	else
+		FormatEx(g_sEligQueryAnswer[client], sizeof(g_sEligQueryAnswer[]), "result %d", view_as<int>(result));
 }
 
 // First criterion the client does not meet yet, regardless of the admin bypass
@@ -423,7 +454,7 @@ void ReplyNotEligible(int client, RTVIneligibility reason)
 	char sIP[64];
 	GetClientIP(client, sIP, sizeof(sIP));
 	LogMessage("RTV refused for \"%L\" (ip %s): missing %s (query %s, connected %.0fs, distance %.0f)",
-		client, sIP, sReason, g_bEligQueryOk[client] ? "ok" : "no answer", GetClientTime(client), g_fEligDistance[client]);
+		client, sIP, sReason, g_bEligQueryOk[client] ? g_sEligQueryAnswer[client] : "no answer", GetClientTime(client), g_fEligDistance[client]);
 }
 
 public void OnPlayerChangedTeam(Event event, const char[] name, bool dontBroadcast)
@@ -444,7 +475,10 @@ bool IsRTVVoter(int client)
 	if (!IsClientInGame(client) || IsFakeClient(client))
 		return false;
 
-	if (!IsRTVEligible(client))
+	/* With the per-map distance a player that was eligible on a previous map stays counted
+	   (but cannot vote before moving again): otherwise at map start the ratio would only count
+	   the first few players that moved, and they could pass the rtv alone. */
+	if (!IsRTVEligible(client) && !g_bEligPreviousMap[client])
 		return false;
 
 #if defined _AFKManager_Included
@@ -789,13 +823,17 @@ public Action Command_DebugRTV(int client, int args)
 
 	if (IsEligibilityEnabled())
 	{
-		int iIneligible = 0;
+		int iIneligible = 0, iCounted = 0;
 		for (int i = 1; i <= MaxClients; i++)
 		{
-			if (IsClientInGame(i) && !IsFakeClient(i) && !IsRTVEligible(i))
-				iIneligible++;
+			if (!IsClientInGame(i) || IsFakeClient(i) || IsRTVEligible(i))
+				continue;
+
+			iIneligible++;
+			if (g_bEligPreviousMap[i])
+				iCounted++;
 		}
-		CReplyToCommand(client, "{green}[RTVE]{default} %d players not eligible yet (not counted).", iIneligible);
+		CReplyToCommand(client, "{green}[RTVE]{default} %d players not eligible yet (%d not counted, %d eligible on a previous map and counted).", iIneligible, iIneligible - iCounted, iCounted);
 	}
 
 	return Plugin_Handled;
