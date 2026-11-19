@@ -1,0 +1,687 @@
+"Phrases"
+{
+	"Vote Nextmap"
+	{
+		"ua"		"Голосуй за наступну мапу!"
+	}
+
+	"Nextmap Voting Started"
+	{
+		"ua"		"Голосування за наступну мапу розпочалося."
+	}
+
+	"Nextmap Voting Finished"
+	{
+		"ua"		"Голосування завершено. Наступна мапа: {1}. (Отримано {2}%% з {3} голосів)"
+	}
+
+	"Current Map Extended"
+	{
+		"ua"		"Поточну мапу продовжено. (Отримано {1}%% з {2} голосів)"
+	}
+
+	"Extend Map"
+	{
+		"ua"		"Продовжити поточну мапу"
+	}
+
+	"Dont Change"
+	{
+		"ua"		"Не змінювати"
+	}
+
+	"Current Map Stays"
+	{
+		"ua"		"Поточна мапа триває! Голосування вирішило! (Отримано {1}%% з {2} голосів)"
+	}
+
+	"MCE No Votes Cast"
+	{
+		"ua"		"Жодного голосу не віддано."
+	}
+
+	"Changed Next Map"
+	{
+		"ua"		"Наступну мапу змінено на \"{1}\"."
+	}
+
+	"Runoff Vote Nextmap"
+	{
+		"ua"		"Повторне голосування за наступну мапу!"
+	}
+
+	"Custom"
+	{
+		"ua"		"{1} (Власна)"
+	}
+
+	"Revote Is Needed"
+	{
+		"ua"		"Жодна мапа не отримала понад {1}%% голосів."
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"ua"		"То яка мапа переможе? Потрібне повторне голосування!"
+	}
+
+	"Revote Warning"
+	{
+		"ua"		"Повторне голосування почнеться через: {1}с"
+	}
+
+	"Vote Warning"
+	{
+		"ua"		"Увага! Голосування за наступну мапу почнеться через: {1}с"
+	}
+
+	"Line One"
+	{
+		"ua"		"Подумай, на якій мапі ти хочеш грати..."
+	}
+
+	"Line Two"
+	{
+		"ua"		"...і не тисни кнопки навмання ;-)"
+	}
+
+	"Cannot Start Vote"
+	{
+		"ua"		"Голосування вже триває. Повторна спроба через {1}с."
+	}
+
+	"Tie Vote"
+	{
+		"ua"		"Перші {1} мап отримали однакову кількість голосів.\n{green}[MCE] {default}Потрібне повторне голосування!"
+	}
+
+	"Custom Marked"
+	{
+		"ua"		"*{1}"
+	}
+
+	"Map Cooldown Time Error"
+	{
+		"ua"		"Ця мапа на перезарядці ще {1} год. і {2} хв."
+	}
+
+	"Nominated by Admin"
+	{
+		"ua"		"Номінація адміна"
+	}
+
+	"Map Nominate Admin Error"
+	{
+		"ua"		"Тільки адміни можуть номінувати цю мапу."
+	}
+
+	"Map Nominate VIP Error"
+	{
+		"ua"		"Тільки VIP можуть номінувати цю мапу."
+	}
+
+	"Map Nominate Leader Error"
+	{
+		"ua"		"Тільки лідери можуть номінувати цю мапу."
+	}
+
+	"Map Nominate Time Error"
+	{
+		"ua"		"Ти зможеш номінувати цю мапу через {1} год. і {2} хв."
+	}
+
+	"Map Nominate MinPlayers Error"
+	{
+		"ua"		"Мапі потрібно ще {1} гравців."
+	}
+
+	"Map Nominate MaxPlayers Error"
+	{
+		"ua"		"Мапі потрібно на {1} гравців менше."
+	}
+
+	"Map Nominate Group Error"
+	{
+		"ua"		"Максимальну кількість ({1}) мап із цієї групи вже номіновано."
+	}
+
+	"Map Time Restriction"
+	{
+		"ua"		"Час{1}{2}H{3}M"
+	}
+
+	"Map Player Restriction"
+	{
+		"ua"		"Гравці{1}{2}"
+	}
+
+	"Map Group Restriction"
+	{
+		"ua"		"Макс. у групі: {1}"
+	}
+
+	"Admin Restriction"
+	{
+		"ua"		"Тільки для адмінів"
+	}
+
+	"VIP Restriction"
+	{
+		"ua"		"Тільки для VIP"
+	}
+
+	"Leader Restriction"
+	{
+		"ua"		"Тільки для лідерів"
+	}
+
+	"Nomination Removed Time Error"
+	{
+		"ua"		"Твою номінацію {1} видалено, бо вона не відповідає вимогам щодо часу."
+	}
+
+	"Nomination Removed MinPlayers Error"
+	{
+		"ua"		"Твою номінацію {1} видалено, бо вона не відповідає вимогам щодо мінімальної кількості гравців."
+	}
+
+	"Nomination Removed MaxPlayers Error"
+	{
+		"ua"		"Твою номінацію {1} видалено, бо вона перевищує обмеження щодо максимальної кількості гравців."
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"ua"		"Показувати недоступні мапи"
+	}
+
+	"Can not Load Cookies"
+	{
+		"ua"		"Не вдається завантажити налаштування cookies."
+	}
+
+	"Cookies are not cached"
+	{
+		"ua"		"Cookies ще не кешовано. Спробуй ще раз за мить."
+	}
+
+	"Map was not found"
+	{
+		"ua"		"Мапу '{1}' не знайдено."
+	}
+
+	"Unnominate"
+	{
+		"ua"		"Скасувати номінацію"
+	}
+
+	"Map Unnominated"
+	{
+		"ua"		"{1} скасував номінацію {2}."
+	}
+
+	"Unable To Unnominate"
+	{
+		"ua"		"Ти не номінував жодної мапи."
+	}
+
+	"NomStatus Menu Title"
+	{
+		"ua"		"Статус nomban для: {1}"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"ua"		"Не під nomban"
+	}
+
+	"Menu - Nomban Duration"
+	{
+		"ua"		"Тривалість: {1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		"ua"		"Дата завершення: {1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		"ua"		"Залишилось часу: {1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		"ua"		"Адмін: {1}"
+	}
+
+	"Menu - Nomban Duration Permanent"
+	{
+		"ua"		"Тривалість: Назавжди"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"ua"		"{1} дн., {2} год., {3} хв."
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"ua"		"{1} год. {2} хв."
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"ua"		"{1} хв."
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"ua"		"{1} с."
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"ua"		"{1} год., {2} хв., {3} с."
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"ua"		"{1} хв., {2} с."
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"ua"		"Ти не можеш номінувати мапу, бо тебе nombanned. Використай {green}!nomstatus{default}, щоб дізнатися більше."
+	}
+
+	"Nombanned"
+	{
+		"ua"		"видав nomban гравцю {1} на {2} хв."
+	}
+
+	"Nomination removed on nomban"
+	{
+		"ua"		"Твою номінацію видалено, бо ти отримав nomban."
+	}
+
+	"UnNomban usage"
+	{
+		"ua"		"Використання: sm_unnomban <ціль>"
+	}
+
+	"Nomban usage"
+	{
+		"ua"		"Використання: sm_nomban <ціль> <тривалість (у хвилинах)>"
+	}
+
+	"Command Usage"
+	{
+		"ua"		"Використання: {lightgreen}{1}"
+	}
+
+	"Already not nombanned"
+	{
+		"ua"		"{1} вже не під nomban!"
+	}
+
+	"Already nombanned"
+	{
+		"ua"		"{1} вже під nomban!"
+	}
+
+	"Nombanned permanent"
+	{
+		"ua"		"видав постійний nomban гравцю {1}."
+	}
+
+	"UnNombanned"
+	{
+		"ua"		"зняв nomban з {1}"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"ua"		"З тебе знято nomban."
+	}
+
+	"Nominated by"
+	{
+		"ua"		"Номінував:"
+	}
+
+	"Disconnected Player"
+	{
+		"ua"		"Відключений гравець"
+	}
+
+	"Client inserted Map"
+	{
+		"ua"		"{1} додав {2} до номінацій."
+	}
+
+	"Client removed Map"
+	{
+		"ua"		"{1} видалив {2} з номінацій."
+	}
+
+	"Map Removed"
+	{
+		"ua"		"Мапу '{1}' видалено зі списку номінацій."
+	}
+
+	"Nominations Locked"
+	{
+		"ua"		"Номінації наразі заблоковано."
+	}
+
+	"Nominations Unlocked"
+	{
+		"ua"		"Номінації мап тепер доступні!"
+	}
+
+	"Nominations already disabled"
+	{
+		"ua"		"Номінації вже вимкнено."
+	}
+
+	"Nominations already enabled"
+	{
+		"ua"		"Номінації вже ввімкнено."
+	}
+
+	"Nominations unlock countdown"
+	{
+		"ua"		"Номінації розблокуються через {1} с."
+	}
+
+	"Wait to Nominate"
+	{
+		"ua"		"Зачекай {1} с., перш ніж знову номінувати."
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"ua"		"Зараз ти не можеш номінувати цю мапу."
+	}
+
+	"No Maps Nominated"
+	{
+		"ua"		"Жодної мапи не номіновано."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"ua"		"Номіновані мапи"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"ua"		"Видалити номінацію"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"ua"		"У години пік номінувати мапи можуть лише VIP. Зачекай {1} год. і {2} хв. або купи VIP, щоб знову номінувати мапи."
+	}
+
+	"NE Map Excluded"
+	{
+		"ua"		"Мапу \"{1}\" виключено з номінацій"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"ua"		"Мапу \"{1}\" виключено з номінацій (ExcludedTime)"
+	}
+
+	"Available Extends"
+	{
+		"ua"		"Доступні продовження: {green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"ua"		"{lightgreen}Наступна мапа: {green}{1}"
+	}
+
+	"MapTierDisplay"
+	{
+		"ua"		"[{lightgreen}{1}{default}]"
+	}
+
+	"ShowMapsTiers"
+	{
+		"ua"		"Показувати рівні мап"
+	}
+
+	"NE Current Map"
+	{
+		"ua"		"Поточна мапа"
+	}
+
+	"NE Recently Played"
+	{
+		"ua"		"Нещодавно зіграні"
+	}
+
+	"NE Nominated"
+	{
+		"ua"		"Номіновано"
+	}
+
+	"NE Cant Nominate Current Map"
+	{
+		"ua"		"Обрана мапа є поточною, її не можна номінувати."
+	}
+
+	"NE Map In Exclude List"
+	{
+		"ua"		"Обрану мапу нещодавно грали, її не можна номінувати."
+	}
+
+	"NE Map Already Nominated"
+	{
+		"ua"		"Обрану мапу вже номіновано."
+	}
+
+	"NE Map Already In Vote"
+	{
+		"ua"		"Мапа '{1}' вже є у списку номінацій."
+	}
+
+	"NE Map Inserted"
+	{
+		"ua"		"Мапу '{1}' додано до списку номінацій."
+	}
+
+	"NE Max Nominations"
+	{
+		"ua"		"Досягнуто максимально дозволеної кількості номінацій."
+	}
+
+	"NE Map Nominated"
+	{
+		"ua"		"{1} номінував {2}."
+	}
+
+	"NE Map Nomination Changed"
+	{
+		"ua"		"{1} змінив свою номінацію на {2}."
+	}
+
+	"NE Map Already Your Nomination"
+	{
+		"ua"		"Ти вже номінував цю мапу."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"ua"		"{1} також номінував {2} ({3} голосів)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"ua"		"{1} змінив свою номінацію на {2} ({3} голосів)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"ua"		"1 голос"
+	}
+
+	"NE Nomination Votes"
+	{
+		"ua"		"{1} голосів"
+	}
+
+	"NE Map Not In Pool"
+	{
+		"ua"		"Мапи '{1}' немає в пулі номінацій."
+	}
+
+	"NE Nominate Title"
+	{
+		"ua"		"Номінувати мапу:"
+	}
+
+	"NE Client Settings"
+	{
+		"ua"		"Налаштування гравця"
+	}
+
+	"Can only use command in game"
+	{
+		"ua"		"Цю команду можна використовувати лише в грі."
+	}
+
+	"No clients nombanned"
+	{
+		"ua"		"Наразі жоден гравець не має nomban."
+	}
+
+	"NombanList Client Not valid"
+	{
+		"ua"		"Цей гравець більше не дійсний."
+	}
+
+	"NE Yes"
+	{
+		"ua"		"Так"
+	}
+
+	"NE No"
+	{
+		"ua"		"Ні"
+	}
+
+	"NE Invalid Time"
+	{
+		"ua"		"\"{1}\" не є дійсним часом: використовуй числа з h, m або s (напр. 1h30m)."
+	}
+
+	"NE Invalid Exclude Mode"
+	{
+		"ua"		"Недійсний режим \"{1}\": 0 = перезарядка мапи з конфігурації, 1 = встановити або замінити, 2 = лише якщо довше."
+	}
+
+	"MCE See Console For Output"
+	{
+		"ua"		"Дивись вивід у консолі."
+	}
+
+	"Vote Map Initiated"
+	{
+		"ua"		"Розпочато голосування за мапу."
+	}
+
+	"Vote Map Already Running"
+	{
+		"ua"		"Голосування за мапу вже триває або ось-ось почнеться."
+	}
+
+	"Vote Map Change In Progress"
+	{
+		"ua"		"Мапа вже змінюється."
+	}
+
+	"Vote No Maps Available"
+	{
+		"ua"		"Немає мап, доступних для голосування."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"ua"		"Rock the Vote ще не дозволено."
+	}
+
+	"RTVE Started"
+	{
+		"ua"		"Rock the Vote вже розпочато."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"ua"		"Не досягнуто необхідної мінімальної кількості гравців."
+	}
+
+	"RTVE Already Voted"
+	{
+		"ua"		"Ти вже проголосував у Rock the Vote. ({1} голосів, потрібно {2})"
+	}
+
+	"RTVE Requested"
+	{
+		"ua"		"{1} хоче розпочати Rock the Vote. ({2} голосів, потрібно {3})"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"ua"		"Зміна мапи на {1}! Rock the Vote вирішило!"
+	}
+
+	"RTVE Not Voter"
+	{
+		"ua"		"Ти не можеш використовувати Rock the Vote, поки ти спостерігач або AFK."
+	}
+
+	"RTVE Available"
+	{
+		"ua"		"RockTheVote тепер доступний!"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"ua"		"вимкнув RockTheVote."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"ua"		"увімкнув RockTheVote."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"ua"		"RockTheVote вже вимкнено."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"ua"		"RockTheVote вже увімкнено."
+	}
+
+	"RTVE Not Eligible Query"
+	{
+		"ua"		"Твій ігровий клієнт перевіряється, спробуй ще раз за мить."
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"ua"		"Ти маєш зіграти ще {1} с., перш ніж використати Rock the Vote."
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"ua"		"Ти маєш пограти (порухатися в команді), перш ніж використати Rock the Vote."
+	}
+}
