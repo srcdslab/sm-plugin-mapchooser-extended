@@ -48,7 +48,7 @@
 #tryinclude <PlayerManager>
 #define REQUIRE_PLUGIN
 
-#define RTVE_VERSION "1.13.1"
+#define RTVE_VERSION "1.13.2"
 
 // AFKManager has no forward: how often the AFK players are re-evaluated
 #define RTV_AFK_RECOUNT_INTERVAL 10.0

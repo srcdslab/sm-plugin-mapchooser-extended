@@ -1,0 +1,687 @@
+"Phrases"
+{
+	"Vote Nextmap"
+	{
+		"cze"		"Hlasujte o další mapě!"
+	}
+
+	"Nextmap Voting Started"
+	{
+		"cze"		"Hlasování o další mapě začalo."
+	}
+
+	"Nextmap Voting Finished"
+	{
+		"cze"		"Hlasování skončilo. Další mapa bude {1}. (Získáno {2}%% z {3} hlasů)"
+	}
+
+	"Current Map Extended"
+	{
+		"cze"		"Aktuální mapa byla prodloužena. (Získáno {1}%% z {2} hlasů)"
+	}
+
+	"Extend Map"
+	{
+		"cze"		"Prodloužit aktuální mapu"
+	}
+
+	"Dont Change"
+	{
+		"cze"		"Neměnit"
+	}
+
+	"Current Map Stays"
+	{
+		"cze"		"Aktuální mapa pokračuje! Hlasování rozhodlo! (Získáno {1}%% z {2} hlasů)"
+	}
+
+	"MCE No Votes Cast"
+	{
+		"cze"		"Nikdo nehlasoval."
+	}
+
+	"Changed Next Map"
+	{
+		"cze"		"Další mapa byla změněna na \"{1}\"."
+	}
+
+	"Runoff Vote Nextmap"
+	{
+		"cze"		"Druhé kolo hlasování o další mapě!"
+	}
+
+	"Custom"
+	{
+		"cze"		"{1} (Vlastní)"
+	}
+
+	"Revote Is Needed"
+	{
+		"cze"		"Žádná mapa nezískala více než {1}%% hlasů."
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"cze"		"Která mapa tedy vyhraje? Je potřeba nové hlasování!"
+	}
+
+	"Revote Warning"
+	{
+		"cze"		"Druhé kolo hlasování začne za: {1}s"
+	}
+
+	"Vote Warning"
+	{
+		"cze"		"Pozor! Hlasování o další mapě začne za: {1}s"
+	}
+
+	"Line One"
+	{
+		"cze"		"Zvažte, kterou mapu chcete hrát..."
+	}
+
+	"Line Two"
+	{
+		"cze"		"...a nemačkejte tlačítka bezmyšlenkovitě ;-)"
+	}
+
+	"Cannot Start Vote"
+	{
+		"cze"		"Hlasování již probíhá. Další pokus za {1}s."
+	}
+
+	"Tie Vote"
+	{
+		"cze"		"Prvních {1} map získalo stejný počet hlasů.\n{green}[MCE] {default}Je potřeba nové hlasování!"
+	}
+
+	"Custom Marked"
+	{
+		"cze"		"*{1}"
+	}
+
+	"Map Cooldown Time Error"
+	{
+		"cze"		"Tato mapa je v cooldownu následujících {1} hodin a {2} minut."
+	}
+
+	"Nominated by Admin"
+	{
+		"cze"		"Nominace adminem"
+	}
+
+	"Map Nominate Admin Error"
+	{
+		"cze"		"Tuto mapu mohou nominovat pouze admini."
+	}
+
+	"Map Nominate VIP Error"
+	{
+		"cze"		"Tuto mapu mohou nominovat pouze VIP."
+	}
+
+	"Map Nominate Leader Error"
+	{
+		"cze"		"Tuto mapu mohou nominovat pouze Leadeři."
+	}
+
+	"Map Nominate Time Error"
+	{
+		"cze"		"Tuto mapu můžete nominovat za {1} hodin a {2} minut."
+	}
+
+	"Map Nominate MinPlayers Error"
+	{
+		"cze"		"Mapa vyžaduje ještě {1} hráčů."
+	}
+
+	"Map Nominate MaxPlayers Error"
+	{
+		"cze"		"Mapa vyžaduje o {1} hráčů méně."
+	}
+
+	"Map Nominate Group Error"
+	{
+		"cze"		"Maximální počet ({1}) map z této skupiny již byl nominován."
+	}
+
+	"Map Time Restriction"
+	{
+		"cze"		"Čas{1}{2}H{3}M"
+	}
+
+	"Map Player Restriction"
+	{
+		"cze"		"Hráči{1}{2}"
+	}
+
+	"Map Group Restriction"
+	{
+		"cze"		"Limit skupiny: {1}"
+	}
+
+	"Admin Restriction"
+	{
+		"cze"		"Pouze pro adminy"
+	}
+
+	"VIP Restriction"
+	{
+		"cze"		"Pouze pro VIP"
+	}
+
+	"Leader Restriction"
+	{
+		"cze"		"Pouze pro Leadery"
+	}
+
+	"Nomination Removed Time Error"
+	{
+		"cze"		"Vaše nominace {1} byla odstraněna, protože nesplňuje časové požadavky."
+	}
+
+	"Nomination Removed MinPlayers Error"
+	{
+		"cze"		"Vaše nominace {1} byla odstraněna, protože nesplňuje požadavek na minimální počet hráčů."
+	}
+
+	"Nomination Removed MaxPlayers Error"
+	{
+		"cze"		"Vaše nominace {1} byla odstraněna, protože překračuje limit maximálního počtu hráčů."
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"cze"		"Zobrazit nedostupné mapy"
+	}
+
+	"Can not Load Cookies"
+	{
+		"cze"		"Nelze načíst nastavení cookies."
+	}
+
+	"Cookies are not cached"
+	{
+		"cze"		"Cookies ještě nejsou v mezipaměti. Zkuste to za chvíli znovu."
+	}
+
+	"Map was not found"
+	{
+		"cze"		"Mapa '{1}' nebyla nalezena."
+	}
+
+	"Unnominate"
+	{
+		"cze"		"Zrušit nominaci"
+	}
+
+	"Map Unnominated"
+	{
+		"cze"		"{1} zrušil nominaci mapy {2}."
+	}
+
+	"Unable To Unnominate"
+	{
+		"cze"		"Nenominovali jste žádnou mapu."
+	}
+
+	"NomStatus Menu Title"
+	{
+		"cze"		"Stav nombanu pro: {1}"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"cze"		"Bez nombanu"
+	}
+
+	"Menu - Nomban Duration"
+	{
+		"cze"		"Délka: {1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		"cze"		"Datum ukončení: {1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		"cze"		"Zbývající čas: {1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		"cze"		"Admin: {1}"
+	}
+
+	"Menu - Nomban Duration Permanent"
+	{
+		"cze"		"Délka: Trvale"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"cze"		"{1} dnů, {2} hodin, {3} minut"
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"cze"		"{1} hodin {2} minut"
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"cze"		"{1} minut"
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"cze"		"{1} sekund"
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"cze"		"{1} hodin, {2} minut, {3} sekund"
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"cze"		"{1} minut, {2} sekund"
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"cze"		"Nemůžete nominovat mapu, protože máte nomban. Použijte {green}!nomstatus{default} pro více informací."
+	}
+
+	"Nombanned"
+	{
+		"cze"		"dal nomban hráči {1} na {2} minut."
+	}
+
+	"Nomination removed on nomban"
+	{
+		"cze"		"Vaše nominace byla odstraněna, protože jste dostali nomban."
+	}
+
+	"UnNomban usage"
+	{
+		"cze"		"Použití: sm_unnomban <cíl>"
+	}
+
+	"Nomban usage"
+	{
+		"cze"		"Použití: sm_nomban <cíl> <délka (v minutách)>"
+	}
+
+	"Command Usage"
+	{
+		"cze"		"Použití: {lightgreen}{1}"
+	}
+
+	"Already not nombanned"
+	{
+		"cze"		"{1} již nemá nomban!"
+	}
+
+	"Already nombanned"
+	{
+		"cze"		"{1} již má nomban!"
+	}
+
+	"Nombanned permanent"
+	{
+		"cze"		"dal trvalý nomban hráči {1}."
+	}
+
+	"UnNombanned"
+	{
+		"cze"		"zrušil nomban hráči {1}"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"cze"		"Váš nomban byl zrušen."
+	}
+
+	"Nominated by"
+	{
+		"cze"		"Nominoval:"
+	}
+
+	"Disconnected Player"
+	{
+		"cze"		"Odpojený hráč"
+	}
+
+	"Client inserted Map"
+	{
+		"cze"		"{1} přidal {2} do nominací."
+	}
+
+	"Client removed Map"
+	{
+		"cze"		"{1} odebral {2} z nominací."
+	}
+
+	"Map Removed"
+	{
+		"cze"		"Mapa '{1}' byla odebrána ze seznamu nominací."
+	}
+
+	"Nominations Locked"
+	{
+		"cze"		"Nominace jsou momentálně uzamčeny."
+	}
+
+	"Nominations Unlocked"
+	{
+		"cze"		"Nominace map jsou nyní dostupné!"
+	}
+
+	"Nominations already disabled"
+	{
+		"cze"		"Nominace jsou již vypnuty."
+	}
+
+	"Nominations already enabled"
+	{
+		"cze"		"Nominace jsou již zapnuty."
+	}
+
+	"Nominations unlock countdown"
+	{
+		"cze"		"Nominace budou odemčeny za {1} sekund."
+	}
+
+	"Wait to Nominate"
+	{
+		"cze"		"Počkejte {1} sekund, než budete moci znovu nominovat."
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"cze"		"Tuto mapu teď nemůžete nominovat."
+	}
+
+	"No Maps Nominated"
+	{
+		"cze"		"Nebyla nominována žádná mapa."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"cze"		"Nominované mapy"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"cze"		"Odebrat nominaci"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"cze"		"Ve špičce mohou mapy nominovat pouze VIP. Počkejte {1} hodin a {2} minut nebo si kupte VIP, abyste mohli znovu nominovat mapy."
+	}
+
+	"NE Map Excluded"
+	{
+		"cze"		"Mapa \"{1}\" byla vyloučena z nominací"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"cze"		"Mapa \"{1}\" byla vyloučena z nominací (ExcludedTime)"
+	}
+
+	"Available Extends"
+	{
+		"cze"		"Dostupná prodloužení: {green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"cze"		"{lightgreen}Další mapa: {green}{1}"
+	}
+
+	"MapTierDisplay"
+	{
+		"cze"		"[{lightgreen}{1}{default}]"
+	}
+
+	"ShowMapsTiers"
+	{
+		"cze"		"Zobrazit úrovně map"
+	}
+
+	"NE Current Map"
+	{
+		"cze"		"Aktuální mapa"
+	}
+
+	"NE Recently Played"
+	{
+		"cze"		"Nedávno hrané"
+	}
+
+	"NE Nominated"
+	{
+		"cze"		"Nominováno"
+	}
+
+	"NE Cant Nominate Current Map"
+	{
+		"cze"		"Vybraná mapa je aktuální mapa a nelze ji nominovat."
+	}
+
+	"NE Map In Exclude List"
+	{
+		"cze"		"Vybraná mapa byla nedávno hrána a nelze ji nominovat."
+	}
+
+	"NE Map Already Nominated"
+	{
+		"cze"		"Vybraná mapa již byla nominována."
+	}
+
+	"NE Map Already In Vote"
+	{
+		"cze"		"Mapa '{1}' je již na seznamu nominací."
+	}
+
+	"NE Map Inserted"
+	{
+		"cze"		"Mapa '{1}' byla přidána na seznam nominací."
+	}
+
+	"NE Max Nominations"
+	{
+		"cze"		"Byl dosažen maximální povolený počet nominací."
+	}
+
+	"NE Map Nominated"
+	{
+		"cze"		"{1} nominoval {2}."
+	}
+
+	"NE Map Nomination Changed"
+	{
+		"cze"		"{1} změnil svou nominaci na {2}."
+	}
+
+	"NE Map Already Your Nomination"
+	{
+		"cze"		"Tuto mapu jste již nominovali."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"cze"		"{1} také nominoval {2} ({3} hlasů)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"cze"		"{1} změnil svou nominaci na {2} ({3} hlasů)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"cze"		"1 hlas"
+	}
+
+	"NE Nomination Votes"
+	{
+		"cze"		"{1} hlasů"
+	}
+
+	"NE Map Not In Pool"
+	{
+		"cze"		"Mapa '{1}' není v seznamu nominací."
+	}
+
+	"NE Nominate Title"
+	{
+		"cze"		"Nominovat mapu:"
+	}
+
+	"NE Client Settings"
+	{
+		"cze"		"Nastavení hráče"
+	}
+
+	"Can only use command in game"
+	{
+		"cze"		"Tento příkaz lze použít pouze ve hře."
+	}
+
+	"No clients nombanned"
+	{
+		"cze"		"Momentálně nemá nomban žádný hráč."
+	}
+
+	"NombanList Client Not valid"
+	{
+		"cze"		"Tento hráč již není platný."
+	}
+
+	"NE Yes"
+	{
+		"cze"		"Ano"
+	}
+
+	"NE No"
+	{
+		"cze"		"Ne"
+	}
+
+	"NE Invalid Time"
+	{
+		"cze"		"\"{1}\" není platný čas: použijte čísla následovaná h, m nebo s (např. 1h30m)."
+	}
+
+	"NE Invalid Exclude Mode"
+	{
+		"cze"		"Neplatný režim \"{1}\": 0 = cooldown mapy z konfigurace, 1 = nastavit nebo nahradit, 2 = pouze pokud je delší."
+	}
+
+	"MCE See Console For Output"
+	{
+		"cze"		"Výstup najdete v konzoli."
+	}
+
+	"Vote Map Initiated"
+	{
+		"cze"		"Bylo zahájeno hlasování o mapě."
+	}
+
+	"Vote Map Already Running"
+	{
+		"cze"		"Hlasování o mapě již probíhá nebo brzy začne."
+	}
+
+	"Vote Map Change In Progress"
+	{
+		"cze"		"Mapa se již mění."
+	}
+
+	"Vote No Maps Available"
+	{
+		"cze"		"Pro hlasování nejsou k dispozici žádné mapy."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"cze"		"Rock the Vote zatím není povoleno."
+	}
+
+	"RTVE Started"
+	{
+		"cze"		"Rock the Vote již začalo."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"cze"		"Nebyl dosažen požadovaný minimální počet hráčů."
+	}
+
+	"RTVE Already Voted"
+	{
+		"cze"		"Již jste hlasovali v Rock the Vote. ({1} hlasů, potřeba {2})"
+	}
+
+	"RTVE Requested"
+	{
+		"cze"		"{1} chce zahájit Rock the Vote. ({2} hlasů, potřeba {3})"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"cze"		"Změna mapy na {1}! Rock the Vote rozhodlo!"
+	}
+
+	"RTVE Not Voter"
+	{
+		"cze"		"Jako divák nebo AFK nemůžete použít Rock the Vote."
+	}
+
+	"RTVE Available"
+	{
+		"cze"		"RockTheVote je nyní dostupné!"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"cze"		"vypnul RockTheVote."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"cze"		"zapnul RockTheVote."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"cze"		"RockTheVote je již vypnuto."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"cze"		"RockTheVote je již zapnuto."
+	}
+
+	"RTVE Not Eligible Query"
+	{
+		"cze"		"Váš herní klient se ověřuje, zkuste to za chvíli znovu."
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"cze"		"Musíte hrát ještě {1} sekund, než budete moci použít Rock the Vote."
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"cze"		"Musíte nejdřív hrát (pohybovat se v týmu), než budete moci použít Rock the Vote."
+	}
+}

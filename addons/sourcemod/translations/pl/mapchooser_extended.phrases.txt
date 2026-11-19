@@ -1,0 +1,687 @@
+"Phrases"
+{
+	"Vote Nextmap"
+	{
+		"pl"		"Zagłosuj na następną mapę!"
+	}
+
+	"Nextmap Voting Started"
+	{
+		"pl"		"Rozpoczęło się głosowanie na następną mapę."
+	}
+
+	"Nextmap Voting Finished"
+	{
+		"pl"		"Głosowanie zakończone. Następna mapa to {1}. (Otrzymano {2}%% z {3} głosów)"
+	}
+
+	"Current Map Extended"
+	{
+		"pl"		"Obecna mapa została przedłużona. (Otrzymano {1}%% z {2} głosów)"
+	}
+
+	"Extend Map"
+	{
+		"pl"		"Przedłuż obecną mapę"
+	}
+
+	"Dont Change"
+	{
+		"pl"		"Nie zmieniaj"
+	}
+
+	"Current Map Stays"
+	{
+		"pl"		"Obecna mapa trwa dalej! Głosowanie zdecydowało! (Otrzymano {1}%% z {2} głosów)"
+	}
+
+	"MCE No Votes Cast"
+	{
+		"pl"		"Nie oddano żadnych głosów."
+	}
+
+	"Changed Next Map"
+	{
+		"pl"		"Zmieniono następną mapę na \"{1}\"."
+	}
+
+	"Runoff Vote Nextmap"
+	{
+		"pl"		"Dogrywka głosowania na następną mapę!"
+	}
+
+	"Custom"
+	{
+		"pl"		"{1} (Własna)"
+	}
+
+	"Revote Is Needed"
+	{
+		"pl"		"Żadna mapa nie otrzymała więcej niż {1}%% głosów."
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"pl"		"Która mapa wygra? Potrzebne jest ponowne głosowanie!"
+	}
+
+	"Revote Warning"
+	{
+		"pl"		"Dogrywka rozpocznie się za: {1}s"
+	}
+
+	"Vote Warning"
+	{
+		"pl"		"Uwaga! Głosowanie na następną mapę rozpocznie się za: {1}s"
+	}
+
+	"Line One"
+	{
+		"pl"		"Zastanów się, na której mapie chcesz grać..."
+	}
+
+	"Line Two"
+	{
+		"pl"		"...i nie klikaj przycisków bezmyślnie ;-)"
+	}
+
+	"Cannot Start Vote"
+	{
+		"pl"		"Głosowanie już trwa. Ponowna próba za {1}s."
+	}
+
+	"Tie Vote"
+	{
+		"pl"		"Najlepsze {1} map otrzymały tyle samo głosów.\n{green}[MCE] {default}Potrzebne jest ponowne głosowanie!"
+	}
+
+	"Custom Marked"
+	{
+		"pl"		"*{1}"
+	}
+
+	"Map Cooldown Time Error"
+	{
+		"pl"		"Ta mapa jest zablokowana przez następne {1} godz. i {2} min."
+	}
+
+	"Nominated by Admin"
+	{
+		"pl"		"Nominacja admina"
+	}
+
+	"Map Nominate Admin Error"
+	{
+		"pl"		"Tylko admini mogą nominować tę mapę."
+	}
+
+	"Map Nominate VIP Error"
+	{
+		"pl"		"Tylko VIP-y mogą nominować tę mapę."
+	}
+
+	"Map Nominate Leader Error"
+	{
+		"pl"		"Tylko liderzy mogą nominować tę mapę."
+	}
+
+	"Map Nominate Time Error"
+	{
+		"pl"		"Tę mapę będzie można nominować za {1} godz. i {2} min."
+	}
+
+	"Map Nominate MinPlayers Error"
+	{
+		"pl"		"Mapa wymaga jeszcze {1} graczy."
+	}
+
+	"Map Nominate MaxPlayers Error"
+	{
+		"pl"		"Mapa wymaga o {1} graczy mniej."
+	}
+
+	"Map Nominate Group Error"
+	{
+		"pl"		"Osiągnięto już maksymalną liczbę ({1}) nominowanych map z tej grupy."
+	}
+
+	"Map Time Restriction"
+	{
+		"pl"		"Czas{1}{2}H{3}M"
+	}
+
+	"Map Player Restriction"
+	{
+		"pl"		"Gracze{1}{2}"
+	}
+
+	"Map Group Restriction"
+	{
+		"pl"		"Limit grupy: {1}"
+	}
+
+	"Admin Restriction"
+	{
+		"pl"		"Tylko dla adminów"
+	}
+
+	"VIP Restriction"
+	{
+		"pl"		"Tylko dla VIP-ów"
+	}
+
+	"Leader Restriction"
+	{
+		"pl"		"Tylko dla liderów"
+	}
+
+	"Nomination Removed Time Error"
+	{
+		"pl"		"Twoja nominacja {1} została usunięta, ponieważ nie spełnia wymagań czasowych."
+	}
+
+	"Nomination Removed MinPlayers Error"
+	{
+		"pl"		"Twoja nominacja {1} została usunięta, ponieważ nie spełnia wymagań dotyczących minimalnej liczby graczy."
+	}
+
+	"Nomination Removed MaxPlayers Error"
+	{
+		"pl"		"Twoja nominacja {1} została usunięta, ponieważ przekracza limit maksymalnej liczby graczy."
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"pl"		"Pokaż niedostępne mapy"
+	}
+
+	"Can not Load Cookies"
+	{
+		"pl"		"Nie można wczytać ustawień ciasteczek."
+	}
+
+	"Cookies are not cached"
+	{
+		"pl"		"Ciasteczka nie zostały jeszcze zapisane w pamięci podręcznej. Spróbuj ponownie za chwilę."
+	}
+
+	"Map was not found"
+	{
+		"pl"		"Nie znaleziono mapy '{1}'."
+	}
+
+	"Unnominate"
+	{
+		"pl"		"Cofnij nominację"
+	}
+
+	"Map Unnominated"
+	{
+		"pl"		"{1} cofnął nominację mapy {2}."
+	}
+
+	"Unable To Unnominate"
+	{
+		"pl"		"Nie nominowałeś żadnej mapy."
+	}
+
+	"NomStatus Menu Title"
+	{
+		"pl"		"Status nomban dla: {1}"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"pl"		"Brak nombana"
+	}
+
+	"Menu - Nomban Duration"
+	{
+		"pl"		"Czas trwania: {1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		"pl"		"Data zakończenia: {1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		"pl"		"Pozostały czas: {1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		"pl"		"Admin: {1}"
+	}
+
+	"Menu - Nomban Duration Permanent"
+	{
+		"pl"		"Czas trwania: Na stałe"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"pl"		"{1} dni, {2} godz., {3} min."
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"pl"		"{1} godz. {2} min."
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"pl"		"{1} min."
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"pl"		"{1} sek."
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"pl"		"{1} godz., {2} min., {3} sek."
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"pl"		"{1} min., {2} sek."
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"pl"		"Nie możesz nominować mapy, ponieważ masz nomban. Użyj {green}!nomstatus{default}, aby uzyskać więcej informacji."
+	}
+
+	"Nombanned"
+	{
+		"pl"		"zablokował nominowanie (nomban) graczowi {1} na {2} min."
+	}
+
+	"Nomination removed on nomban"
+	{
+		"pl"		"Twoja nominacja została usunięta, ponieważ otrzymałeś nomban."
+	}
+
+	"UnNomban usage"
+	{
+		"pl"		"Użycie: sm_unnomban <cel>"
+	}
+
+	"Nomban usage"
+	{
+		"pl"		"Użycie: sm_nomban <cel> <czas trwania (w minutach)>"
+	}
+
+	"Command Usage"
+	{
+		"pl"		"Użycie: {lightgreen}{1}"
+	}
+
+	"Already not nombanned"
+	{
+		"pl"		"{1} nie ma już nombana!"
+	}
+
+	"Already nombanned"
+	{
+		"pl"		"{1} ma już nomban!"
+	}
+
+	"Nombanned permanent"
+	{
+		"pl"		"zablokował nominowanie (nomban) graczowi {1} na stałe."
+	}
+
+	"UnNombanned"
+	{
+		"pl"		"zdjął nomban graczowi {1}"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"pl"		"Twój nomban został zdjęty."
+	}
+
+	"Nominated by"
+	{
+		"pl"		"Nominowana przez:"
+	}
+
+	"Disconnected Player"
+	{
+		"pl"		"Rozłączony gracz"
+	}
+
+	"Client inserted Map"
+	{
+		"pl"		"{1} dodał {2} do nominacji."
+	}
+
+	"Client removed Map"
+	{
+		"pl"		"{1} usunął {2} z nominacji."
+	}
+
+	"Map Removed"
+	{
+		"pl"		"Mapa '{1}' została usunięta z listy nominacji."
+	}
+
+	"Nominations Locked"
+	{
+		"pl"		"Nominacje są obecnie zablokowane."
+	}
+
+	"Nominations Unlocked"
+	{
+		"pl"		"Nominacje map są teraz dostępne!"
+	}
+
+	"Nominations already disabled"
+	{
+		"pl"		"Nominacje są już wyłączone."
+	}
+
+	"Nominations already enabled"
+	{
+		"pl"		"Nominacje są już włączone."
+	}
+
+	"Nominations unlock countdown"
+	{
+		"pl"		"Nominacje zostaną odblokowane za {1} sek."
+	}
+
+	"Wait to Nominate"
+	{
+		"pl"		"Poczekaj {1} sek., zanim ponownie nominujesz."
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"pl"		"W tej chwili nie możesz nominować tej mapy."
+	}
+
+	"No Maps Nominated"
+	{
+		"pl"		"Nie nominowano żadnych map."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"pl"		"Nominowane mapy"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"pl"		"Usuń nominację"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"pl"		"W godzinach szczytu mapy mogą nominować tylko VIP-y. Poczekaj {1} godz. i {2} min. lub kup VIP-a, aby znów nominować mapy."
+	}
+
+	"NE Map Excluded"
+	{
+		"pl"		"Mapa \"{1}\" wykluczona z nominacji"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"pl"		"Mapa \"{1}\" wykluczona z nominacji (ExcludedTime)"
+	}
+
+	"Available Extends"
+	{
+		"pl"		"Dostępne przedłużenia: {green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"pl"		"{lightgreen}Następna mapa: {green}{1}"
+	}
+
+	"MapTierDisplay"
+	{
+		"pl"		"[{lightgreen}{1}{default}]"
+	}
+
+	"ShowMapsTiers"
+	{
+		"pl"		"Pokaż poziomy map"
+	}
+
+	"NE Current Map"
+	{
+		"pl"		"Obecna mapa"
+	}
+
+	"NE Recently Played"
+	{
+		"pl"		"Ostatnio grane"
+	}
+
+	"NE Nominated"
+	{
+		"pl"		"Nominowana"
+	}
+
+	"NE Cant Nominate Current Map"
+	{
+		"pl"		"Wybrana mapa jest obecną mapą i nie można jej nominować."
+	}
+
+	"NE Map In Exclude List"
+	{
+		"pl"		"Wybrana mapa była niedawno grana i nie można jej nominować."
+	}
+
+	"NE Map Already Nominated"
+	{
+		"pl"		"Wybrana mapa została już nominowana."
+	}
+
+	"NE Map Already In Vote"
+	{
+		"pl"		"Mapa '{1}' jest już na liście nominacji."
+	}
+
+	"NE Map Inserted"
+	{
+		"pl"		"Mapa '{1}' została dodana do listy nominacji."
+	}
+
+	"NE Max Nominations"
+	{
+		"pl"		"Osiągnięto maksymalną dozwoloną liczbę nominacji."
+	}
+
+	"NE Map Nominated"
+	{
+		"pl"		"{1} nominował {2}."
+	}
+
+	"NE Map Nomination Changed"
+	{
+		"pl"		"{1} zmienił swoją nominację na {2}."
+	}
+
+	"NE Map Already Your Nomination"
+	{
+		"pl"		"Już nominowałeś tę mapę."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"pl"		"{1} również nominował {2} ({3} głosów)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"pl"		"{1} zmienił swoją nominację na {2} ({3} głosów)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"pl"		"1 głos"
+	}
+
+	"NE Nomination Votes"
+	{
+		"pl"		"{1} głosów"
+	}
+
+	"NE Map Not In Pool"
+	{
+		"pl"		"Mapy '{1}' nie ma w puli nominacji."
+	}
+
+	"NE Nominate Title"
+	{
+		"pl"		"Nominuj mapę:"
+	}
+
+	"NE Client Settings"
+	{
+		"pl"		"Ustawienia gracza"
+	}
+
+	"Can only use command in game"
+	{
+		"pl"		"Tej komendy można użyć tylko w grze."
+	}
+
+	"No clients nombanned"
+	{
+		"pl"		"Żaden gracz nie ma obecnie nombana."
+	}
+
+	"NombanList Client Not valid"
+	{
+		"pl"		"Ten gracz nie jest już prawidłowy."
+	}
+
+	"NE Yes"
+	{
+		"pl"		"Tak"
+	}
+
+	"NE No"
+	{
+		"pl"		"Nie"
+	}
+
+	"NE Invalid Time"
+	{
+		"pl"		"\"{1}\" nie jest prawidłowym czasem: użyj liczb z h, m lub s (np. 1h30m)."
+	}
+
+	"NE Invalid Exclude Mode"
+	{
+		"pl"		"Nieprawidłowy tryb \"{1}\": 0 = czas blokady mapy z konfiguracji, 1 = ustaw lub zastąp, 2 = tylko jeśli dłuższy."
+	}
+
+	"MCE See Console For Output"
+	{
+		"pl"		"Sprawdź konsolę, aby zobaczyć wynik."
+	}
+
+	"Vote Map Initiated"
+	{
+		"pl"		"Rozpoczęto głosowanie na mapę."
+	}
+
+	"Vote Map Already Running"
+	{
+		"pl"		"Głosowanie na mapę już trwa lub zaraz się rozpocznie."
+	}
+
+	"Vote Map Change In Progress"
+	{
+		"pl"		"Mapa już się zmienia."
+	}
+
+	"Vote No Maps Available"
+	{
+		"pl"		"Brak map dostępnych do głosowania."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"pl"		"Rock the Vote nie jest jeszcze dozwolone."
+	}
+
+	"RTVE Started"
+	{
+		"pl"		"Rock the Vote już się rozpoczęło."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"pl"		"Nie osiągnięto wymaganej minimalnej liczby graczy."
+	}
+
+	"RTVE Already Voted"
+	{
+		"pl"		"Już zagłosowałeś w Rock the Vote. ({1} głosów, wymagane {2})"
+	}
+
+	"RTVE Requested"
+	{
+		"pl"		"{1} chce rozpocząć Rock the Vote. ({2} głosów, wymagane {3})"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"pl"		"Zmiana mapy na {1}! Rock the Vote zdecydowało!"
+	}
+
+	"RTVE Not Voter"
+	{
+		"pl"		"Nie możesz użyć Rock the Vote, gdy jesteś obserwatorem lub AFK."
+	}
+
+	"RTVE Available"
+	{
+		"pl"		"RockTheVote jest teraz dostępne!"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"pl"		"wyłączył RockTheVote."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"pl"		"włączył RockTheVote."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"pl"		"RockTheVote jest już wyłączone."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"pl"		"RockTheVote jest już włączone."
+	}
+
+	"RTVE Not Eligible Query"
+	{
+		"pl"		"Twój klient gry jest weryfikowany, spróbuj ponownie za chwilę."
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"pl"		"Musisz zagrać jeszcze {1} sek., zanim użyjesz Rock the Vote."
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"pl"		"Musisz zagrać (poruszać się w drużynie), zanim użyjesz Rock the Vote."
+	}
+}

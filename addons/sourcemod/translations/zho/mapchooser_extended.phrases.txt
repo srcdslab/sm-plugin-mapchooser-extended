@@ -1,0 +1,687 @@
+"Phrases"
+{
+	"Vote Nextmap"
+	{
+		"zho"		"為下一張地圖投票！"
+	}
+
+	"Nextmap Voting Started"
+	{
+		"zho"		"下一張地圖的投票已經開始。"
+	}
+
+	"Nextmap Voting Finished"
+	{
+		"zho"		"地圖投票已結束。下一張地圖將是 {1}。（在 {3} 票中獲得 {2}%%）"
+	}
+
+	"Current Map Extended"
+	{
+		"zho"		"目前的地圖已延長。（在 {2} 票中獲得 {1}%%）"
+	}
+
+	"Extend Map"
+	{
+		"zho"		"延長目前地圖"
+	}
+
+	"Dont Change"
+	{
+		"zho"		"不要更換"
+	}
+
+	"Current Map Stays"
+	{
+		"zho"		"目前地圖繼續！投票已決定！（在 {2} 票中獲得 {1}%%）"
+	}
+
+	"MCE No Votes Cast"
+	{
+		"zho"		"沒有人投票。"
+	}
+
+	"Changed Next Map"
+	{
+		"zho"		"下一張地圖已更改為 \"{1}\"。"
+	}
+
+	"Runoff Vote Nextmap"
+	{
+		"zho"		"下一張地圖的決選投票！"
+	}
+
+	"Custom"
+	{
+		"zho"		"{1}（自訂）"
+	}
+
+	"Revote Is Needed"
+	{
+		"zho"		"沒有地圖獲得超過 {1}%% 的選票。"
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"zho"		"那麼哪張地圖會勝出？需要重新投票！"
+	}
+
+	"Revote Warning"
+	{
+		"zho"		"決選投票將在 {1} 秒後開始"
+	}
+
+	"Vote Warning"
+	{
+		"zho"		"警告！下一張地圖的投票將在 {1} 秒後開始"
+	}
+
+	"Line One"
+	{
+		"zho"		"想想你想玩哪張地圖……"
+	}
+
+	"Line Two"
+	{
+		"zho"		"……不要亂按按鍵 ;-)"
+	}
+
+	"Cannot Start Vote"
+	{
+		"zho"		"投票已在進行中。{1} 秒後重試。"
+	}
+
+	"Tie Vote"
+	{
+		"zho"		"前 {1} 張地圖得票數相同。\n{green}[MCE] {default}需要重新投票！"
+	}
+
+	"Custom Marked"
+	{
+		"zho"		"*{1}"
+	}
+
+	"Map Cooldown Time Error"
+	{
+		"zho"		"這張地圖正在冷卻，還需 {1} 小時 {2} 分鐘。"
+	}
+
+	"Nominated by Admin"
+	{
+		"zho"		"管理員提名"
+	}
+
+	"Map Nominate Admin Error"
+	{
+		"zho"		"只有管理員可以提名這張地圖。"
+	}
+
+	"Map Nominate VIP Error"
+	{
+		"zho"		"只有 VIP 可以提名這張地圖。"
+	}
+
+	"Map Nominate Leader Error"
+	{
+		"zho"		"只有隊長（Leader）可以提名這張地圖。"
+	}
+
+	"Map Nominate Time Error"
+	{
+		"zho"		"你可以在 {1} 小時 {2} 分鐘後提名這張地圖。"
+	}
+
+	"Map Nominate MinPlayers Error"
+	{
+		"zho"		"這張地圖還需要 {1} 名玩家。"
+	}
+
+	"Map Nominate MaxPlayers Error"
+	{
+		"zho"		"這張地圖需要減少 {1} 名玩家。"
+	}
+
+	"Map Nominate Group Error"
+	{
+		"zho"		"這個群組已提名的地圖數量已達上限（{1}）。"
+	}
+
+	"Map Time Restriction"
+	{
+		"zho"		"時間{1}{2}H{3}M"
+	}
+
+	"Map Player Restriction"
+	{
+		"zho"		"玩家{1}{2}"
+	}
+
+	"Map Group Restriction"
+	{
+		"zho"		"群組上限：{1}"
+	}
+
+	"Admin Restriction"
+	{
+		"zho"		"僅限管理員"
+	}
+
+	"VIP Restriction"
+	{
+		"zho"		"僅限 VIP"
+	}
+
+	"Leader Restriction"
+	{
+		"zho"		"僅限 Leader"
+	}
+
+	"Nomination Removed Time Error"
+	{
+		"zho"		"你提名的 {1} 因不符合時間要求而被移除。"
+	}
+
+	"Nomination Removed MinPlayers Error"
+	{
+		"zho"		"你提名的 {1} 因不符合最低玩家人數要求而被移除。"
+	}
+
+	"Nomination Removed MaxPlayers Error"
+	{
+		"zho"		"你提名的 {1} 因超過最高玩家人數限制而被移除。"
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"zho"		"顯示無法使用的地圖"
+	}
+
+	"Can not Load Cookies"
+	{
+		"zho"		"無法載入 Cookie 設定。"
+	}
+
+	"Cookies are not cached"
+	{
+		"zho"		"Cookie 尚未快取，請稍後再試。"
+	}
+
+	"Map was not found"
+	{
+		"zho"		"找不到地圖 '{1}'。"
+	}
+
+	"Unnominate"
+	{
+		"zho"		"取消提名"
+	}
+
+	"Map Unnominated"
+	{
+		"zho"		"{1} 取消了對 {2} 的提名。"
+	}
+
+	"Unable To Unnominate"
+	{
+		"zho"		"你還沒有提名任何地圖。"
+	}
+
+	"NomStatus Menu Title"
+	{
+		"zho"		"{1} 的 Nomban 狀態"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"zho"		"未被 nomban"
+	}
+
+	"Menu - Nomban Duration"
+	{
+		"zho"		"時長：{1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		"zho"		"結束日期：{1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		"zho"		"剩餘時間：{1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		"zho"		"管理員：{1}"
+	}
+
+	"Menu - Nomban Duration Permanent"
+	{
+		"zho"		"時長：永久"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"zho"		"{1} 天 {2} 小時 {3} 分鐘"
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"zho"		"{1} 小時 {2} 分鐘"
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"zho"		"{1} 分鐘"
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"zho"		"{1} 秒"
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"zho"		"{1} 小時 {2} 分鐘 {3} 秒"
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"zho"		"{1} 分鐘 {2} 秒"
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"zho"		"你已被 nomban，無法提名地圖。使用 {green}!nomstatus{default} 查看詳細資訊。"
+	}
+
+	"Nombanned"
+	{
+		"zho"		"對 {1} 施加了 nomban，時長 {2} 分鐘。"
+	}
+
+	"Nomination removed on nomban"
+	{
+		"zho"		"你的提名因被 nomban 而被移除。"
+	}
+
+	"UnNomban usage"
+	{
+		"zho"		"用法：sm_unnomban <目標>"
+	}
+
+	"Nomban usage"
+	{
+		"zho"		"用法：sm_nomban <目標> <時長（分鐘）>"
+	}
+
+	"Command Usage"
+	{
+		"zho"		"用法：{lightgreen}{1}"
+	}
+
+	"Already not nombanned"
+	{
+		"zho"		"{1} 已經沒有被 nomban！"
+	}
+
+	"Already nombanned"
+	{
+		"zho"		"{1} 已經被 nomban！"
+	}
+
+	"Nombanned permanent"
+	{
+		"zho"		"對 {1} 施加了永久 nomban。"
+	}
+
+	"UnNombanned"
+	{
+		"zho"		"解除了 {1} 的 nomban"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"zho"		"你的 nomban 已被解除。"
+	}
+
+	"Nominated by"
+	{
+		"zho"		"提名者："
+	}
+
+	"Disconnected Player"
+	{
+		"zho"		"已斷線的玩家"
+	}
+
+	"Client inserted Map"
+	{
+		"zho"		"{1} 將 {2} 加入了提名。"
+	}
+
+	"Client removed Map"
+	{
+		"zho"		"{1} 將 {2} 從提名中移除。"
+	}
+
+	"Map Removed"
+	{
+		"zho"		"地圖 '{1}' 已從提名清單中移除。"
+	}
+
+	"Nominations Locked"
+	{
+		"zho"		"目前已鎖定提名。"
+	}
+
+	"Nominations Unlocked"
+	{
+		"zho"		"現在可以提名地圖了！"
+	}
+
+	"Nominations already disabled"
+	{
+		"zho"		"提名已經停用。"
+	}
+
+	"Nominations already enabled"
+	{
+		"zho"		"提名已經啟用。"
+	}
+
+	"Nominations unlock countdown"
+	{
+		"zho"		"提名將在 {1} 秒後解鎖。"
+	}
+
+	"Wait to Nominate"
+	{
+		"zho"		"請等待 {1} 秒後才能再次提名。"
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"zho"		"你目前無法提名這張地圖。"
+	}
+
+	"No Maps Nominated"
+	{
+		"zho"		"沒有任何地圖被提名。"
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"zho"		"已提名的地圖"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"zho"		"移除提名"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"zho"		"高峰時段只有 VIP 可以提名地圖。請等待 {1} 小時 {2} 分鐘，或購買 VIP 以再次提名地圖。"
+	}
+
+	"NE Map Excluded"
+	{
+		"zho"		"地圖 \"{1}\" 已從提名中排除"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"zho"		"地圖 \"{1}\" 已從提名中排除（ExcludedTime）"
+	}
+
+	"Available Extends"
+	{
+		"zho"		"可用延長次數：{green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"zho"		"{lightgreen}下一張地圖：{green}{1}"
+	}
+
+	"MapTierDisplay"
+	{
+		"zho"		"[{lightgreen}{1}{default}]"
+	}
+
+	"ShowMapsTiers"
+	{
+		"zho"		"顯示地圖等級"
+	}
+
+	"NE Current Map"
+	{
+		"zho"		"目前地圖"
+	}
+
+	"NE Recently Played"
+	{
+		"zho"		"最近玩過"
+	}
+
+	"NE Nominated"
+	{
+		"zho"		"已提名"
+	}
+
+	"NE Cant Nominate Current Map"
+	{
+		"zho"		"你選擇的地圖是目前的地圖，無法提名。"
+	}
+
+	"NE Map In Exclude List"
+	{
+		"zho"		"你選擇的地圖最近玩過，無法提名。"
+	}
+
+	"NE Map Already Nominated"
+	{
+		"zho"		"你選擇的地圖已經被提名。"
+	}
+
+	"NE Map Already In Vote"
+	{
+		"zho"		"地圖 '{1}' 已在提名清單中。"
+	}
+
+	"NE Map Inserted"
+	{
+		"zho"		"地圖 '{1}' 已加入提名清單。"
+	}
+
+	"NE Max Nominations"
+	{
+		"zho"		"已達到允許的提名數量上限。"
+	}
+
+	"NE Map Nominated"
+	{
+		"zho"		"{1} 提名了 {2}。"
+	}
+
+	"NE Map Nomination Changed"
+	{
+		"zho"		"{1} 將提名改為 {2}。"
+	}
+
+	"NE Map Already Your Nomination"
+	{
+		"zho"		"你已經提名過這張地圖。"
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"zho"		"{1} 也提名了 {2}（{3} 票）。"
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"zho"		"{1} 將提名改為 {2}（{3} 票）。"
+	}
+
+	"NE Nomination Vote"
+	{
+		"zho"		"1 票"
+	}
+
+	"NE Nomination Votes"
+	{
+		"zho"		"{1} 票"
+	}
+
+	"NE Map Not In Pool"
+	{
+		"zho"		"地圖 '{1}' 不在提名池中。"
+	}
+
+	"NE Nominate Title"
+	{
+		"zho"		"提名地圖："
+	}
+
+	"NE Client Settings"
+	{
+		"zho"		"玩家設定"
+	}
+
+	"Can only use command in game"
+	{
+		"zho"		"此指令只能在遊戲中使用。"
+	}
+
+	"No clients nombanned"
+	{
+		"zho"		"目前沒有玩家被 nomban。"
+	}
+
+	"NombanList Client Not valid"
+	{
+		"zho"		"該玩家已失效。"
+	}
+
+	"NE Yes"
+	{
+		"zho"		"是"
+	}
+
+	"NE No"
+	{
+		"zho"		"否"
+	}
+
+	"NE Invalid Time"
+	{
+		"zho"		"\"{1}\" 不是有效的時間：請使用數字加 h、m 或 s（例如 1h30m）。"
+	}
+
+	"NE Invalid Exclude Mode"
+	{
+		"zho"		"無效的模式 \"{1}\"：0 = 使用設定檔中的地圖冷卻時間，1 = 設定或取代，2 = 僅在較長時套用。"
+	}
+
+	"MCE See Console For Output"
+	{
+		"zho"		"請查看控制台輸出。"
+	}
+
+	"Vote Map Initiated"
+	{
+		"zho"		"已發起地圖投票。"
+	}
+
+	"Vote Map Already Running"
+	{
+		"zho"		"地圖投票已在進行或即將開始。"
+	}
+
+	"Vote Map Change In Progress"
+	{
+		"zho"		"地圖正在更換中。"
+	}
+
+	"Vote No Maps Available"
+	{
+		"zho"		"沒有可供投票的地圖。"
+	}
+
+	"RTVE Not Allowed"
+	{
+		"zho"		"目前尚不允許 Rock the Vote。"
+	}
+
+	"RTVE Started"
+	{
+		"zho"		"Rock the Vote 已經開始。"
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"zho"		"未達到所需的最低玩家人數。"
+	}
+
+	"RTVE Already Voted"
+	{
+		"zho"		"你已經為 Rock the Vote 投過票。（{1} 票，需要 {2} 票）"
+	}
+
+	"RTVE Requested"
+	{
+		"zho"		"{1} 想要發起 Rock the Vote。（{2} 票，需要 {3} 票）"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"zho"		"正在更換地圖為 {1}！Rock the Vote 已決定！"
+	}
+
+	"RTVE Not Voter"
+	{
+		"zho"		"觀戰或掛機（AFK）時無法使用 Rock the Vote。"
+	}
+
+	"RTVE Available"
+	{
+		"zho"		"RockTheVote 現已可用！"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"zho"		"停用了 RockTheVote。"
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"zho"		"啟用了 RockTheVote。"
+	}
+
+	"RTVE Already Disabled"
+	{
+		"zho"		"RockTheVote 已經停用。"
+	}
+
+	"RTVE Already Enabled"
+	{
+		"zho"		"RockTheVote 已經啟用。"
+	}
+
+	"RTVE Not Eligible Query"
+	{
+		"zho"		"正在驗證你的遊戲用戶端，請稍後再試。"
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"zho"		"你還需要再遊玩 {1} 秒才能使用 Rock the Vote。"
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"zho"		"你必須先遊玩（在隊伍中移動）才能使用 Rock the Vote。"
+	}
+}

@@ -1,0 +1,687 @@
+"Phrases"
+{
+	"Vote Nextmap"
+	{
+		"tr"		"Sonraki harita için oy ver!"
+	}
+
+	"Nextmap Voting Started"
+	{
+		"tr"		"Sonraki harita oylaması başladı."
+	}
+
+	"Nextmap Voting Finished"
+	{
+		"tr"		"Harita oylaması bitti. Sonraki harita {1} olacak. ({3} oyun %%{2} kadarı alındı)"
+	}
+
+	"Current Map Extended"
+	{
+		"tr"		"Mevcut harita uzatıldı. ({2} oyun %%{1} kadarı alındı)"
+	}
+
+	"Extend Map"
+	{
+		"tr"		"Mevcut haritayı uzat"
+	}
+
+	"Dont Change"
+	{
+		"tr"		"Değiştirme"
+	}
+
+	"Current Map Stays"
+	{
+		"tr"		"Mevcut harita devam ediyor! Oylama kararını verdi! ({2} oyun %%{1} kadarı alındı)"
+	}
+
+	"MCE No Votes Cast"
+	{
+		"tr"		"Hiç oy kullanılmadı."
+	}
+
+	"Changed Next Map"
+	{
+		"tr"		"Sonraki harita \"{1}\" olarak değiştirildi."
+	}
+
+	"Runoff Vote Nextmap"
+	{
+		"tr"		"Sonraki harita için ikinci tur oylama!"
+	}
+
+	"Custom"
+	{
+		"tr"		"{1} (Özel)"
+	}
+
+	"Revote Is Needed"
+	{
+		"tr"		"Hiçbir harita oyların %%{1}'inden fazlasını alamadı."
+	}
+
+	"Revote Is Needed New Vote"
+	{
+		"tr"		"Peki hangi harita kazanacak? Yeniden oylama gerekiyor!"
+	}
+
+	"Revote Warning"
+	{
+		"tr"		"İkinci tur oylama şu kadar süre sonra başlayacak: {1}sn"
+	}
+
+	"Vote Warning"
+	{
+		"tr"		"Dikkat! Sonraki harita oylaması şu kadar süre sonra başlayacak: {1}sn"
+	}
+
+	"Line One"
+	{
+		"tr"		"Hangi haritada oynamak istediğini düşün..."
+	}
+
+	"Line Two"
+	{
+		"tr"		"...ve tuşlara düşünmeden basma ;-)"
+	}
+
+	"Cannot Start Vote"
+	{
+		"tr"		"Oylama zaten devam ediyor. {1}sn sonra tekrar denenecek."
+	}
+
+	"Tie Vote"
+	{
+		"tr"		"İlk {1} harita eşit oy aldı.\n{green}[MCE] {default}Yeniden oylama gerekiyor!"
+	}
+
+	"Custom Marked"
+	{
+		"tr"		"*{1}"
+	}
+
+	"Map Cooldown Time Error"
+	{
+		"tr"		"Bu harita önümüzdeki {1} saat {2} dakika boyunca bekleme süresinde."
+	}
+
+	"Nominated by Admin"
+	{
+		"tr"		"Admin adaylığı"
+	}
+
+	"Map Nominate Admin Error"
+	{
+		"tr"		"Bu haritayı yalnızca adminler aday gösterebilir."
+	}
+
+	"Map Nominate VIP Error"
+	{
+		"tr"		"Bu haritayı yalnızca VIP'ler aday gösterebilir."
+	}
+
+	"Map Nominate Leader Error"
+	{
+		"tr"		"Bu haritayı yalnızca Lider'ler aday gösterebilir."
+	}
+
+	"Map Nominate Time Error"
+	{
+		"tr"		"Bu haritayı {1} saat {2} dakika sonra aday gösterebilirsin."
+	}
+
+	"Map Nominate MinPlayers Error"
+	{
+		"tr"		"Harita {1} oyuncu daha gerektiriyor."
+	}
+
+	"Map Nominate MaxPlayers Error"
+	{
+		"tr"		"Harita {1} oyuncu daha az olmasını gerektiriyor."
+	}
+
+	"Map Nominate Group Error"
+	{
+		"tr"		"Bu gruptan aday gösterilebilecek azami harita sayısına ({1}) zaten ulaşıldı."
+	}
+
+	"Map Time Restriction"
+	{
+		"tr"		"Süre{1}{2}H{3}M"
+	}
+
+	"Map Player Restriction"
+	{
+		"tr"		"Oyuncu{1}{2}"
+	}
+
+	"Map Group Restriction"
+	{
+		"tr"		"Grup azami: {1}"
+	}
+
+	"Admin Restriction"
+	{
+		"tr"		"Yalnızca admin"
+	}
+
+	"VIP Restriction"
+	{
+		"tr"		"Yalnızca VIP"
+	}
+
+	"Leader Restriction"
+	{
+		"tr"		"Yalnızca Lider"
+	}
+
+	"Nomination Removed Time Error"
+	{
+		"tr"		"{1} adaylığın zaman koşullarını karşılamadığı için kaldırıldı."
+	}
+
+	"Nomination Removed MinPlayers Error"
+	{
+		"tr"		"{1} adaylığın asgari oyuncu koşullarını karşılamadığı için kaldırıldı."
+	}
+
+	"Nomination Removed MaxPlayers Error"
+	{
+		"tr"		"{1} adaylığın azami oyuncu sınırını aştığı için kaldırıldı."
+	}
+
+	"Nominations Show Unavailable"
+	{
+		"tr"		"Kullanılamayan haritaları göster"
+	}
+
+	"Can not Load Cookies"
+	{
+		"tr"		"Çerez ayarları yüklenemiyor."
+	}
+
+	"Cookies are not cached"
+	{
+		"tr"		"Çerezler henüz önbelleğe alınmadı. Lütfen birazdan tekrar dene."
+	}
+
+	"Map was not found"
+	{
+		"tr"		"'{1}' haritası bulunamadı."
+	}
+
+	"Unnominate"
+	{
+		"tr"		"Adaylığı kaldır"
+	}
+
+	"Map Unnominated"
+	{
+		"tr"		"{1}, {2} adaylığını kaldırdı."
+	}
+
+	"Unable To Unnominate"
+	{
+		"tr"		"Hiçbir harita aday göstermedin."
+	}
+
+	"NomStatus Menu Title"
+	{
+		"tr"		"Nomban durumu: {1}"
+	}
+
+	"Menu - Not Nombanned"
+	{
+		"tr"		"Nomban yok"
+	}
+
+	"Menu - Nomban Duration"
+	{
+		"tr"		"Süre: {1}"
+	}
+
+	"Menu - Nomban end"
+	{
+		"tr"		"Bitiş tarihi: {1}"
+	}
+
+	"Menu - Nomban timeleft"
+	{
+		"tr"		"Kalan süre: {1}"
+	}
+
+	"Menu - Nomban Admin"
+	{
+		"tr"		"Admin: {1}"
+	}
+
+	"Menu - Nomban Duration Permanent"
+	{
+		"tr"		"Süre: Kalıcı"
+	}
+
+	"Menu - Nomban Days Hours Minutes"
+	{
+		"tr"		"{1} gün, {2} saat, {3} dakika"
+	}
+
+	"Menu - Nomban Hours Minutes"
+	{
+		"tr"		"{1} saat {2} dakika"
+	}
+
+	"Menu - Nomban Minutes"
+	{
+		"tr"		"{1} dakika"
+	}
+
+	"Menu - Nomban Seconds"
+	{
+		"tr"		"{1} saniye"
+	}
+
+	"Menu - Nomban Hours Minutes Seconds"
+	{
+		"tr"		"{1} saat, {2} dakika, {3} saniye"
+	}
+
+	"Menu - Nomban Minutes Seconds"
+	{
+		"tr"		"{1} dakika, {2} saniye"
+	}
+
+	"Cannot nominate - Nombanned"
+	{
+		"tr"		"Nomban aldığın için harita aday gösteremezsin. Daha fazla bilgi için {green}!nomstatus{default} yaz."
+	}
+
+	"Nombanned"
+	{
+		"tr"		"{1} oyuncusuna {2} dakika nomban verdi."
+	}
+
+	"Nomination removed on nomban"
+	{
+		"tr"		"Nomban aldığın için adaylığın kaldırıldı."
+	}
+
+	"UnNomban usage"
+	{
+		"tr"		"Kullanım: sm_unnomban <hedef>"
+	}
+
+	"Nomban usage"
+	{
+		"tr"		"Kullanım: sm_nomban <hedef> <süre (dakika)>"
+	}
+
+	"Command Usage"
+	{
+		"tr"		"Kullanım: {lightgreen}{1}"
+	}
+
+	"Already not nombanned"
+	{
+		"tr"		"{1} zaten nomban almamış!"
+	}
+
+	"Already nombanned"
+	{
+		"tr"		"{1} zaten nomban almış!"
+	}
+
+	"Nombanned permanent"
+	{
+		"tr"		"{1} oyuncusuna kalıcı nomban verdi."
+	}
+
+	"UnNombanned"
+	{
+		"tr"		"{1} oyuncusunun nombanını kaldırdı"
+	}
+
+	"Menu Got UnNombanned"
+	{
+		"tr"		"Nomban'ın kaldırıldı."
+	}
+
+	"Nominated by"
+	{
+		"tr"		"Aday gösteren:"
+	}
+
+	"Disconnected Player"
+	{
+		"tr"		"Bağlantısı kopan oyuncu"
+	}
+
+	"Client inserted Map"
+	{
+		"tr"		"{1}, {2} haritasını adaylara ekledi."
+	}
+
+	"Client removed Map"
+	{
+		"tr"		"{1}, {2} haritasını adaylardan kaldırdı."
+	}
+
+	"Map Removed"
+	{
+		"tr"		"'{1}' haritası aday listesinden kaldırıldı."
+	}
+
+	"Nominations Locked"
+	{
+		"tr"		"Adaylıklar şu anda kilitli."
+	}
+
+	"Nominations Unlocked"
+	{
+		"tr"		"Harita adaylıkları artık açık!"
+	}
+
+	"Nominations already disabled"
+	{
+		"tr"		"Adaylıklar zaten kapalı."
+	}
+
+	"Nominations already enabled"
+	{
+		"tr"		"Adaylıklar zaten açık."
+	}
+
+	"Nominations unlock countdown"
+	{
+		"tr"		"Adaylıklar {1} saniye sonra açılacak."
+	}
+
+	"Wait to Nominate"
+	{
+		"tr"		"Tekrar aday göstermeden önce {1} saniye bekle."
+	}
+
+	"Selected Map Nomination Restricted"
+	{
+		"tr"		"Şu anda bu haritayı aday gösteremezsin."
+	}
+
+	"No Maps Nominated"
+	{
+		"tr"		"Hiçbir harita aday gösterilmedi."
+	}
+
+	"NE Nominated Maps Title"
+	{
+		"tr"		"Aday gösterilen haritalar"
+	}
+
+	"NE Remove Nomination Title"
+	{
+		"tr"		"Adaylığı kaldır"
+	}
+
+	"NE VIP Peak Hours"
+	{
+		"tr"		"Yoğun saatlerde yalnızca VIP'ler harita aday gösterebilir. {1} saat {2} dakika bekle ya da tekrar aday göstermek için VIP satın al."
+	}
+
+	"NE Map Excluded"
+	{
+		"tr"		"\"{1}\" haritası adaylıktan hariç tutuldu"
+	}
+
+	"NE Map Excluded Time"
+	{
+		"tr"		"\"{1}\" haritası adaylıktan hariç tutuldu (ExcludedTime)"
+	}
+
+	"Available Extends"
+	{
+		"tr"		"Kullanılabilir uzatmalar: {green}{1}"
+	}
+
+	"Nextmap"
+	{
+		"tr"		"{lightgreen}Sonraki harita: {green}{1}"
+	}
+
+	"MapTierDisplay"
+	{
+		"tr"		"[{lightgreen}{1}{default}]"
+	}
+
+	"ShowMapsTiers"
+	{
+		"tr"		"Harita seviyelerini göster"
+	}
+
+	"NE Current Map"
+	{
+		"tr"		"Mevcut harita"
+	}
+
+	"NE Recently Played"
+	{
+		"tr"		"Yakın zamanda oynanan"
+	}
+
+	"NE Nominated"
+	{
+		"tr"		"Aday gösterildi"
+	}
+
+	"NE Cant Nominate Current Map"
+	{
+		"tr"		"Seçtiğin harita mevcut harita ve aday gösterilemez."
+	}
+
+	"NE Map In Exclude List"
+	{
+		"tr"		"Seçtiğin harita yakın zamanda oynandı ve aday gösterilemez."
+	}
+
+	"NE Map Already Nominated"
+	{
+		"tr"		"Seçtiğin harita zaten aday gösterilmiş."
+	}
+
+	"NE Map Already In Vote"
+	{
+		"tr"		"'{1}' haritası zaten aday listesinde."
+	}
+
+	"NE Map Inserted"
+	{
+		"tr"		"'{1}' haritası aday listesine eklendi."
+	}
+
+	"NE Max Nominations"
+	{
+		"tr"		"İzin verilen azami aday sayısına ulaşıldı."
+	}
+
+	"NE Map Nominated"
+	{
+		"tr"		"{1}, {2} haritasını aday gösterdi."
+	}
+
+	"NE Map Nomination Changed"
+	{
+		"tr"		"{1} adaylığını {2} olarak değiştirdi."
+	}
+
+	"NE Map Already Your Nomination"
+	{
+		"tr"		"Bu haritayı zaten aday gösterdin."
+	}
+
+	"NE Map Nominated Votes"
+	{
+		"tr"		"{1} da {2} haritasını aday gösterdi ({3} oy)."
+	}
+
+	"NE Map Nomination Changed Votes"
+	{
+		"tr"		"{1} adaylığını {2} olarak değiştirdi ({3} oy)."
+	}
+
+	"NE Nomination Vote"
+	{
+		"tr"		"1 oy"
+	}
+
+	"NE Nomination Votes"
+	{
+		"tr"		"{1} oy"
+	}
+
+	"NE Map Not In Pool"
+	{
+		"tr"		"'{1}' haritası aday havuzunda değil."
+	}
+
+	"NE Nominate Title"
+	{
+		"tr"		"Harita aday göster:"
+	}
+
+	"NE Client Settings"
+	{
+		"tr"		"Oyuncu ayarları"
+	}
+
+	"Can only use command in game"
+	{
+		"tr"		"Bu komut yalnızca oyun içinde kullanılabilir."
+	}
+
+	"No clients nombanned"
+	{
+		"tr"		"Şu anda nomban kısıtlaması olan oyuncu yok."
+	}
+
+	"NombanList Client Not valid"
+	{
+		"tr"		"Bu oyuncu artık geçerli değil."
+	}
+
+	"NE Yes"
+	{
+		"tr"		"Evet"
+	}
+
+	"NE No"
+	{
+		"tr"		"Hayır"
+	}
+
+	"NE Invalid Time"
+	{
+		"tr"		"\"{1}\" geçerli bir süre değil: sayıların ardına h, m veya s ekle (örn. 1h30m)."
+	}
+
+	"NE Invalid Exclude Mode"
+	{
+		"tr"		"Geçersiz mod \"{1}\": 0 = yapılandırmadaki harita bekleme süresi, 1 = ayarla veya değiştir, 2 = yalnızca daha uzunsa."
+	}
+
+	"MCE See Console For Output"
+	{
+		"tr"		"Çıktı için konsola bak."
+	}
+
+	"Vote Map Initiated"
+	{
+		"tr"		"Harita oylaması başlatıldı."
+	}
+
+	"Vote Map Already Running"
+	{
+		"tr"		"Bir harita oylaması zaten sürüyor ya da başlamak üzere."
+	}
+
+	"Vote Map Change In Progress"
+	{
+		"tr"		"Harita zaten değişiyor."
+	}
+
+	"Vote No Maps Available"
+	{
+		"tr"		"Oylama için uygun harita yok."
+	}
+
+	"RTVE Not Allowed"
+	{
+		"tr"		"Rock the Vote henüz kullanılamaz."
+	}
+
+	"RTVE Started"
+	{
+		"tr"		"Rock the Vote zaten başladı."
+	}
+
+	"RTVE Minimal Players Not Met"
+	{
+		"tr"		"Gereken asgari oyuncu sayısına ulaşılmadı."
+	}
+
+	"RTVE Already Voted"
+	{
+		"tr"		"Rock the Vote için zaten oy verdin. ({1} oy, {2} gerekli)"
+	}
+
+	"RTVE Requested"
+	{
+		"tr"		"{1} Rock the Vote istiyor. ({2} oy, {3} gerekli)"
+	}
+
+	"RTVE Changing Maps"
+	{
+		"tr"		"Harita {1} olarak değişiyor! Rock the Vote kararını verdi!"
+	}
+
+	"RTVE Not Voter"
+	{
+		"tr"		"İzleyiciyken veya AFK iken Rock the Vote kullanamazsın."
+	}
+
+	"RTVE Available"
+	{
+		"tr"		"RockTheVote artık kullanılabilir!"
+	}
+
+	"RTVE Disabled Activity"
+	{
+		"tr"		"RockTheVote'u devre dışı bıraktı."
+	}
+
+	"RTVE Enabled Activity"
+	{
+		"tr"		"RockTheVote'u etkinleştirdi."
+	}
+
+	"RTVE Already Disabled"
+	{
+		"tr"		"RockTheVote zaten devre dışı."
+	}
+
+	"RTVE Already Enabled"
+	{
+		"tr"		"RockTheVote zaten etkin."
+	}
+
+	"RTVE Not Eligible Query"
+	{
+		"tr"		"Oyun istemcin doğrulanıyor, birazdan tekrar dene."
+	}
+
+	"RTVE Not Eligible Time"
+	{
+		"tr"		"Rock the Vote kullanabilmek için {1} saniye daha oynamalısın."
+	}
+
+	"RTVE Not Eligible Move"
+	{
+		"tr"		"Rock the Vote kullanabilmek için önce oynamalısın (takımda hareket et)."
+	}
+}
