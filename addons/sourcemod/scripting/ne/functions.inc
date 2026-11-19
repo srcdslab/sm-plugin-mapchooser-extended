@@ -31,6 +31,9 @@ int g_mapFileSerial = -1;
 int g_AdminMapFileSerial = -1;
 int g_Player_NominationDelay[MAXPLAYERS+1];
 
+// Map menu shown again from its own MenuAction_Select, which MenuAction_End must not delete
+Menu g_hRedisplayedMapMenu = null;
+
 bool g_bLate = false;
 bool g_bNextMapSet = false;
 bool g_bNEAllowed = false;		// True if Nominations is available to players.
