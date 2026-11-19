@@ -442,6 +442,14 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 	{
 		case MenuAction_End:
 		{
+			// SourceMod still ends the menu after a selection that displayed it again: the player
+			// has it open, and deleting it here crashes the server on their next key press
+			if (param1 == MenuEnd_Selected && menu == g_hRedisplayedMapMenu)
+			{
+				g_hRedisplayedMapMenu = null;
+				return 0;
+			}
+
 			delete menu;
 		}
 
@@ -474,7 +482,8 @@ public int Handler_MapSelectMenu(Menu menu, MenuAction action, int param1, int p
 			if (g_Player_NominationDelay[param1] > iCurrentTime)
 			{
 				CPrintToChat(param1, "{green}[NE]{default} %t", "Wait to Nominate", g_Player_NominationDelay[param1] - iCurrentTime);
-				menu.DisplayAt(param1, GetMenuSelectionPosition(), MENU_TIME_FOREVER);
+				if (menu.DisplayAt(param1, GetMenuSelectionPosition(), MENU_TIME_FOREVER))
+					g_hRedisplayedMapMenu = menu;
 				return 0;
 			}
 
